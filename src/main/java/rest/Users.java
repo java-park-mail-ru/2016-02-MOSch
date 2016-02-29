@@ -76,7 +76,7 @@ public class Users {
     public Response editUser(@PathParam("id") Long id, UserProfile new_user, @Context HttpHeaders headers) {
         UserProfile user = accountService.getUser(id);
         if(user == null) {
-            String payload = "{\"status\":\"403\",\"message\":\"Чужой юзер\"}";
+            String payload = "{\"status\":\"404\",\"message\":\"User not found\"}";
             return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
         }else {
             user.setLogin(new_user.getLogin());
@@ -84,8 +84,21 @@ public class Users {
             String payload = String.format("{\"id\":\"%d\"}", user.getId());
             return Response.status(Response.Status.OK).entity(payload).build();
         }
-
-
     }
 
+    @DELETE
+    @Path("{id :[0-9]+}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteUser(@PathParam("id") Long id){
+        UserProfile user = accountService.getUser(id);
+        if (user == null){
+            String payload = "{\"status\":\"404\",\"message\":\"User not found\"}";
+            return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
+        }else {
+            accountService.getAllUsers().remove(user);
+            return Response.status(Response.Status.OK).build();
+
+        }
+    }
 }
