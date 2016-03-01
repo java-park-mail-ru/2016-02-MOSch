@@ -1,6 +1,7 @@
 package rest;
 
 import main.AccountService;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Singleton;
 import javax.json.JsonObject;
@@ -26,6 +27,7 @@ public class Session {
         this.accountService = accountService;
     }
 
+
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -33,13 +35,15 @@ public class Session {
         final String sessionId = request.getSession().getId();
         final UserProfile validUser = accountService.getUser(user.getLogin());
         String payload;
-        if (user.getPassword().equals(validUser.getPassword())){
-            if(accountService.addActiveUser(validUser,sessionId)) {
-                payload = String.format("{\"id\":\"%d\"}", validUser.getId());
-                return Response.status(Response.Status.OK).entity(payload).build();
+        if (validUser != null) {
+            if (user.getPassword().equals(validUser.getPassword())) {
+                if (accountService.addActiveUser(validUser, sessionId)) {
+                    payload = String.format("{\"id\":\"%d\"}", validUser.getId());
+                    return Response.status(Response.Status.OK).entity(payload).build();
+                }
+                payload = "{\"message\":\"Already logged in\"}";
+                return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
             }
-            payload = "{\"message\":\"Already logged in\"}";
-            return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
         }
         payload = "{\"message\":\"Wrong login or password\"}";
         return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
