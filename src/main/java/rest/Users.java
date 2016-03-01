@@ -95,7 +95,7 @@ public class Users {
             return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
         }else if(user == null) {
             payload = "{\"status\":\"404\",\"message\":\"User not found\"}";
-            return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
+            return Response.status(Response.Status.NOT_FOUND).entity(payload).build();
         }else {
             accountService.removeActiveUser(id); //logout by id if edited user is online
             user.setLogin(new_user.getLogin());
@@ -115,7 +115,7 @@ public class Users {
         String payload = "{\"status\":\"403\",\"message\":\"Access denied\"}";
         if (currentUser != null) {
             if (currentUser != user && currentUser.getRole() != UserProfile.roleEnum.admin) {
-                payload = "{\"status\":\"444\",\"message\":\"Access denied\"}";
+                payload = "{\"status\":\"403\",\"message\":\"Access denied\"}";
                 return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
             } else if (user == null) {
                 payload = "{\"status\":\"404\",\"message\":\"User not found\"}";
