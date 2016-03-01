@@ -1,13 +1,17 @@
 package rest;
 
+//import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import main.AccountService;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Singleton;
 import javax.json.JsonObject;
+import javax.print.attribute.standard.Media;
 import javax.ws.rs.*;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
@@ -57,48 +61,79 @@ public class Users {
         }
     }
 
-    @POST
+    @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createUser(UserProfile user, @Context HttpHeaders headers){
-        if(accountService.addUser(user)){
-            String payload = String.format("{\"id\":\"%d\"}", user.getId());
-            return Response.status(Response.Status.OK).entity(payload).build();
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).build();
+    public Response createUser(UserProfile user, @Context HttpServletRequest request){
+        String sessionId = request.getSession().getId();
+        UserProfile currentUser = accountService.getActiveUser(sessionId);
+        String payload;
+        if (currentUser != null) {
+            if (currentUser.getRole() == UserProfile.roleEnum.admin) {
+                if (accountService.addUser(user)) {
+                    payload = String.format("{\"id\":\"%d\"}", user.getId());
+                    return Response.status(Response.Status.OK).entity(payload).build();
+                }
+            }
         }
+        payload = "{\"status\":\"403\",\"message\":\"Access denied\"}";
+        return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
     }
 
     @POST
     @Path("{id :[0-9]+}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response editUser(@PathParam("id") Long id, UserProfile new_user, @Context HttpHeaders headers) {
+    public Response editUser(@PathParam("id") Long id, UserProfile new_user, @Context HttpServletRequest request) {
+        String sessionId = request.getSession().getId();
+        UserProfile currentUser = accountService.getActiveUser(sessionId);
         UserProfile user = accountService.getUser(id);
-        if(user == null) {
-            String payload = "{\"status\":\"404\",\"message\":\"User not found\"}";
+        String payload;
+
+        if (currentUser != user && currentUser.getRole() != UserProfile.roleEnum.admin){
+            payload = "{\"status\":\"403\",\"message\":\"Access denied\"}";
+            return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
+        }else if(user == null) {
+            payload = "{\"status\":\"404\",\"message\":\"User not found\"}";
             return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
         }else {
+            accountService.removeActiveUser(id); //logout by id if edited user is online
             user.setLogin(new_user.getLogin());
             user.setPassword(new_user.getPassword());
-            String payload = String.format("{\"id\":\"%d\"}", user.getId());
+            payload = String.format("{\"id\":\"%d\"}", user.getId());
             return Response.status(Response.Status.OK).entity(payload).build();
         }
     }
 
     @DELETE
     @Path("{id :[0-9]+}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteUser(@PathParam("id") Long id){
+    public Response deleteUser(@PathParam("id") Long id, @Context HttpServletRequest request ){
+        String sessionId = request.getSession().getId();
+        UserProfile currentUser = accountService.getActiveUser(request.getSession().getId());
         UserProfile user = accountService.getUser(id);
-        if (user == null){
-            String payload = "{\"status\":\"404\",\"message\":\"User not found\"}";
-            return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
-        }else {
-            accountService.getAllUsers().remove(user);
-            return Response.status(Response.Status.OK).build();
-
+        String payload = "{\"status\":\"403\",\"message\":\"Access denied\"}";
+        if (currentUser != null) {
+            if (currentUser != user && currentUser.getRole() != UserProfile.roleEnum.admin) {
+                payload = "{\"status\":\"444\",\"message\":\"Access denied\"}";
+                return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
+            } else if (user == null) {
+                payload = "{\"status\":\"404\",\"message\":\"User not found\"}";
+                return Response.status(Response.Status.NOT_FOUND).entity(payload).build();
+            } else {
+                accountService.getAllUsers().remove(user);
+                accountService.removeActiveUser(id); //logout by id if edited user is online
+                return Response.status(Response.Status.OK).build();
+            }
         }
+        return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
+    }
+
+    @NotNull
+    private Boolean is_active(String sessionId, UserProfile user) {
+        if (accountService.getActiveUser(sessionId) == user)
+            return true;
+        return false;
+
     }
 }

@@ -1,5 +1,6 @@
 package main;
 
+import rest.Session;
 import rest.Users;
 
 import javax.ws.rs.ApplicationPath;
@@ -15,7 +16,9 @@ public class RestApplication extends Application {
     @Override
     public Set<Object> getSingletons() {
         final HashSet<Object> objects = new HashSet<>();
-        objects.add(new Users(new AccountService()));
+        AccountService bd = new AccountService();
+        objects.add(new Users(bd));
+        objects.add(new Session(bd));
         return objects;
     }
 }

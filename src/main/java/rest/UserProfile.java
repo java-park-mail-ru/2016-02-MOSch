@@ -13,22 +13,37 @@ public class UserProfile {
     @NotNull
     private Long id;
 
+    public enum roleEnum {admin, user};
+
+    @NotNull
+    private roleEnum role;
+
     public UserProfile() {
         login = "";
         password = "";
-        id = 0L;
+        id = null;
+        role = roleEnum.user;
     }
 
     public UserProfile(@NotNull String login, @NotNull String password, @NotNull Long id) {
         this.login = login;
         this.password = password;
         this.id = id;
+        this.role = roleEnum.user;
     }
 
     public UserProfile(@NotNull String login, @NotNull String password) {
         this.login = login;
         this.password = password;
         this.id = 0L;
+        this.role = roleEnum.user;
+    }
+
+    public UserProfile(@NotNull String login, @NotNull String password, @NotNull Long id, @NotNull roleEnum role) {
+        this.login = login;
+        this.password = password;
+        this.id = id;
+        this.role = role;
     }
 
     @NotNull
@@ -56,4 +71,9 @@ public class UserProfile {
     }
 
     public void setId(@NotNull Long id) { this.id = id; }
+
+    @NotNull
+    public roleEnum getRole() { return role;}
+
+    public void setRole(@NotNull roleEnum role) {this.role = role;}
 }
