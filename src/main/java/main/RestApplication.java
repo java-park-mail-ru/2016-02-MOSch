@@ -21,4 +21,6 @@ public class RestApplication extends Application {
         objects.add(new Session(bd));
         return objects;
     }
+
+
 }

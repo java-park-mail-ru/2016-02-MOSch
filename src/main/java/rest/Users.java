@@ -30,21 +30,40 @@ public class Users {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllUsers() {
-        final Collection<UserProfile> allUsers = accountService.getAllUsers();
+    public Response getAllUsers(@Context HttpServletRequest request) {
+        String sessionId = request.getSession().getId();
+        UserProfile currentUser = accountService.getActiveUser(sessionId);
+        String payload = "{\"status\":\"403\",\"message\":\"Access denied\"}";
 
-        return Response.status(Response.Status.OK).entity(allUsers.toArray(new UserProfile[allUsers.size()])).build();
+        if (currentUser != null) {
+            if (currentUser.getRole() == UserProfile.roleEnum.admin) {
+                final Collection<UserProfile> allUsers = accountService.getAllUsers();
+                return Response.status(Response.Status.OK).entity(allUsers.toArray(new UserProfile[allUsers.size()])).build();
+            }
+        }
+        return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
+
     }
 
     @GET
     @Path("{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserByName(@PathParam("name") String name) {
+    public Response getUserByName(@PathParam("name") String name, @Context HttpServletRequest request) {
+        String sessionId = request.getSession().getId();
+        UserProfile currentUser = accountService.getActiveUser(sessionId);
+        String payload = "{\"status\":\"404\",\"message\":\"User not found\"}";
         final UserProfile user = accountService.getUser(name);
-        if(user == null){
-            return Response.status(Response.Status.NOT_FOUND).build();
+
+        if (currentUser != null) {
+            if (currentUser == user || currentUser.getRole() == UserProfile.roleEnum.admin) {
+                if(user == null){return Response.status(Response.Status.NOT_FOUND).entity(payload).build();}
+                else return Response.status(Response.Status.OK).entity(user).build();
+            }
+            payload = "{\"status\":\"403\",\"message\":\"Access denied\"}";
+            return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
+
         }else {
-            return Response.status(Response.Status.OK).entity(user).build();
+            return Response.status(Response.Status.UNAUTHORIZED).build();
         }
     }
 
@@ -52,12 +71,22 @@ public class Users {
     @GET
     @Path("{id: [0-9]+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserById(@PathParam("id") Long id) {
+    public Response getUserById(@PathParam("id") Long id, @Context HttpServletRequest request) {
         final UserProfile user = accountService.getUser(id);
-        if(user == null){
-            return Response.status(Response.Status.NOT_FOUND).build();
+        String sessionId = request.getSession().getId();
+        UserProfile currentUser = accountService.getActiveUser(sessionId);
+        String payload = "{\"status\":\"404\",\"message\":\"User not found\"}";
+
+        if (currentUser != null) {
+            if (currentUser == user || currentUser.getRole() == UserProfile.roleEnum.admin) {
+                if(user == null){return Response.status(Response.Status.NOT_FOUND).entity(payload).build();}
+                else return Response.status(Response.Status.OK).entity(user).build();
+            }
+            payload = "{\"status\":\"403\",\"message\":\"Access denied\"}";
+            return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
+
         }else {
-            return Response.status(Response.Status.OK).entity(user).build();
+            return Response.status(Response.Status.UNAUTHORIZED).build();
         }
     }
 
