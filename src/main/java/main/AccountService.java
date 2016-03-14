@@ -7,11 +7,12 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.security.*;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "MagicNumber"})
 public class AccountService {
     private final Map<String, UserProfile> users = new ConcurrentHashMap<>();
     private final Map<String, UserProfile> activeUsers = new ConcurrentHashMap<>();
@@ -74,6 +75,26 @@ public class AccountService {
         }
         return null;
 
+    }
+
+
+    public static String getMD5(String input) {
+        try {
+            final MessageDigest md = MessageDigest.getInstance("MD5");
+            final byte[] messageDigest = md.digest(input.getBytes());
+            // Convert to hex string
+            final StringBuilder sb = new StringBuilder();
+            for (byte aMessageDigest : messageDigest) {
+                if ((0xff & aMessageDigest) < 0x10) {
+                    sb.append('0');
+                }
+                sb.append(Integer.toHexString(0xff & aMessageDigest));
+            }
+            return sb.toString();
+        }
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

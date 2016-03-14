@@ -1,6 +1,7 @@
 package rest;
 
 import main.AccountService;
+import java.io.*;
 import javax.inject.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -25,14 +26,18 @@ public class Session {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response loginUser(UserProfile user, @Context HttpServletRequest request){
+    public Response loginUser(UserProfile user, @Context HttpServletRequest request)
+        throws IOException{
         final String sessionId = request.getSession().getId();
         final UserProfile validUser = accountService.getUser(user.getLogin());
         final String payload;
         if (validUser != null) {
             if (user.getPassword().equals(validUser.getPassword())) {
                 if (accountService.addActiveUser(validUser, sessionId)) {
-                    payload = String.format("{\"id\":\"%d\"}", validUser.getId());
+                    final long validID = validUser.getId();
+                    payload = String.format("{\"id\":\"%d\", \"auth_token\":\"%s\"}",
+                            validID,
+                            AccountService.getMD5(validUser.getId().toString()));
                     return Response.status(Response.Status.OK).entity(payload).build();
                 }
                 payload = "{\"message\":\"Already logged in\"}";

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("unused")
 public class UserProfile {
     @NotNull
-    private String login;
+    private String login = "";
     @NotNull
     private String password;
     @NotNull
