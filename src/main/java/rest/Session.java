@@ -1,19 +1,14 @@
 package rest;
 
 import main.AccountService;
-import org.jetbrains.annotations.NotNull;
-
+import java.io.*;
 import javax.inject.Singleton;
-import javax.json.JsonObject;
-import javax.print.attribute.standard.Media;
 import javax.ws.rs.*;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collection;
+
 
 /**
  * MOSch-team test server for "Kill The Birds" game
@@ -21,7 +16,7 @@ import java.util.Collection;
 @Singleton
 @Path("/session")
 public class Session {
-    private AccountService accountService;
+    private final AccountService accountService;
 
     public Session(AccountService accountService) {
         this.accountService = accountService;
@@ -31,14 +26,18 @@ public class Session {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response loginUser(UserProfile user, @Context HttpServletRequest request){
+    public Response loginUser(UserProfile user, @Context HttpServletRequest request)
+        throws IOException{
         final String sessionId = request.getSession().getId();
         final UserProfile validUser = accountService.getUser(user.getLogin());
-        String payload;
+        final String payload;
         if (validUser != null) {
             if (user.getPassword().equals(validUser.getPassword())) {
                 if (accountService.addActiveUser(validUser, sessionId)) {
-                    payload = String.format("{\"id\":\"%d\"}", validUser.getId());
+                    final long validID = validUser.getId();
+                    payload = String.format("{\"id\":\"%d\", \"auth_token\":\"%s\"}",
+                            validID,
+                            AccountService.getMD5(validUser.getId().toString()));
                     return Response.status(Response.Status.OK).entity(payload).build();
                 }
                 payload = "{\"message\":\"Already logged in\"}";
@@ -64,7 +63,7 @@ public class Session {
         if (currentUser == null){
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        String payload = String.format("{\"id\":\"%d\"}", currentUser.getId());
+        final String payload = String.format("{\"id\":\"%d\"}", currentUser.getId());
         return Response.status(Response.Status.OK).entity(payload).build();
     }
 

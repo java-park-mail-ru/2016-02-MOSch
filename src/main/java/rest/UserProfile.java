@@ -5,41 +5,42 @@ import org.jetbrains.annotations.NotNull;
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
+@SuppressWarnings("unused")
 public class UserProfile {
     @NotNull
-    private String login;
+    private String login = "";
     @NotNull
     private String password;
     @NotNull
     private Long id;
 
-    public enum roleEnum {admin, user};
+    public enum RoleEnum {ADMIN, USER}
 
     @NotNull
-    private roleEnum role;
+    private RoleEnum role;
 
     public UserProfile() {
         login = "";
         password = "";
-        id = null;
-        role = roleEnum.user;
+        id = 0L;
+        role = RoleEnum.USER;
     }
 
     public UserProfile(@NotNull String login, @NotNull String password, @NotNull Long id) {
         this.login = login;
         this.password = password;
         this.id = id;
-        this.role = roleEnum.user;
+        this.role = RoleEnum.USER;
     }
 
     public UserProfile(@NotNull String login, @NotNull String password) {
         this.login = login;
         this.password = password;
         this.id = 0L;
-        this.role = roleEnum.user;
+        this.role = RoleEnum.USER;
     }
 
-    public UserProfile(@NotNull String login, @NotNull String password, @NotNull Long id, @NotNull roleEnum role) {
+    public UserProfile(@NotNull String login, @NotNull String password, @NotNull Long id, @NotNull RoleEnum role) {
         this.login = login;
         this.password = password;
         this.id = id;
@@ -73,7 +74,7 @@ public class UserProfile {
     public void setId(@NotNull Long id) { this.id = id; }
 
     @NotNull
-    public roleEnum getRole() { return role;}
+    public RoleEnum getRole() { return role;}
 
-    public void setRole(@NotNull roleEnum role) {this.role = role;}
+    public void setRole(@NotNull RoleEnum role) {this.role = role;}
 }

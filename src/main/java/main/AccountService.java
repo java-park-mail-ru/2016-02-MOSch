@@ -1,22 +1,27 @@
 package main;
 
+import org.jetbrains.annotations.Nullable;
 import rest.UserProfile;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.security.*;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
+@SuppressWarnings({"unused", "MagicNumber"})
 public class AccountService {
-    private Map<String, UserProfile> users = new HashMap<>();
-    private Map<String, UserProfile> activeUsers = new HashMap<>();
+    private final Map<String, UserProfile> users = new ConcurrentHashMap<>();
+    private final Map<String, UserProfile> activeUsers = new ConcurrentHashMap<>();
 
     public AccountService() {
-        users.put("Tolya", new UserProfile("Tolya", "12345", 0L));
-        users.put("Kolya", new UserProfile("Kolya", "12345", 1L));
-        users.put("Lesha", new UserProfile("Lesha", "12345", 2L, UserProfile.roleEnum.admin));
+        users.put("Tolya", new UserProfile("Tolya", "12345", 1L, UserProfile.RoleEnum.ADMIN));
+        users.put("Kolya", new UserProfile("Kolya", "12345", 2L));
+        //noinspection MagicNumber
+        users.put("Lesha", new UserProfile("Lesha", "12345", 3L, UserProfile.RoleEnum.ADMIN));
 
     }
 
@@ -32,17 +37,17 @@ public class AccountService {
 
 
     public boolean addUser(UserProfile userProfile) {
-        Long id = (long)countUsers()+1;
+        final Long id = (long)countUsers()+1;
         if (users.containsKey(userProfile.getLogin()))
             return false;
         userProfile.setId(id);
-        userProfile.setRole(UserProfile.roleEnum.user);
+        userProfile.setRole(UserProfile.RoleEnum.USER);
         users.put(userProfile.getLogin(), userProfile);
         return true;
     }
 
     public boolean addActiveUser(UserProfile userProfile, String sessionId) {
-        UserProfile user = getUser(userProfile.getLogin()); //due to id-less
+        final UserProfile user = getUser(userProfile.getLogin()); //due to id-less
 
         if (activeUsers.containsKey(sessionId)) {
             return false;
@@ -56,22 +61,40 @@ public class AccountService {
     }
 
     public void removeActiveUser(Long id){
-        for (UserProfile user : this.getAllActiveUsers() ) {
-            if (user.getId() == id)
-                getAllActiveUsers().remove(user);
-        }
+        this.getAllActiveUsers().stream().filter(user -> Objects.equals(user.getId(), id)).forEach(user -> getAllActiveUsers().remove(user));
     }
 
     public UserProfile getActiveUser(String sessionId){return activeUsers.get(sessionId);}
     public UserProfile getUser(String userName) {return users.get(userName);}
+    @Nullable
     public UserProfile getUser(Long id) {
         for (UserProfile user : this.getAllUsers() )
         {
-            if (user.getId() == id)
+            if (Objects.equals(user.getId(), id))
                 return user;
         }
         return null;
 
+    }
+
+
+    public static String getMD5(String input) {
+        try {
+            final MessageDigest md = MessageDigest.getInstance("MD5");
+            final byte[] messageDigest = md.digest(input.getBytes());
+            // Convert to hex string
+            final StringBuilder sb = new StringBuilder();
+            for (byte aMessageDigest : messageDigest) {
+                if ((0xff & aMessageDigest) < 0x10) {
+                    sb.append('0');
+                }
+                sb.append(Integer.toHexString(0xff & aMessageDigest));
+            }
+            return sb.toString();
+        }
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
