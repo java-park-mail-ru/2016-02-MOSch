@@ -18,8 +18,8 @@ public class AccountService {
     private final Map<String, UserProfile> activeUsers = new ConcurrentHashMap<>();
 
     public AccountService() {
-        users.put("Tolya", new UserProfile("Tolya", "12345", 1L, UserProfile.RoleEnum.ADMIN));
-        users.put("Kolya", new UserProfile("Kolya", "12345", 2L));
+        users.put("Tolya", new UserProfile("Tolya", "1234567", 1L, UserProfile.RoleEnum.ADMIN));
+        users.put("Kolya", new UserProfile("Kolya", "1234567", 2L));
         //noinspection MagicNumber
         users.put("Lesha", new UserProfile("Lesha", "12345", 3L, UserProfile.RoleEnum.ADMIN));
 
