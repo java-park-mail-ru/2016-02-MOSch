@@ -5,8 +5,8 @@
 
 # Package Files #
  .idea
- .idea/
- .idea\
+ .idea/*
+ .idea\*
 *.war
 *.ear
 *.iml
