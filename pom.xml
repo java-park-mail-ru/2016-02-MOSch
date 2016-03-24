@@ -90,6 +90,11 @@
             <artifactId>jersey-media-moxy</artifactId>
             <version>${org.glassfish.jersey.version}</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-
 </project>

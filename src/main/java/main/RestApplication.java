@@ -22,5 +22,4 @@ public class RestApplication extends Application {
         return objects;
     }
 
-
 }
