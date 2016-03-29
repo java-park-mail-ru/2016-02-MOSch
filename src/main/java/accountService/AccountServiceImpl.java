@@ -38,7 +38,12 @@ public class AccountServiceImpl implements AccountService {
 
         Configuration configuration = new Configuration();
         configuration.addAnnotatedClass(UserDataSet.class);
+
         configuration.configure();
+
+        sessionFactory = createSessionFactory(configuration);
+
+
     }
 
     public Collection<UserProfile> getAllUsers() {

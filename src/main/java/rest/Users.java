@@ -2,6 +2,7 @@ package rest;
 
 //import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import accountService.*;
+import dbStuff.dataSets.UserDataSet;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Singleton;
@@ -92,6 +93,7 @@ public class Users {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(UserProfile user){
+        System.out.println(user.getLogin() + user.getPassword());
         if (accountService.addUser(user)) {
             final String payload = String.format("{\"id\":\"%d\"}", user.getId());
             return Response.status(Response.Status.OK).entity(payload).build();

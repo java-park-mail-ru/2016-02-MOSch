@@ -1,4 +1,5 @@
 package dbStuff.dataSets;
+import org.jetbrains.annotations.NotNull;
 import rest.UserProfile;
 
 import javax.persistence.*;
@@ -30,6 +31,13 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     public UserDataSet(String name) {
         this.id = -1;
         this.username = name;
+        this.isAdmin = false;
+    }
+
+    public UserDataSet(@NotNull String login, @NotNull String password) {
+        this.id = -1;
+        this.username = login;
+        this.password = password;
         this.isAdmin = false;
     }
 

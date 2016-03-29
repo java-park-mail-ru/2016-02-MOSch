@@ -1,5 +1,6 @@
 package dbStuff;
 
+import dbStuff.dataSets.UserDataSet;
 import rest.UserProfile;
 
 import java.util.Collection;
