@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import accountService.*;
 /**
  * Created by KOPTE3 on 24.03.2016.
  */

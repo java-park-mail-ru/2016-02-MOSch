@@ -22,7 +22,7 @@ public class UserDataSetDAO {
     }
 
     public UserDataSet read(long id) {
-        return session.get(UserDataSet.class, id);
+        return (UserDataSet) session.get(UserDataSet.class, id);
     }
 
     public UserDataSet readByName(String name) {

@@ -18,7 +18,7 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-
+import accountService.dao.*;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
@@ -59,14 +59,15 @@ public class AccountServiceImpl implements AccountService {
 
 
     public boolean addUser(UserProfile userProfile) {
-        final Long id = (long) countUsers() + 1;
-        if (users.containsKey(userProfile.getLogin()))
-            return false;
-        userProfile.setId(id);
-        userProfile.setRole(UserProfile.RoleEnum.USER);
-        users.put(userProfile.getLogin(), userProfile);
+        UserDataSet dataSet = new UserDataSet(userProfile);
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        UserDataSetDAO dao = new UserDataSetDAO(session);
+        dao.save(dataSet);
+        transaction.commit();
         return true;
     }
+
 
     public boolean addActiveUser(UserProfile userProfile, String sessionId) {
         final UserProfile user = getUser(userProfile.getLogin()); //due to id-less
@@ -122,5 +123,11 @@ public class AccountServiceImpl implements AccountService {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+    private static SessionFactory createSessionFactory(Configuration configuration) {
+        StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder();
+        builder.applySettings(configuration.getProperties());
+        ServiceRegistry serviceRegistry = builder.build();
+        return configuration.buildSessionFactory(serviceRegistry);
     }
 }
