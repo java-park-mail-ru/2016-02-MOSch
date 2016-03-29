@@ -8,12 +8,15 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     private static final long serialVersionUID = -8706689714326132798L;
 
     @Id
-    @Column(name = "user_id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "user_name")
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "isAdmin")
+    private Boolean isAdmin;
 
     //Important to Hibernate!
     public UserDataSet() {
@@ -22,6 +25,7 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     public UserDataSet(String name) {
         this.id = -1;
         this.name = name;
+        this.isAdmin = false;
     }
 
     public String getName() {
@@ -45,6 +49,7 @@ public class UserDataSet implements Serializable { // Serializable Important to 
         return "UserDataSet{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", is_Admin=" + isAdmin +
                 '}';
         }
 

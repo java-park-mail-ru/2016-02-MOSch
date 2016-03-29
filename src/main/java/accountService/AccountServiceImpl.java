@@ -9,7 +9,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.security.*;
-import dbStuff.AccountService;
+import dbStuff.dataSets.*;
+import dbStuff.*;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
 
 
 /**
@@ -19,12 +27,18 @@ import dbStuff.AccountService;
 public class AccountServiceImpl implements AccountService {
     private final Map<String, UserProfile> users = new ConcurrentHashMap<>();
     private final Map<String, UserProfile> activeUsers = new ConcurrentHashMap<>();
+    private SessionFactory sessionFactory;
+
 
     public AccountServiceImpl() {
 //        users.put("Tolya", new UserProfile("Tolya", "1234567", 1L, UserProfile.RoleEnum.ADMIN));
 //        users.put("Kolya", new UserProfile("Kolya", "1234567", 2L));
 //        //noinspection MagicNumber
 //        users.put("Lesha", new UserProfile("Lesha", "12345", 3L, UserProfile.RoleEnum.ADMIN));
+
+        Configuration configuration = new Configuration();
+        configuration.addAnnotatedClass(UserDataSet.class);
+        configuration.configure();
     }
 
     public Collection<UserProfile> getAllUsers() {
