@@ -33,7 +33,7 @@ public class AccountServiceTest {
 
     @Test
     public void testCountUsers() throws Exception {
-        final AccountService service = new AccountService();
+        final AccountServiceImpl service = new AccountServiceImpl();
         final int countUsers = service.countUsers();
 
         assertEquals(0, countUsers);

@@ -1,7 +1,7 @@
 package rest;
 
 //import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
-import main.AccountService;
+import main.AccountServiceImpl;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Singleton;
@@ -20,9 +20,9 @@ import java.util.Objects;
 @Singleton
 @Path("/user")
 public class Users {
-    private final AccountService accountService;
+    private final AccountServiceImpl accountService;
 
-    public Users(AccountService accountService) {
+    public Users(AccountServiceImpl accountService) {
         this.accountService = accountService;
     }
 

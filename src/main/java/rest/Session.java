@@ -1,6 +1,6 @@
 package rest;
 
-import main.AccountService;
+import main.AccountServiceImpl;
 import java.io.*;
 import javax.inject.Singleton;
 import javax.ws.rs.*;
@@ -16,9 +16,9 @@ import javax.ws.rs.core.Response;
 @Singleton
 @Path("/session")
 public class Session {
-    private final AccountService accountService;
+    private final AccountServiceImpl accountService;
 
-    public Session(AccountService accountService) {
+    public Session(AccountServiceImpl accountService) {
         this.accountService = accountService;
     }
 
@@ -37,7 +37,7 @@ public class Session {
                     final long validID = validUser.getId();
                     payload = String.format("{\"id\":\"%d\", \"auth_token\":\"%s\"}",
                             validID,
-                            AccountService.getMD5(validUser.getId().toString()));
+                            AccountServiceImpl.getMD5(validUser.getId().toString()));
                     return Response.status(Response.Status.OK).entity(payload).build();
                 }
                 payload = "{\"message\":\"Already logged in\"}";
