@@ -1,9 +1,11 @@
 package accountService;
 
+import org.eclipse.persistence.internal.sessions.DirectCollectionChangeRecord;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rest.UserProfile;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
@@ -68,9 +70,13 @@ public class AccountServiceImpl implements AccountService {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         UserDataSetDAO dao = new UserDataSetDAO(session);
-        dao.save(dataSet);
+        Serializable id = dao.save(dataSet);
         transaction.commit();
-        return true;
+        if (id != null) {
+            dataSet.setId((long) id);
+            return true;
+        }
+        return false;
     }
 
 
@@ -98,6 +104,13 @@ public class AccountServiceImpl implements AccountService {
 
     public UserProfile getUser(String userName) {
         return users.get(userName);
+    }
+
+    public UserDataSet getUserDS(String name) {
+        try (Session session = sessionFactory.openSession()) {
+            UserDataSetDAO dao = new UserDataSetDAO(session);
+            return dao.readByName(name);
+        }
     }
 
     @Nullable

@@ -13,10 +13,10 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "username")
-    private String username;
+    private String login;
 
     @Column(name = "isAdmin")
     private Boolean isAdmin;
@@ -29,46 +29,63 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     }
 
     public UserDataSet(String name) {
-        this.id = -1;
-        this.username = name;
+        this.id = (long)-1;
+        this.login = name;
         this.isAdmin = false;
     }
 
     public UserDataSet(@NotNull String login, @NotNull String password) {
-        this.id = -1;
-        this.username = login;
+        this.id = (long)-1;
+        this.login = login;
         this.password = password;
         this.isAdmin = false;
     }
 
     public UserDataSet(UserProfile user) {
-        this.id = -1;
-        this.username = user.getLogin();
+        this.id = (long)-1;
+        this.login = user.getLogin();
         this.isAdmin = user.getAdmin();
         this.password = user.getPassword();
     }
 
-    public String getName() {
-            return username;
-        }
 
     public void setName(String name) {
-            this.username = name;
+            this.login = name;
         }
 
+    @NotNull
     public long getId() {
             return id;
         }
 
-    public void setId(long id) {
+    public void setId(@NotNull long id) {
             this.id = id;
         }
+
+    @NotNull
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(@NotNull String login) {
+        this.login = login;
+    }
+
+    @NotNull
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(@NotNull String password) {
+        this.password = password;
+    }
+
 
     @Override
     public String toString() {
         return "UserDataSet{" +
                 "id=" + id +
-                ", name='" + username + '\'' +
+                ", name='" + login + '\'' +
                 ", is_Admin=" + isAdmin +
                 '}';
         }

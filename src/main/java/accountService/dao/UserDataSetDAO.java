@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import dbStuff.dataSets.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class UserDataSetDAO {
@@ -17,17 +18,17 @@ public class UserDataSetDAO {
         this.session = session;
     }
 
-    public void save(UserDataSet dataSet) {
-        session.save(dataSet);
+    public Serializable save(UserDataSet dataSet) {
+        return session.save(dataSet);
     }
 
     public UserDataSet read(long id) {
         return (UserDataSet) session.get(UserDataSet.class, id);
     }
 
-    public UserDataSet readByName(String name) {
+    public UserDataSet readByName(String login) {
         Criteria criteria = session.createCriteria(UserDataSet.class);
-        return (UserDataSet) criteria.add(Restrictions.eq("name", name)).uniqueResult();
+        return (UserDataSet) criteria.add(Restrictions.eq("login", login)).uniqueResult();
     }
 
     @SuppressWarnings("unchecked")

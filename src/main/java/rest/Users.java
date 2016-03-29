@@ -93,9 +93,10 @@ public class Users {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(UserProfile user){
-        System.out.println(user.getLogin() + user.getPassword());
+        //System.out.println(user.toString());
         if (accountService.addUser(user)) {
-            final String payload = String.format("{\"id\":\"%d\"}", user.getId());
+            UserDataSet userDS = accountService.getUserDS(user.getLogin());
+            final String payload = String.format("{\"id\":\"%d\"}", userDS.getId());
             return Response.status(Response.Status.OK).entity(payload).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
