@@ -1,7 +1,7 @@
 package rest;
 
 //import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
-import main.AccountServiceImpl;
+import accountService.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Singleton;

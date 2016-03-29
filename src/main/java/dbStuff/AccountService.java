@@ -1,4 +1,4 @@
-package main;
+package dbStuff;
 
 import rest.UserProfile;
 

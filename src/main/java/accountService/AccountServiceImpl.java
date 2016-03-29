@@ -1,4 +1,4 @@
-package main;
+package accountService;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.security.*;
+import dbStuff.AccountService;
 
 
 /**

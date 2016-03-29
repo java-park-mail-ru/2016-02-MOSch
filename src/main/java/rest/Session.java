@@ -1,6 +1,6 @@
 package rest;
 
-import main.AccountServiceImpl;
+import accountService.*;
 import java.io.*;
 import javax.inject.Singleton;
 import javax.ws.rs.*;
