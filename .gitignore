@@ -7,6 +7,15 @@
  .idea
  .idea/*
  .idea\*
+/.idea
+ lib
+ lib/*
+ lib\*
+/lib
+ target
+ target/*
+ target\*
+/target
 *.war
 *.ear
 *.iml
