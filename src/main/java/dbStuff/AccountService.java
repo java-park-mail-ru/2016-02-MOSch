@@ -1,5 +1,6 @@
 package dbStuff;
 
+import dbStuff.dataSets.*;
 import rest.UserProfile;
 
 import java.util.Collection;
@@ -9,7 +10,7 @@ import java.util.Collection;
  */
 public interface AccountService {
 
-    Collection<UserProfile> getAllUsers();
+    Collection getAllUsers();
 
     Collection<UserProfile> getAllActiveUsers();
 
@@ -19,15 +20,13 @@ public interface AccountService {
 
     boolean addUser(UserProfile userProfile);
 
-    boolean addActiveUser(UserProfile userProfile, String sessionId);
+    boolean addActiveUser(UserDataSet userProfile, String authToken);
 
-    void removeActiveUser(String sessionId);
+    void removeActiveUser(String authToken );
 
     void removeActiveUser(Long id);
 
-    UserProfile getActiveUser(String sessionId);
+    AuthDataSet getActiveUser(String sessionId);
 
-    UserProfile getUser(String userName);
-
-    UserProfile getUser(Long id);
+    UserDataSet getUser(Long id);
 }

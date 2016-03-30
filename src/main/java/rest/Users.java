@@ -3,7 +3,7 @@ package rest;
 //import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 
 import accountService.AccountServiceImpl;
-import dbStuff.dataSets.UserDataSet;
+import dbStuff.dataSets.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Singleton;
@@ -30,56 +30,27 @@ public class Users {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllUsers(@Context HttpServletRequest request) {
-        final String sessionId = request.getSession().getId();
-        final UserProfile currentUser = accountService.getActiveUser(sessionId);
+    public Response getAllUsers(@Context HttpServletRequest request,
+                                @HeaderParam("auth_token") String currentToken) {
 
-        if (currentUser != null) {
-            if (currentUser.getRole() == UserProfile.RoleEnum.ADMIN) {
-                final Collection<UserProfile> allUsers = accountService.getAllUsers();
-                return Response.status(Response.Status.OK).entity(allUsers.toArray(new UserProfile[allUsers.size()])).build();
-            }
-        }
-        final String payload = "{\"status\":\"403\",\"message\":\"Access denied\"}";
-        return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
+        final Collection allUsers = accountService.getAllUsers();
+        return Response.status(Response.Status.OK).entity(allUsers.toArray(new UserProfile[allUsers.size()])).build();
 
     }
 
-    @GET
-    @Path("{name}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserByName(@PathParam("name") String name, @Context HttpServletRequest request) {
-        final String sessionId = request.getSession().getId();
-        final UserProfile currentUser = accountService.getActiveUser(sessionId);
-        final UserProfile user = accountService.getUser(name);
-
-        if (currentUser != null) {
-            String payload = "{\"status\":\"404\",\"message\":\"User not found\"}";
-            if (Objects.equals(currentUser, user) || currentUser.getRole() == UserProfile.RoleEnum.ADMIN) {
-                if (user == null) {
-                    return Response.status(Response.Status.NOT_FOUND).entity(payload).build();
-                } else return Response.status(Response.Status.OK).entity(user).build();
-            }
-            payload = "{\"status\":\"403\",\"message\":\"Access denied\"}";
-            return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
-
-        } else {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-    }
 
 
     @GET
     @Path("{id: [0-9]+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserById(@PathParam("id") Long id, @Context HttpServletRequest request) {
-        final UserProfile user = accountService.getUser(id);
-        final String sessionId = request.getSession().getId();
-        final UserProfile currentUser = accountService.getActiveUser(sessionId);
+    public Response getUserById(@PathParam("id") Long id,
+                                @HeaderParam("auth_token") String currentToken) {
+        final UserDataSet user = accountService.getUser(id);
+        final AuthDataSet currentAuth = accountService.getActiveUser(currentToken);
 
-        if (currentUser != null) {
+        if (currentAuth != null) {
             String payload = "{\"status\":\"404\",\"message\":\"User not found\"}";
-            if (Objects.equals(currentUser, user) || currentUser.getRole() == UserProfile.RoleEnum.ADMIN) {
+            if (Objects.equals(currentAuth.getUser(), user) || currentAuth.getUser().isAdmin()) {
                 if (user == null) {
                     return Response.status(Response.Status.NOT_FOUND).entity(payload).build();
                 } else return Response.status(Response.Status.OK).entity(user).build();

@@ -12,18 +12,26 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     private static final long serialVersionUID = -8706689714326132798L;
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username")
+    @Column(name = "username", unique=true, nullable = false)
     private String login;
 
-    @Column(name = "isAdmin")
+    @Column(name = "isAdmin", nullable = false)
     private Boolean isAdmin;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
+
+    @OneToOne
+    @PrimaryKeyJoinColumn(name = "id")
+    private ScoreDataSet scores;
+
+    @OneToOne
+    @PrimaryKeyJoinColumn(name = "id")
+    private AuthDataSet auth;
 
     //Important to Hibernate!
     public UserDataSet() {
@@ -79,6 +87,11 @@ public class UserDataSet implements Serializable { // Serializable Important to 
 
     public void setPassword(@NotNull String password) {
         this.password = password;
+    }
+
+    @NotNull
+    public boolean isAdmin(){
+        return this.isAdmin;
     }
 
     @Override
