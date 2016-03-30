@@ -4,14 +4,13 @@ import accountService.dao.AuthDataSetDAO;
 import accountService.dao.ScoreDataSetDAO;
 import accountService.dao.UserDataSetDAO;
 import dbStuff.AccountService;
-import dbStuff.dataSets.*;
-import org.eclipse.jetty.server.Authentication;
+import dbStuff.dataSets.AuthDataSet;
+import dbStuff.dataSets.ScoreDataSet;
+import dbStuff.dataSets.UserDataSet;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.criterion.Projections;
 import org.hibernate.service.ServiceRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +20,7 @@ import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,9 +46,10 @@ public class AccountServiceImpl implements AccountService {
 
     public Collection getAllUsers() {
         Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
         UserDataSetDAO userdao = new UserDataSetDAO(session);
-        return userdao.readAll();
+        List list = userdao.readAll();
+        session.close();
+        return list;
     }
 
     public Collection<UserProfile> getAllActiveUsers() {
@@ -69,20 +70,18 @@ public class AccountServiceImpl implements AccountService {
     public boolean addUser(UserProfile userProfile) {
         UserDataSet dataSet = new UserDataSet(userProfile);
         Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
         UserDataSetDAO userdao = new UserDataSetDAO(session);
         Serializable id = userdao.save(dataSet);
 
         if (id != null) {
             dataSet.setId((long) id);
-            ScoreDataSet scoreDS = new ScoreDataSet((long)id);
+            ScoreDataSet scoreDS = new ScoreDataSet((long) id);
             ScoreDataSetDAO scoredao = new ScoreDataSetDAO(session);
             scoredao.save(scoreDS);
-            transaction.commit();
+            session.close();
             return true;
         }
-        transaction.commit();
-
+        session.close();
         return false;
     }
 
@@ -90,23 +89,19 @@ public class AccountServiceImpl implements AccountService {
         AuthDataSet authDS = new AuthDataSet(userDS);
         authDS.setToken(auth_token);
         Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
         AuthDataSetDAO authdao = new AuthDataSetDAO(session);
         authdao.saveorupdate(authDS);
-        transaction.commit();
+        session.close();
         return true;
-
     }
 
     public void removeActiveUser(String authToken) {
         Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
         AuthDataSetDAO authdao = new AuthDataSetDAO(session);
         AuthDataSet authDS = authdao.getByToken(authToken);
         if (authDS != null)
             authdao.remove(authDS);
-        transaction.commit();
-
+        session.close();
     }
 
     public void removeActiveUser(Long id) {
@@ -115,46 +110,42 @@ public class AccountServiceImpl implements AccountService {
 
     public AuthDataSet getActiveUser(String currentToken) {
         Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
         AuthDataSetDAO authdao = new AuthDataSetDAO(session);
         AuthDataSet authDS = authdao.getByToken(currentToken);
-        transaction.commit();
+        session.close();
         return authDS;
-
     }
 
-    public void removeUser(UserDataSet userDS){
+    public void removeUser(UserDataSet userDS) {
         Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
         UserDataSetDAO userdao = new UserDataSetDAO(session);
         userdao.remove(userDS);
-        transaction.commit();
-
+        session.close();
     }
 
 
-    public void updateUser(UserDataSet userDS){
+    public void updateUser(UserDataSet userDS) {
         Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
         UserDataSetDAO userdao = new UserDataSetDAO(session);
         userdao.saveorupdate(userDS);
-        transaction.commit();
+        session.close();
     }
 
     public UserDataSet getUserDS(String name) {
-        try (Session session = sessionFactory.openSession()) {
-            UserDataSetDAO dao = new UserDataSetDAO(session);
-            return dao.readByName(name);
-        }
+        Session session = sessionFactory.openSession();
+        UserDataSetDAO dao = new UserDataSetDAO(session);
+        UserDataSet userDataSet = dao.readByName(name);
+        session.close();
+        return userDataSet;
     }
 
     @Nullable
     public UserDataSet getUser(Long id) {
         Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
         UserDataSetDAO userdao = new UserDataSetDAO(session);
-
-        return userdao.getUser(id);
+        UserDataSet userDataSet = userdao.getUser(id);
+        session.close();
+        return userDataSet;
     }
 
     @NotNull
