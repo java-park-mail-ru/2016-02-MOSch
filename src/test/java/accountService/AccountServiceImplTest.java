@@ -1,10 +1,14 @@
 package accountService;
 
 import dbStuff.dataSets.UserDataSet;
+import org.eclipse.persistence.internal.oxm.schema.model.List;
+import org.hibernate.mapping.Collection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import rest.UserProfile;
+
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 
@@ -45,8 +49,7 @@ public class AccountServiceImplTest {
     public void test_AddGet_Users() throws Exception {
         UserProfile profile = new UserProfile("usertest", "123456");
         accountService.addUser(profile);
-        UserDataSet userDS = new UserDataSet();
-        userDS = accountService.getUser(1L);
+        UserDataSet userDS = accountService.getUser(1L);
         assertEquals("usertest",userDS.getLogin());
         assertEquals("123456",userDS.getPassword());
 
@@ -55,6 +58,18 @@ public class AccountServiceImplTest {
         assertEquals("123456",userDS.getPassword());
 
         assertEquals(1, (long) accountService.countUsers());
+    }
+
+    @Test
+    public void testGetAllUsers() throws Exception {
+        ArrayList<UserProfile> list = new ArrayList<>();
+        UserProfile profile = new UserProfile("usertest", "123456");
+        for(int i = 0; i < 10; i++) {
+            profile.setLogin("usertest" + ((Integer) i).toString());
+            accountService.addUser(profile);
+            list.add(profile);
+        }
+        assertEquals(list.size(),accountService.getAllUsers().size());
     }
 
     @Test
