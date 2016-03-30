@@ -3,6 +3,7 @@ package accountService.dao;
 /**
  * Created by Olerdrive on 29.03.16.
  */
+
 import dbStuff.dataSets.UserDataSet;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -28,9 +29,13 @@ public class UserDataSetDAO {
         return (UserDataSet) session.get(UserDataSet.class, id);
     }
 
-    public void saveorupdate(UserDataSet dataSet) { session.saveOrUpdate(dataSet); }
+    public void saveorupdate(UserDataSet dataSet) {
+        session.saveOrUpdate(dataSet);
+    }
 
-    public void remove(UserDataSet dataSet) { session.delete(dataSet);}
+    public void remove(UserDataSet dataSet) {
+        session.delete(dataSet);
+    }
 
     public UserDataSet readByName(String login) {
         Criteria criteria = session.createCriteria(UserDataSet.class);
@@ -41,18 +46,12 @@ public class UserDataSetDAO {
     public List readAll() {
         Projection id = Projections.property("id");
         Projection login = Projections.property("login");
-
         Criteria criteria = session.createCriteria(UserDataSet.class).setProjection(id);
         criteria.setProjection(login);
-
         return criteria.list();
     }
 
-    public int countUsers(){
-        return (int) session.createCriteria(UserDataSet.class).setProjection(Projections.rowCount()).uniqueResult();
+    public Long countUsers() {
+        return (Long) session.createCriteria(UserDataSet.class).setProjection(Projections.rowCount()).uniqueResult();
     }
-
-
-
-
 }

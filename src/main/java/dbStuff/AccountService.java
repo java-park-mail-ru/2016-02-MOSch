@@ -14,9 +14,9 @@ public interface AccountService {
 
     Collection<UserProfile> getAllActiveUsers();
 
-    int countUsers();
+    Long countUsers();
 
-    int countActiveUsers();
+    Long countActiveUsers();
 
     boolean addUser(UserProfile userProfile);
 

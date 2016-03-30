@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AccountServiceImpl implements AccountService {
     private final Map<String, UserProfile> users = new ConcurrentHashMap<>();
     private final Map<String, UserProfile> activeUsers = new ConcurrentHashMap<>();
-    private SessionFactory sessionFactory;
+    SessionFactory sessionFactory;
 
 
     public AccountServiceImpl() {
@@ -55,13 +55,13 @@ public class AccountServiceImpl implements AccountService {
         return activeUsers.values();
     }
 
-    public int countUsers() {
+    public Long countUsers() {
         return new UserDataSetDAO(sessionFactory.openSession()).countUsers();
 
     }
 
-    public int countActiveUsers() {
-        return activeUsers.size();
+    public Long countActiveUsers() {
+        return new Long(activeUsers.size());
     }
 
     public boolean addUser(UserProfile userProfile) {
@@ -153,7 +153,6 @@ public class AccountServiceImpl implements AccountService {
         UserDataSetDAO userdao = new UserDataSetDAO(session);
 
         return userdao.getUser(id);
-
     }
 
     @NotNull
