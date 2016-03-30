@@ -42,6 +42,22 @@ public class AccountServiceImplTest {
     }
 
     @Test
+    public void test_AddGet_Users() throws Exception {
+        UserProfile profile = new UserProfile("usertest", "123456");
+        accountService.addUser(profile);
+        UserDataSet userDS = new UserDataSet();
+        userDS = accountService.getUser(1L);
+        assertEquals("usertest",userDS.getLogin());
+        assertEquals("123456",userDS.getPassword());
+
+        userDS = accountService.getUserDS("usertest");
+        assertEquals(1L,userDS.getId());
+        assertEquals("123456",userDS.getPassword());
+
+        assertEquals(1, (long) accountService.countUsers());
+    }
+
+    @Test
     public void testGetMD5() throws Exception {
         final int len1 = AccountServiceImpl.getMD5("").length();
         assertEquals(32, len1);
