@@ -34,7 +34,6 @@ public class AccountServiceImpl implements AccountService {
     private final Map<String, UserProfile> activeUsers = new ConcurrentHashMap<>();
     SessionFactory sessionFactory;
 
-
     public AccountServiceImpl() {
         Configuration configuration = new Configuration();
         configuration.addAnnotatedClass(UserDataSet.class);

@@ -29,4 +29,10 @@ public interface AccountService {
     AuthDataSet getActiveUser(String sessionId);
 
     UserDataSet getUser(Long id);
+
+    UserDataSet getUserDS(String login);
+
+    void updateUser(UserDataSet user);
+
+    void removeUser(UserDataSet user);
 }
