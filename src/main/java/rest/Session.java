@@ -52,9 +52,8 @@ public class Session {
     }
 
     @DELETE
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response logoutUser(@Context HttpServletRequest request,
-                               @QueryParam("auth_token") String currentToken) {
+                               @HeaderParam("auth_token") String currentToken) {
         //final String current_token = request.getParameter("auth_token");
         accountService.removeActiveUser(currentToken);
         return Response.status(Response.Status.OK).build();
@@ -63,7 +62,7 @@ public class Session {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response checkAuth(@Context HttpServletRequest request,
-                              @QueryParam("auth_token") String currentToken) {
+                              @HeaderParam("auth_token") String currentToken) {
         final AuthDataSet currentAuth = accountService.getActiveUser(currentToken);
         if (currentAuth == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
