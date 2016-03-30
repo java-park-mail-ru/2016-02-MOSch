@@ -18,6 +18,8 @@ import java.util.Date;
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
+
+@SuppressWarnings("unused")
 @Singleton
 @Path("/session")
 public class Session {
@@ -35,10 +37,10 @@ public class Session {
         final String payload;
         if (validUserDS != null) {
             if (user.getPassword().equals(validUserDS.getPassword())) {
-                final String auth_token = AccountServiceImpl.getMD5(new Date() + validUserDS.getPassword());
+                final String authToken = AccountServiceImpl.getMD5(new Date() + validUserDS.getPassword());
                 final long validID = validUserDS.getId();
-                accountService.addActiveUser(validUserDS, auth_token);
-                payload = String.format("{\"id\":\"%d\", \"auth_token\":\"%s\"}", validID, auth_token);
+                accountService.addActiveUser(validUserDS, authToken);
+                payload = String.format("{\"id\":\"%d\", \"auth_token\":\"%s\"}", validID, authToken);
                 return Response
                         .status(Response.Status.OK)
                         .entity(payload)

@@ -18,6 +18,7 @@ import rest.Users;
  */
 public class Main {
 
+    @SuppressWarnings("OverlyBroadThrowsClause")
     public static void main(String[] args) throws Exception {
         int port = -1;
         if (args.length == 1) {
@@ -37,9 +38,9 @@ public class Main {
         final Server server = new Server(port);
         final Context ctx = new Context();
         try {
-            AccountServiceImpl accountService = new AccountServiceImpl();
+            final AccountServiceImpl accountService = new AccountServiceImpl();
             ctx.put(AccountService.class, accountService);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             System.err.println(e.getLocalizedMessage());
             System.exit(1);
         }
@@ -54,7 +55,7 @@ public class Main {
 
         final ServletContextHandler contextHandler = new ServletContextHandler(server, "/api/", ServletContextHandler.SESSIONS);
         final ServletHolder servletHolder = new ServletHolder(new ServletContainer(resourceConfig));
-        HandlerList handlers = new HandlerList();
+        final HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[]{contextHandler});
         server.setHandler(handlers);
         contextHandler.addServlet(servletHolder, "/*");

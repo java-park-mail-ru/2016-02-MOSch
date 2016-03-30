@@ -1,8 +1,6 @@
 package accountService;
 
 import dbStuff.dataSets.UserDataSet;
-import org.eclipse.persistence.internal.oxm.schema.model.List;
-import org.hibernate.mapping.Collection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,27 +13,28 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by KOPTE3 on 30.03.2016.
  */
+@SuppressWarnings({"MagicNumber", "unused"})
 public class AccountServiceImplTest {
     AccountServiceImpl accountService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         accountService = new AccountServiceImpl();
     }
 
     @Test
     public void testGetUserDS() throws Exception {
         assertEquals(0, (long) accountService.countUsers());
-        UserProfile profile = new UserProfile("mytest", "password");
+        final UserProfile profile = new UserProfile("mytest", "password");
         accountService.addUser(profile);
-        UserDataSet dataSet = accountService.getUserDS(profile.getLogin());
+        final UserDataSet dataSet = accountService.getUserDS(profile.getLogin());
         assertEquals(profile.getLogin(), dataSet.getLogin());
     }
 
     @Test
     public void testAddCountUsers() throws Exception {
         assertEquals(0, (long) accountService.countUsers());
-        UserProfile profile = new UserProfile("mytest", "password");
+        final UserProfile profile = new UserProfile("mytest", "password");
         accountService.addUser(profile);
         assertEquals(1, (long) accountService.countUsers());
         for (int i = 0; i < 19; i++) {
@@ -46,15 +45,16 @@ public class AccountServiceImplTest {
     }
 
     @Test
-    public void test_AddGet_Users() throws Exception {
-        UserProfile profile = new UserProfile("usertest", "123456");
+    public void testAddGetUsers() throws Exception {
+        final UserProfile profile = new UserProfile("usertest", "123456");
         accountService.addUser(profile);
         UserDataSet userDS = accountService.getUser(1L);
+        //noinspection ConstantConditions
         assertEquals("usertest",userDS.getLogin());
         assertEquals("123456",userDS.getPassword());
 
         userDS = accountService.getUserDS("usertest");
-        assertEquals(1L,userDS.getId());
+        assertEquals((Long)1L, userDS.getId());
         assertEquals("123456",userDS.getPassword());
 
         assertEquals(1, (long) accountService.countUsers());
@@ -62,8 +62,8 @@ public class AccountServiceImplTest {
 
     @Test
     public void testGetAllUsers() throws Exception {
-        ArrayList<UserProfile> list = new ArrayList<>();
-        UserProfile profile = new UserProfile("usertest", "123456");
+        final ArrayList<UserProfile> list = new ArrayList<>();
+        final UserProfile profile = new UserProfile("usertest", "123456");
         for(int i = 0; i < 10; i++) {
             profile.setLogin("usertest" + ((Integer) i).toString());
             accountService.addUser(profile);
@@ -82,11 +82,12 @@ public class AccountServiceImplTest {
 
     @Test(expected = NullPointerException.class)
     public void testGetMD5ofNull() throws Exception {
+        //noinspection ConstantConditions
         AccountServiceImpl.getMD5(null);
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         accountService.sessionFactory.close();
     }
 }

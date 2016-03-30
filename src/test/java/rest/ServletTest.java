@@ -2,24 +2,24 @@ package rest;
 
 import dbStuff.AccountService;
 import accountService.AccountServiceImpl;
-import org.junit.After;
-import org.junit.Before;
+
 import org.glassfish.jersey.test.JerseyTest;
-import static org.junit.Assert.*;
+
 import main.Context;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
+
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Application;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 /**
  * Created by KOPTE3 on 30.03.2016.
  */
+
+@SuppressWarnings("unused")
 public class ServletTest extends JerseyTest {
 
     @Override
@@ -28,6 +28,7 @@ public class ServletTest extends JerseyTest {
         ctx.put(AccountService.class, new AccountServiceImpl());
         final ResourceConfig resourceConfig = new ResourceConfig(Users.class, Session.class);
         final HttpServletRequest request = mock(HttpServletRequest.class);
+        //noinspection AnonymousInnerClassMayBeStatic
         resourceConfig.register(new AbstractBinder() {
             @Override
             protected void configure() {
@@ -38,6 +39,7 @@ public class ServletTest extends JerseyTest {
         return resourceConfig;
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Test
     public void testSimple() {
 //        System.out.println("fffffff");

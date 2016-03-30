@@ -10,10 +10,10 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 import java.io.Serializable;
-import java.util.List;
 
+@SuppressWarnings("unused")
 public class AuthDataSetDAO {
-    private Session session;
+    private final Session session;
 
     public AuthDataSetDAO(Session session) {
         this.session = session;

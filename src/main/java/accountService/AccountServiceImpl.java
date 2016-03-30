@@ -28,14 +28,14 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
-@SuppressWarnings({"unused"})
+@SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
 public class AccountServiceImpl implements AccountService {
     private final Map<String, UserProfile> users = new ConcurrentHashMap<>();
     private final Map<String, UserProfile> activeUsers = new ConcurrentHashMap<>();
-    SessionFactory sessionFactory;
+    final SessionFactory sessionFactory;
 
     public AccountServiceImpl() {
-        Configuration configuration = new Configuration();
+        final Configuration configuration = new Configuration();
         configuration.addAnnotatedClass(UserDataSet.class);
         configuration.addAnnotatedClass(AuthDataSet.class);
         configuration.addAnnotatedClass(ScoreDataSet.class);
@@ -43,39 +43,46 @@ public class AccountServiceImpl implements AccountService {
         sessionFactory = createSessionFactory(configuration);
     }
 
+    @Override
     public Collection getAllUsers() {
-        Session session = sessionFactory.openSession();
-        UserDataSetDAO userdao = new UserDataSetDAO(session);
-        List list = userdao.readAll();
+        final Session session = sessionFactory.openSession();
+        final UserDataSetDAO userdao = new UserDataSetDAO(session);
+        final List list = userdao.readAll();
         session.close();
         return list;
     }
 
+    @Override
     public Collection<UserProfile> getAllActiveUsers() {
         return activeUsers.values();
     }
 
+    @Override
     public Long countUsers() {
-        Session session = sessionFactory.openSession();
-        Long result = new UserDataSetDAO(session).countUsers();
+        //noinspection HibernateResourceOpenedButNotSafelyClosed
+        final Session session = sessionFactory.openSession();
+        final Long result = new UserDataSetDAO(session).countUsers();
         session.close();
         return result;
+
     }
 
+    @Override
     public Long countActiveUsers() {
-        return new Long(activeUsers.size());
+        return (long) activeUsers.size();
     }
 
+    @Override
     public boolean addUser(UserProfile userProfile) {
-        UserDataSet dataSet = new UserDataSet(userProfile);
-        Session session = sessionFactory.openSession();
-        UserDataSetDAO userdao = new UserDataSetDAO(session);
-        Serializable id = userdao.save(dataSet);
+        final UserDataSet dataSet = new UserDataSet(userProfile);
+        final Session session = sessionFactory.openSession();
+        final UserDataSetDAO userdao = new UserDataSetDAO(session);
+        final Serializable id = userdao.save(dataSet);
 
         if (id != null) {
             dataSet.setId((long) id);
-            ScoreDataSet scoreDS = new ScoreDataSet((long) id);
-            ScoreDataSetDAO scoredao = new ScoreDataSetDAO(session);
+            final ScoreDataSet scoreDS = new ScoreDataSet((long) id);
+            final ScoreDataSetDAO scoredao = new ScoreDataSetDAO(session);
             scoredao.save(scoreDS);
             session.close();
             return true;
@@ -84,69 +91,78 @@ public class AccountServiceImpl implements AccountService {
         return false;
     }
 
-    public boolean addActiveUser(UserDataSet userDS, String auth_token) {
-        AuthDataSet authDS = new AuthDataSet(userDS);
-        authDS.setToken(auth_token);
-        Session session = sessionFactory.openSession();
-        AuthDataSetDAO authdao = new AuthDataSetDAO(session);
+    @Override
+    public void addActiveUser(UserDataSet userDS, String authToken) {
+        final AuthDataSet authDS = new AuthDataSet(userDS);
+        authDS.setToken(authToken);
+        final Session session = sessionFactory.openSession();
+        final AuthDataSetDAO authdao = new AuthDataSetDAO(session);
         authdao.saveorupdate(authDS);
         session.close();
-        return true;
     }
 
+    @Override
     public void removeActiveUser(String authToken) {
-        Session session = sessionFactory.openSession();
-        AuthDataSetDAO authdao = new AuthDataSetDAO(session);
-        AuthDataSet authDS = authdao.getByToken(authToken);
+        final Session session = sessionFactory.openSession();
+        final AuthDataSetDAO authdao = new AuthDataSetDAO(session);
+        final AuthDataSet authDS = authdao.getByToken(authToken);
         if (authDS != null)
             authdao.remove(authDS);
         session.close();
     }
 
+    @Override
     public void removeActiveUser(Long id) {
         this.getAllActiveUsers().stream().filter(user -> Objects.equals(user.getId(), id)).forEach(user -> getAllActiveUsers().remove(user));
     }
 
+    @Override
     public AuthDataSet getActiveUser(String currentToken) {
-        Session session = sessionFactory.openSession();
-        AuthDataSetDAO authdao = new AuthDataSetDAO(session);
-        AuthDataSet authDS = authdao.getByToken(currentToken);
+        final Session session = sessionFactory.openSession();
+        final AuthDataSetDAO authdao = new AuthDataSetDAO(session);
+        final AuthDataSet authDS = authdao.getByToken(currentToken);
         session.close();
         return authDS;
     }
 
+    @Override
     public void removeUser(UserDataSet userDS) {
-        Session session = sessionFactory.openSession();
-        UserDataSetDAO userdao = new UserDataSetDAO(session);
+        final Session session = sessionFactory.openSession();
+        final UserDataSetDAO userdao = new UserDataSetDAO(session);
         userdao.remove(userDS);
         session.close();
     }
 
 
+    @Override
     public void updateUser(UserDataSet userDS) {
-        Session session = sessionFactory.openSession();
-        UserDataSetDAO userdao = new UserDataSetDAO(session);
+        final Session session = sessionFactory.openSession();
+        final UserDataSetDAO userdao = new UserDataSetDAO(session);
         userdao.saveorupdate(userDS);
         session.close();
     }
 
+    @Override
     public UserDataSet getUserDS(String name) {
-        Session session = sessionFactory.openSession();
-        UserDataSetDAO dao = new UserDataSetDAO(session);
-        UserDataSet userDataSet = dao.readByName(name);
+        final Session session = sessionFactory.openSession();
+        final UserDataSetDAO dao = new UserDataSetDAO(session);
+        final UserDataSet userDataSet = dao.readByName(name);
         session.close();
         return userDataSet;
     }
 
+    @Override
     @Nullable
     public UserDataSet getUser(Long id) {
-        Session session = sessionFactory.openSession();
-        UserDataSetDAO userdao = new UserDataSetDAO(session);
-        UserDataSet userDataSet = userdao.getUser(id);
+        final Session session = sessionFactory.openSession();
+        final UserDataSetDAO userdao = new UserDataSetDAO(session);
+        final UserDataSet userDataSet = userdao.getUser(id);
         session.close();
         return userDataSet;
     }
 
+
+    @SuppressWarnings("MagicNumber")
     @NotNull
     public static String getMD5(String input) {
         try {
@@ -167,9 +183,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private static SessionFactory createSessionFactory(Configuration configuration) {
-        StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder();
+        final StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder();
         builder.applySettings(configuration.getProperties());
-        ServiceRegistry serviceRegistry = builder.build();
+        final ServiceRegistry serviceRegistry = builder.build();
         return configuration.buildSessionFactory(serviceRegistry);
     }
 }

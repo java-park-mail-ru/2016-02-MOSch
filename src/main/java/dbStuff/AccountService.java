@@ -8,6 +8,8 @@ import java.util.Collection;
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
+
+@SuppressWarnings("unused")
 public interface AccountService {
 
     Collection getAllUsers();
@@ -20,7 +22,7 @@ public interface AccountService {
 
     boolean addUser(UserProfile userProfile);
 
-    boolean addActiveUser(UserDataSet userProfile, String authToken);
+    void addActiveUser(UserDataSet userProfile, String authToken);
 
     void removeActiveUser(String authToken );
 

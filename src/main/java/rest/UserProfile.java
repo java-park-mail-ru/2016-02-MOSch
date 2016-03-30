@@ -17,7 +17,7 @@ public class UserProfile {
     public enum RoleEnum {ADMIN, USER}
 
     @NotNull
-    private boolean isAdmin;
+    private Boolean isAdmin;
     @NotNull
     private RoleEnum role;
 
@@ -91,11 +91,11 @@ public class UserProfile {
     }
 
     @NotNull
-    public boolean getAdmin() {
+    public Boolean getAdmin() {
         return isAdmin;
     }
 
-    public void setAdmin(@NotNull boolean Admin) {
-        this.isAdmin = Admin;
+    public void setAdmin(@NotNull Boolean admin) {
+        this.isAdmin = admin;
     }
 }

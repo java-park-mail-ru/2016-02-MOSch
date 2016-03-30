@@ -4,11 +4,11 @@ package dbStuff.dataSets;
  * Created by Olerdrive on 30.03.16.
  */
 import org.jetbrains.annotations.NotNull;
-import rest.UserProfile;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
+@SuppressWarnings("unused")
 @Entity
 @Table(name = "scores")
 public class ScoreDataSet implements Serializable { // Serializable Important to Hibernate!
@@ -48,15 +48,15 @@ public class ScoreDataSet implements Serializable { // Serializable Important to
     }
 
     @NotNull
-    public long getLevel() { return this.level; }
+    public Long getLevel() { return this.level; }
 
     @NotNull
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
 
-    public void setId(@NotNull long id) {
+    public void setId(@NotNull Long id) {
         this.id = id;
     }
 
@@ -71,9 +71,9 @@ public class ScoreDataSet implements Serializable { // Serializable Important to
     }
 
     @NotNull
-    public long getRating(){ return rating; }
+    public Long getRating(){ return rating; }
 
-    public void setRating(@NotNull long rating) { this.rating = rating; }
+    public void setRating(@NotNull Long rating) { this.rating = rating; }
 
 
 

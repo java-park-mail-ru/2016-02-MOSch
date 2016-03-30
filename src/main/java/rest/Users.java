@@ -5,7 +5,7 @@ package rest;
 import dbStuff.AccountService;
 import dbStuff.dataSets.AuthDataSet;
 import dbStuff.dataSets.UserDataSet;
-import org.jetbrains.annotations.NotNull;
+
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -20,6 +20,8 @@ import java.util.Objects;
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
+
+@SuppressWarnings("unused")
 @Singleton
 @Path("/user")
 public class Users {
@@ -81,7 +83,7 @@ public class Users {
     public Response createUser(UserProfile user) {
         final AccountService accountService = ctx.get(AccountService.class);
         if (accountService.addUser(user)) {
-            UserDataSet userDS = accountService.getUserDS(user.getLogin());
+            final UserDataSet userDS = accountService.getUserDS(user.getLogin());
             final String payload = String.format("{\"id\":\"%d\"}", userDS.getId());
             return Response
                     .status(Response.Status.OK)
@@ -164,9 +166,4 @@ public class Users {
                 .build();
     }
 
-    @NotNull
-    private Boolean isActive(String sessionId, UserProfile user) {
-        final AccountService accountService = ctx.get(AccountService.class);
-        return Objects.equals(accountService.getActiveUser(sessionId), user);
-    }
 }

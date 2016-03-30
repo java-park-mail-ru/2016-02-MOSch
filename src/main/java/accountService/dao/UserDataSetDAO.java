@@ -15,7 +15,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class UserDataSetDAO {
-    private Session session;
+    private final Session session;
 
     public UserDataSetDAO(Session session) {
         this.session = session;
@@ -26,7 +26,7 @@ public class UserDataSetDAO {
     }
 
     public UserDataSet getUser(long id) {
-        return (UserDataSet) session.get(UserDataSet.class, id);
+        return session.get(UserDataSet.class, id);
     }
 
     public void saveorupdate(UserDataSet dataSet) {
@@ -38,15 +38,14 @@ public class UserDataSetDAO {
     }
 
     public UserDataSet readByName(String login) {
-        Criteria criteria = session.createCriteria(UserDataSet.class);
+        final Criteria criteria = session.createCriteria(UserDataSet.class);
         return (UserDataSet) criteria.add(Restrictions.eq("login", login)).uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
     public List readAll() {
-        Projection id = Projections.property("id");
-        Projection login = Projections.property("login");
-        Criteria criteria = session.createCriteria(UserDataSet.class).setProjection(id);
+        final Projection id = Projections.property("id");
+        final Projection login = Projections.property("login");
+        final Criteria criteria = session.createCriteria(UserDataSet.class).setProjection(id);
         criteria.setProjection(login);
         return criteria.list();
     }

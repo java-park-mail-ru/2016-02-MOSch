@@ -8,6 +8,7 @@ import java.util.Map;
 /**
  * Created by KOPTE3 on 30.03.2016.
  */
+@SuppressWarnings("unchecked")
 public class Context {
     @NotNull
     final Map<Class, Object> contextMap = new HashMap<>();

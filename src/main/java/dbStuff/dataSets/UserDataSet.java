@@ -6,6 +6,8 @@ import rest.UserProfile;
 import javax.persistence.*;
 import java.io.Serializable;
 
+
+@SuppressWarnings("unused")
 @Entity
 @Table(name = "users")
 public class UserDataSet implements Serializable { // Serializable Important to Hibernate!
@@ -63,11 +65,11 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     }
 
     @NotNull
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(@NotNull long id) {
+    public void setId(@NotNull Long id) {
         this.id = id;
     }
 
@@ -90,7 +92,7 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     }
 
     @NotNull
-    public boolean isAdmin(){
+    public Boolean isAdmin(){
         return this.isAdmin;
     }
 

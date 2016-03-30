@@ -3,14 +3,14 @@ package dbStuff.dataSets;
 /**
  * Created by Olerdrive on 30.03.16.
  */
-import com.sun.javafx.beans.IDProperty;
+
 import org.jetbrains.annotations.NotNull;
-import rest.UserProfile;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
+@SuppressWarnings("unused")
 @Entity
 @Table(name = "auths")
 public class AuthDataSet implements Serializable { // Serializable Important to Hibernate!
@@ -23,6 +23,7 @@ public class AuthDataSet implements Serializable { // Serializable Important to 
     @Column (name = "auth_token", unique = true, nullable = false)
     private String authToken;
 
+    @SuppressWarnings("FieldCanBeLocal")
     @Column (name = "date", columnDefinition="DATETIME", nullable = false)
     private Date date;
 
@@ -51,7 +52,7 @@ public class AuthDataSet implements Serializable { // Serializable Important to 
     }
 
     @NotNull
-    public long getId(){
+    public Long getId(){
         return this.id;
     }
 
