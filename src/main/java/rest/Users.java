@@ -80,22 +80,22 @@ public class Users {
     @Path("{id :[0-9]+}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response editUser(@PathParam("id") Long id, UserProfile newUser, @Context HttpServletRequest request) {
-        final String sessionId = request.getSession().getId();
-        final UserProfile currentUser = accountService.getActiveUser(sessionId);
-        final UserProfile user = accountService.getUser(id);
+    public Response editUser(@PathParam("id") Long id, UserProfile newUser,
+                             @HeaderParam("auth_token") String currentToken) {
+        final AuthDataSet currentAuth = accountService.getActiveUser(currentToken);
+        final UserDataSet user = accountService.getUser(id);
         final String payload;
 
-        if (!Objects.equals(currentUser, user) && currentUser.getRole() != UserProfile.RoleEnum.ADMIN) {
+        if (!Objects.equals(currentAuth.getUser(), user) && currentAuth.getUser().isAdmin()) {
             payload = "{\"status\":\"403\",\"message\":\"Access denied\"}";
             return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
         } else if (user == null) {
             payload = "{\"status\":\"404\",\"message\":\"User not found\"}";
             return Response.status(Response.Status.NOT_FOUND).entity(payload).build();
         } else {
-            accountService.removeActiveUser(id); //logout by id if edited user is online
             user.setLogin(newUser.getLogin());
             user.setPassword(newUser.getPassword());
+            accountService.updateUser(user);
             payload = String.format("{\"id\":\"%d\"}", user.getId());
             return Response.status(Response.Status.OK).entity(payload).build();
         }
@@ -104,21 +104,21 @@ public class Users {
     @DELETE
     @Path("{id :[0-9]+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteUser(@PathParam("id") Long id, @Context HttpServletRequest request) {
-        final String sessionId = request.getSession().getId();
-        final UserProfile currentUser = accountService.getActiveUser(sessionId);
-        final UserProfile user = accountService.getUser(id);
+    public Response deleteUser(@PathParam("id") Long id,
+                               @HeaderParam("auth_token") String currentToken) {
+
+        final AuthDataSet currentAuth = accountService.getActiveUser(currentToken);
+        final UserDataSet user = accountService.getUser(id);
         String payload = "{\"status\":\"403\",\"message\":\"Access denied\"}";
-        if (currentUser != null) {
-            if (!Objects.equals(currentUser, user) && currentUser.getRole() != UserProfile.RoleEnum.ADMIN) {
+        if (currentAuth != null) {
+            if (!Objects.equals(currentAuth.getUser(), user) && currentAuth.getUser().isAdmin()) {
                 payload = "{\"status\":\"403\",\"message\":\"Access denied\"}";
                 return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
             } else if (user == null) {
                 payload = "{\"status\":\"404\",\"message\":\"User not found\"}";
                 return Response.status(Response.Status.NOT_FOUND).entity(payload).build();
             } else {
-                accountService.getAllUsers().remove(user);
-                accountService.removeActiveUser(id); //logout by id if edited user is online
+                accountService.removeUser(user);
                 return Response.status(Response.Status.OK).build();
             }
         }

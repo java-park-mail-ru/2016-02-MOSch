@@ -28,6 +28,10 @@ public class UserDataSetDAO {
         return (UserDataSet) session.get(UserDataSet.class, id);
     }
 
+    public void saveorupdate(UserDataSet dataSet) { session.saveOrUpdate(dataSet); }
+
+    public void remove(UserDataSet dataSet) { session.delete(dataSet);}
+
     public UserDataSet readByName(String login) {
         Criteria criteria = session.createCriteria(UserDataSet.class);
         return (UserDataSet) criteria.add(Restrictions.eq("login", login)).uniqueResult();

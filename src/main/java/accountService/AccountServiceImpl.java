@@ -5,6 +5,7 @@ import accountService.dao.ScoreDataSetDAO;
 import accountService.dao.UserDataSetDAO;
 import dbStuff.AccountService;
 import dbStuff.dataSets.*;
+import org.eclipse.jetty.server.Authentication;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -120,6 +121,23 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
+    public void removeUser(UserDataSet userDS){
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        UserDataSetDAO userdao = new UserDataSetDAO(session);
+        userdao.remove(userDS);
+        transaction.commit();
+
+    }
+
+
+    public void updateUser(UserDataSet userDS){
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        UserDataSetDAO userdao = new UserDataSetDAO(session);
+        userdao.saveorupdate(userDS);
+        transaction.commit();
+    }
 
     public UserDataSet getUserDS(String name) {
         try (Session session = sessionFactory.openSession()) {
