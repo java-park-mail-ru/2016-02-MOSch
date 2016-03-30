@@ -2,7 +2,9 @@ package main;
 
 import accountService.AccountServiceImpl;
 import dbStuff.AccountService;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -33,7 +35,6 @@ public class Main {
         System.out.append("Starting at port: ").append(String.valueOf(port)).append('\n');
 
         final Server server = new Server(port);
-        final ServletContextHandler contextHandler = new ServletContextHandler(server, "/api/", ServletContextHandler.SESSIONS);
         final Context ctx = new Context();
         try {
             AccountServiceImpl accountService = new AccountServiceImpl();
@@ -50,8 +51,14 @@ public class Main {
                 bind(ctx);
             }
         });
-        final ServletHolder servletHolder = new ServletHolder(ServletContainer.class);
+
+        final ServletContextHandler contextHandler = new ServletContextHandler(server, "/api/", ServletContextHandler.SESSIONS);
+        final ServletHolder servletHolder = new ServletHolder(new ServletContainer(resourceConfig));
+        HandlerList handlers = new HandlerList();
+        handlers.setHandlers(new Handler[]{contextHandler});
+        server.setHandler(handlers);
         contextHandler.addServlet(servletHolder, "/*");
+
         server.start();
         server.join();
     }
