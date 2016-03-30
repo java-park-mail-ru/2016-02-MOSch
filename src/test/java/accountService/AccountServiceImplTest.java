@@ -1,6 +1,8 @@
 package accountService;
 
 import dbStuff.dataSets.UserDataSet;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import rest.UserProfile;
@@ -11,31 +13,36 @@ import static org.junit.Assert.assertEquals;
  * Created by KOPTE3 on 30.03.2016.
  */
 public class AccountServiceImplTest {
+    AccountServiceImpl accountService;
 
-    @Test
-    @Ignore
-    public void testAddCountUsers() throws Exception {
-        AccountServiceImpl service = new AccountServiceImpl();
-        assertEquals(0, service.countUsers());
-        UserProfile profile = new UserProfile("mytest", "password");
-        service.addUser(profile);
-        assertEquals(1, service.countUsers());
-        for (int i = 0; i < 119; i++) {
-            profile.setLogin("testlogin" + ((Integer) i).toString());
-            service.addUser(profile);
-        }
-        assertEquals(120, service.countUsers());
+    @Before
+    public void setUp() throws Exception {
+        accountService = new AccountServiceImpl();
     }
 
     @Test
     @Ignore
     public void testGetUserDS() throws Exception {
         AccountServiceImpl service = new AccountServiceImpl();
-        assertEquals(0, service.countUsers());
+        assertEquals(0, (long) service.countUsers());
         UserProfile profile = new UserProfile("mytest", "password");
         service.addUser(profile);
         UserDataSet dataSet = service.getUserDS(profile.getLogin());
         assertEquals(profile.getLogin(), dataSet.getLogin());
+    }
+
+    @Test
+    public void testAddCountUsers() throws Exception {
+        AccountServiceImpl service = new AccountServiceImpl();
+        assertEquals(0, (long) service.countUsers());
+        UserProfile profile = new UserProfile("mytest", "password");
+        service.addUser(profile);
+        assertEquals(1, (long) service.countUsers());
+        for (int i = 0; i < 19; i++) {
+            profile.setLogin("testlogin" + ((Integer) i).toString());
+            service.addUser(profile);
+        }
+        assertEquals(20, (long) service.countUsers());
     }
 
     @Test
@@ -49,5 +56,10 @@ public class AccountServiceImplTest {
     @Test(expected = NullPointerException.class)
     public void testGetMD5ofNull() throws Exception {
         AccountServiceImpl.getMD5(null);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        accountService.sessionFactory.close();
     }
 }
