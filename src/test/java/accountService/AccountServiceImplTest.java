@@ -3,7 +3,6 @@ package accountService;
 import dbStuff.dataSets.UserDataSet;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import rest.UserProfile;
 
@@ -21,28 +20,25 @@ public class AccountServiceImplTest {
     }
 
     @Test
-    @Ignore
     public void testGetUserDS() throws Exception {
-        AccountServiceImpl service = new AccountServiceImpl();
-        assertEquals(0, (long) service.countUsers());
+        assertEquals(0, (long) accountService.countUsers());
         UserProfile profile = new UserProfile("mytest", "password");
-        service.addUser(profile);
-        UserDataSet dataSet = service.getUserDS(profile.getLogin());
+        accountService.addUser(profile);
+        UserDataSet dataSet = accountService.getUserDS(profile.getLogin());
         assertEquals(profile.getLogin(), dataSet.getLogin());
     }
 
     @Test
     public void testAddCountUsers() throws Exception {
-        AccountServiceImpl service = new AccountServiceImpl();
-        assertEquals(0, (long) service.countUsers());
+        assertEquals(0, (long) accountService.countUsers());
         UserProfile profile = new UserProfile("mytest", "password");
-        service.addUser(profile);
-        assertEquals(1, (long) service.countUsers());
+        accountService.addUser(profile);
+        assertEquals(1, (long) accountService.countUsers());
         for (int i = 0; i < 19; i++) {
             profile.setLogin("testlogin" + ((Integer) i).toString());
-            service.addUser(profile);
+            accountService.addUser(profile);
         }
-        assertEquals(20, (long) service.countUsers());
+        assertEquals(20, (long) accountService.countUsers());
     }
 
     @Test

@@ -56,8 +56,10 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public Long countUsers() {
-        return new UserDataSetDAO(sessionFactory.openSession()).countUsers();
-
+        Session session = sessionFactory.openSession();
+        Long result = new UserDataSetDAO(session).countUsers();
+        session.close();
+        return result;
     }
 
     public Long countActiveUsers() {
