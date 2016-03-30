@@ -1,4 +1,5 @@
 package dbStuff.dataSets;
+
 import org.jetbrains.annotations.NotNull;
 import rest.UserProfile;
 
@@ -29,20 +30,20 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     }
 
     public UserDataSet(String name) {
-        this.id = (long)-1;
+        this.id = (long) -1;
         this.login = name;
         this.isAdmin = false;
     }
 
     public UserDataSet(@NotNull String login, @NotNull String password) {
-        this.id = (long)-1;
+        this.id = (long) -1;
         this.login = login;
         this.password = password;
         this.isAdmin = false;
     }
 
     public UserDataSet(UserProfile user) {
-        this.id = (long)-1;
+        this.id = (long) -1;
         this.login = user.getLogin();
         this.isAdmin = user.getAdmin();
         this.password = user.getPassword();
@@ -50,17 +51,17 @@ public class UserDataSet implements Serializable { // Serializable Important to 
 
 
     public void setName(String name) {
-            this.login = name;
-        }
+        this.login = name;
+    }
 
     @NotNull
     public long getId() {
-            return id;
-        }
+        return id;
+    }
 
     public void setId(@NotNull long id) {
-            this.id = id;
-        }
+        this.id = id;
+    }
 
     @NotNull
     public String getLogin() {
@@ -80,7 +81,6 @@ public class UserDataSet implements Serializable { // Serializable Important to 
         this.password = password;
     }
 
-
     @Override
     public String toString() {
         return "UserDataSet{" +
@@ -88,6 +88,5 @@ public class UserDataSet implements Serializable { // Serializable Important to 
                 ", name='" + login + '\'' +
                 ", is_Admin=" + isAdmin +
                 '}';
-        }
-
+    }
 }

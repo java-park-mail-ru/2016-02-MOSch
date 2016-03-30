@@ -1,13 +1,8 @@
 package dbStuff;
 
-import dbStuff.dataSets.UserDataSet;
 import rest.UserProfile;
 
 import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.security.*;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
@@ -17,6 +12,7 @@ public interface AccountService {
     Collection<UserProfile> getAllUsers();
 
     Collection<UserProfile> getAllActiveUsers();
+
     int countUsers();
 
     int countActiveUsers();

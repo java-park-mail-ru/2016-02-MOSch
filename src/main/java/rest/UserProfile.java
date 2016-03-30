@@ -15,6 +15,7 @@ public class UserProfile {
     private Long id;
 
     public enum RoleEnum {ADMIN, USER}
+
     @NotNull
     private boolean isAdmin;
     @NotNull
@@ -76,15 +77,25 @@ public class UserProfile {
         this.password = password;
     }
 
-    public void setId(@NotNull Long id) { this.id = id; }
+    public void setId(@NotNull Long id) {
+        this.id = id;
+    }
 
     @NotNull
-    public RoleEnum getRole() { return role;}
+    public RoleEnum getRole() {
+        return role;
+    }
 
-    public void setRole(@NotNull RoleEnum role) {this.role = role;}
+    public void setRole(@NotNull RoleEnum role) {
+        this.role = role;
+    }
 
     @NotNull
-    public boolean getAdmin() { return isAdmin;}
+    public boolean getAdmin() {
+        return isAdmin;
+    }
 
-    public void setAdmin(@NotNull boolean Admin) {this.isAdmin = Admin;}
+    public void setAdmin(@NotNull boolean Admin) {
+        this.isAdmin = Admin;
+    }
 }

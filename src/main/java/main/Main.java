@@ -20,17 +20,12 @@ public class Main {
         }
 
         System.out.append("Starting at port: ").append(String.valueOf(port)).append('\n');
-
         final Server server = new Server(port);
         final ServletContextHandler contextHandler = new ServletContextHandler(server, "/api/", ServletContextHandler.SESSIONS);
-
         final ServletHolder servletHolder = new ServletHolder(ServletContainer.class);
-        servletHolder.setInitParameter("javax.ws.rs.Application","main.RestApplication");
-
+        servletHolder.setInitParameter("javax.ws.rs.Application", "main.RestApplication");
         contextHandler.addServlet(servletHolder, "/*");
         server.start();
         server.join();
     }
-
-
 }

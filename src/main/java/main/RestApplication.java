@@ -1,5 +1,6 @@
 package main;
 
+import accountService.AccountServiceImpl;
 import rest.Session;
 import rest.Users;
 
@@ -7,7 +8,6 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
-import accountService.*;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
@@ -22,5 +22,4 @@ public class RestApplication extends Application {
         objects.add(new Session(bd));
         return objects;
     }
-
 }

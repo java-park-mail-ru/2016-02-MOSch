@@ -1,26 +1,26 @@
 package accountService;
 
-import org.eclipse.persistence.internal.sessions.DirectCollectionChangeRecord;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import rest.UserProfile;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.security.*;
-import dbStuff.dataSets.*;
-import dbStuff.*;
-
+import accountService.dao.UserDataSetDAO;
+import dbStuff.AccountService;
+import dbStuff.dataSets.UserDataSet;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Projections;
 import org.hibernate.service.ServiceRegistry;
-import accountService.dao.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import rest.UserProfile;
+
+import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
@@ -33,19 +33,10 @@ public class AccountServiceImpl implements AccountService {
 
 
     public AccountServiceImpl() {
-//        users.put("Tolya", new UserProfile("Tolya", "1234567", 1L, UserProfile.RoleEnum.ADMIN));
-//        users.put("Kolya", new UserProfile("Kolya", "1234567", 2L));
-//        //noinspection MagicNumber
-//        users.put("Lesha", new UserProfile("Lesha", "12345", 3L, UserProfile.RoleEnum.ADMIN));
-
         Configuration configuration = new Configuration();
         configuration.addAnnotatedClass(UserDataSet.class);
-
         configuration.configure();
-
         sessionFactory = createSessionFactory(configuration);
-
-
     }
 
     public Collection<UserProfile> getAllUsers() {
@@ -57,13 +48,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public int countUsers() {
-        return users.size();
+        Session session = sessionFactory.openSession();
+        return (int) session.createCriteria(UserDataSet.class).setProjection(Projections.rowCount()).uniqueResult();
     }
 
     public int countActiveUsers() {
         return activeUsers.size();
     }
-
 
     public boolean addUser(UserProfile userProfile) {
         UserDataSet dataSet = new UserDataSet(userProfile);
@@ -78,7 +69,6 @@ public class AccountServiceImpl implements AccountService {
         }
         return false;
     }
-
 
     public boolean addActiveUser(UserProfile userProfile, String sessionId) {
         final UserProfile user = getUser(userProfile.getLogin()); //due to id-less
@@ -123,7 +113,6 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
-
     @NotNull
     public static String getMD5(String input) {
         try {
@@ -142,6 +131,7 @@ public class AccountServiceImpl implements AccountService {
             throw new RuntimeException(e);
         }
     }
+
     private static SessionFactory createSessionFactory(Configuration configuration) {
         StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder();
         builder.applySettings(configuration.getProperties());

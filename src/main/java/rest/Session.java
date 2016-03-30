@@ -1,13 +1,14 @@
 package rest;
 
-import accountService.*;
-import java.io.*;
+import accountService.AccountServiceImpl;
+
 import javax.inject.Singleton;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 
 
 /**
@@ -22,12 +23,11 @@ public class Session {
         this.accountService = accountService;
     }
 
-
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response loginUser(UserProfile user, @Context HttpServletRequest request)
-        throws IOException{
+            throws IOException {
         final String sessionId = request.getSession().getId();
         final UserProfile validUser = accountService.getUser(user.getLogin());
         final String payload;
@@ -48,23 +48,20 @@ public class Session {
         return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
     }
 
-
     @DELETE
-    public Response logoutUser(@Context HttpServletRequest request){
+    public Response logoutUser(@Context HttpServletRequest request) {
         accountService.removeActiveUser(request.getSession().getId());
         return Response.status(Response.Status.OK).build();
     }
 
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response checkAuth(@Context HttpServletRequest request){
+    public Response checkAuth(@Context HttpServletRequest request) {
         final UserProfile currentUser = accountService.getActiveUser(request.getSession().getId());
-        if (currentUser == null){
+        if (currentUser == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
         final String payload = String.format("{\"id\":\"%d\"}", currentUser.getId());
         return Response.status(Response.Status.OK).entity(payload).build();
     }
-
 }

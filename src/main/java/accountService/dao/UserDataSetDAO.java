@@ -3,10 +3,10 @@ package accountService.dao;
 /**
  * Created by Olerdrive on 29.03.16.
  */
+import dbStuff.dataSets.UserDataSet;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import dbStuff.dataSets.*;
 
 import java.io.Serializable;
 import java.util.List;
