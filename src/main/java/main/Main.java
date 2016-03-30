@@ -37,11 +37,12 @@ public class Main {
         final Context ctx = new Context();
         try {
             AccountServiceImpl accountService = new AccountServiceImpl();
+            ctx.put(AccountService.class, accountService);
         } catch (Exception e) {
             System.err.println(e.getLocalizedMessage());
             System.exit(1);
         }
-        ctx.put(AccountService.class, ctx);
+
         final ResourceConfig resourceConfig = new ResourceConfig(Users.class, Session.class);
         resourceConfig.register(new AbstractBinder() {
             @Override
@@ -50,7 +51,6 @@ public class Main {
             }
         });
         final ServletHolder servletHolder = new ServletHolder(ServletContainer.class);
-        servletHolder.setInitParameter("javax.ws.rs.Application", "main.RestApplication");
         contextHandler.addServlet(servletHolder, "/*");
         server.start();
         server.join();
