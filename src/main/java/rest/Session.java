@@ -1,9 +1,6 @@
 package rest;
 
-import accountService.AccountServiceImpl;
-import dbStuff.AccountService;
-import dbStuff.dataSets.AuthDataSet;
-import dbStuff.dataSets.UserDataSet;
+import main.AccountService;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -13,12 +10,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.Date;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
-
 @SuppressWarnings("unused")
 @Singleton
 @Path("/session")
@@ -31,29 +26,28 @@ public class Session {
     @Produces(MediaType.APPLICATION_JSON)
     public Response loginUser(UserProfile user, @Context HttpServletRequest request)
             throws IOException {
-        //final String sessionId = request.getSession().getId();
         final AccountService accountService = ctx.get(AccountService.class);
-        final UserDataSet validUserDS = accountService.getUserDS(user.getLogin());
-        final String payload;
-        if (validUserDS != null) {
-            if (user.getPassword().equals(validUserDS.getPassword())) {
-                final String authToken = AccountServiceImpl.getMD5(new Date() + validUserDS.getPassword());
-                final long validID = validUserDS.getId();
-                accountService.addActiveUser(validUserDS, authToken);
-                payload = String.format("{\"id\":\"%d\", \"auth_token\":\"%s\"}", validID, authToken);
+        String auth_token = accountService.loginUser(user.getLogin(), user.getPassword());
+        if (auth_token != null) {
+            UserProfile userProfile = accountService.getUserBySessionID(auth_token);
+            if (userProfile == null) {
+                final String serverError = "{\"status\":\"500\",\"message\":\"Server Error\"}";
+                return Response
+                        .status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(serverError)
+                        .build();
+            } else {
+                String result = String.format("{\"id\":\"%d\", \"auth_token\":\"%s\"}", userProfile.getId(), auth_token);
                 return Response
                         .status(Response.Status.OK)
-                        .entity(payload)
+                        .entity(result)
                         .build();
-
-                //payload = "{\"message\":\"Already logged in\"}";
-                //return Response.status(Response.Status.FORBIDDEN).entity(payload).build();
             }
         }
-        payload = "{\"message\":\"Wrong login or password\"}";
+        String wrong = "{\"message\":\"Wrong login or password\"}";
         return Response
                 .status(Response.Status.FORBIDDEN)
-                .entity(payload)
+                .entity(wrong)
                 .build();
     }
 
@@ -61,7 +55,7 @@ public class Session {
     public Response logoutUser(@Context HttpServletRequest request,
                                @HeaderParam("auth_token") String currentToken) {
         final AccountService accountService = ctx.get(AccountService.class);
-        accountService.removeActiveUser(currentToken);
+        accountService.logoutUser(currentToken);
         return Response
                 .status(Response.Status.OK)
                 .build();
@@ -72,16 +66,17 @@ public class Session {
     public Response checkAuth(@Context HttpServletRequest request,
                               @HeaderParam("auth_token") String currentToken) {
         final AccountService accountService = ctx.get(AccountService.class);
-        final AuthDataSet currentAuth = accountService.getActiveUser(currentToken);
-        if (currentAuth == null) {
+        final UserProfile userProfile = accountService.getUserBySessionID(currentToken);
+        if (userProfile == null) {
             return Response
                     .status(Response.Status.UNAUTHORIZED)
                     .build();
+        } else {
+            final String result = String.format("{\"id\":\"%d\"}", userProfile.getId());
+            return Response
+                    .status(Response.Status.OK)
+                    .entity(result)
+                    .build();
         }
-        final String payload = String.format("{\"id\":\"%d\"}", currentAuth.getId());
-        return Response
-                .status(Response.Status.OK)
-                .entity(payload)
-                .build();
     }
 }

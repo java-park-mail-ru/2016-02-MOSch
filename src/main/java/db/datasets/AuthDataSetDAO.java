@@ -1,16 +1,14 @@
-package accountService.dao;
+package db.datasets;
 
-/**
- * Created by Olerdrive on 30.03.16.
- */
-
-import dbStuff.dataSets.*;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 import java.io.Serializable;
 
+/**
+ * MOSch-team test server for "Kill The Birds" game
+ */
 @SuppressWarnings("unused")
 public class AuthDataSetDAO {
     private final Session session;
@@ -23,9 +21,13 @@ public class AuthDataSetDAO {
         return session.save(dataSet);
     }
 
-    public void saveorupdate(AuthDataSet dataSet) { session.saveOrUpdate(dataSet); }
+    public void saveorupdate(AuthDataSet dataSet) {
+        session.saveOrUpdate(dataSet);
+    }
 
-    public void remove (AuthDataSet dataSet) {session.delete(dataSet);}
+    public void remove(AuthDataSet dataSet) {
+        session.delete(dataSet);
+    }
 
     public AuthDataSet getByToken(String token) {
         final Criteria criteria = session.createCriteria(AuthDataSet.class);

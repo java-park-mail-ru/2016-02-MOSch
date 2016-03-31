@@ -1,12 +1,10 @@
-package accountService.dao;
+package db.datasets;
 
-/**
- * Created by Olerdrive on 30.03.16.
- */
-import dbStuff.dataSets.*;
 import org.hibernate.Session;
 
-
+/**
+ * MOSch-team test server for "Kill The Birds" game
+ */
 public class ScoreDataSetDAO {
     private final Session session;
 

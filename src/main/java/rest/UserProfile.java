@@ -1,5 +1,6 @@
 package rest;
 
+import db.datasets.UserDataSet;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -8,14 +9,11 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("unused")
 public class UserProfile {
     @NotNull
-    private String login = "";
+    private String login;
     @NotNull
     private String password;
     @NotNull
     private Long id;
-
-    public enum RoleEnum {ADMIN, USER}
-
     @NotNull
     private Boolean isAdmin;
     @NotNull
@@ -27,6 +25,14 @@ public class UserProfile {
         id = 0L;
         role = RoleEnum.USER;
         isAdmin = false;
+    }
+
+    public UserProfile(@NotNull UserDataSet dataSet) {
+        login = dataSet.getLogin();
+        password = dataSet.getPassword();
+        id = dataSet.getId();
+        role = dataSet.getIsAdmin() ? RoleEnum.ADMIN : RoleEnum.USER;
+        isAdmin = dataSet.getIsAdmin();
     }
 
     public UserProfile(@NotNull String login, @NotNull String password, @NotNull Long id) {
@@ -67,14 +73,13 @@ public class UserProfile {
         return password;
     }
 
+    public void setPassword(@NotNull String password) {
+        this.password = password;
+    }
 
     @NotNull
     public Long getId() {
         return id;
-    }
-
-    public void setPassword(@NotNull String password) {
-        this.password = password;
     }
 
     public void setId(@NotNull Long id) {
@@ -91,11 +96,13 @@ public class UserProfile {
     }
 
     @NotNull
-    public Boolean getAdmin() {
+    public Boolean getIsAdmin() {
         return isAdmin;
     }
 
-    public void setAdmin(@NotNull Boolean admin) {
+    public void setIsAdmin(@NotNull Boolean admin) {
         this.isAdmin = admin;
     }
+
+    public enum RoleEnum {ADMIN, USER}
 }

@@ -1,4 +1,4 @@
-package dbStuff.dataSets;
+package db.datasets;
 
 import org.jetbrains.annotations.NotNull;
 import rest.UserProfile;
@@ -6,7 +6,9 @@ import rest.UserProfile;
 import javax.persistence.*;
 import java.io.Serializable;
 
-
+/**
+ * MOSch-team test server for "Kill The Birds" game
+ */
 @SuppressWarnings("unused")
 @Entity
 @Table(name = "users")
@@ -18,7 +20,7 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", unique=true, nullable = false)
+    @Column(name = "username", unique = true, nullable = false)
     private String login;
 
     @Column(name = "isAdmin", nullable = false)
@@ -39,29 +41,24 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     public UserDataSet() {
     }
 
-    public UserDataSet(String name) {
+    public UserDataSet(@NotNull String username) {
         this.id = (long) -1;
-        this.login = name;
+        this.login = username;
         this.isAdmin = false;
     }
 
-    public UserDataSet(@NotNull String login, @NotNull String password) {
+    public UserDataSet(@NotNull String username, @NotNull String password) {
         this.id = (long) -1;
-        this.login = login;
+        this.login = username;
         this.password = password;
         this.isAdmin = false;
     }
 
-    public UserDataSet(UserProfile user) {
+    public UserDataSet(@NotNull UserProfile user) {
         this.id = (long) -1;
         this.login = user.getLogin();
-        this.isAdmin = user.getAdmin();
+        this.isAdmin = user.getIsAdmin();
         this.password = user.getPassword();
-    }
-
-
-    public void setName(String name) {
-        this.login = name;
     }
 
     @NotNull
@@ -78,8 +75,8 @@ public class UserDataSet implements Serializable { // Serializable Important to 
         return login;
     }
 
-    public void setLogin(@NotNull String login) {
-        this.login = login;
+    public void setLogin(@NotNull String username) {
+        this.login = username;
     }
 
     @NotNull
@@ -92,8 +89,12 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     }
 
     @NotNull
-    public Boolean isAdmin(){
-        return this.isAdmin;
+    public Boolean getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(@NotNull Boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 
     @Override

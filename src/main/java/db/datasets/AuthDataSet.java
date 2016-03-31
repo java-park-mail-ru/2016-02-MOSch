@@ -1,15 +1,14 @@
-package dbStuff.dataSets;
-
-/**
- * Created by Olerdrive on 30.03.16.
- */
+package db.datasets;
 
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Date;
 
+/**
+ * MOSch-team test server for "Kill The Birds" game
+ */
 @SuppressWarnings("unused")
 @Entity
 @Table(name = "auths")
@@ -17,14 +16,14 @@ public class AuthDataSet implements Serializable { // Serializable Important to 
     private static final long serialVersionUID = -8706689714326132798L;
 
     @Id
-    @JoinColumn (name = "id")
+    @JoinColumn(name = "id")
     private Long id;
 
-    @Column (name = "auth_token", unique = true, nullable = false)
+    @Column(name = "auth_token", unique = true, nullable = false)
     private String authToken;
 
     @SuppressWarnings("FieldCanBeLocal")
-    @Column (name = "date", columnDefinition="DATETIME", nullable = false)
+    @Column(name = "date", columnDefinition = "DATETIME", nullable = false)
     private Date date;
 
     @OneToOne
@@ -42,22 +41,22 @@ public class AuthDataSet implements Serializable { // Serializable Important to 
 
     }
 
-    public void setToken(@NotNull String authToken){
+    public void setToken(@NotNull String authToken) {
         this.authToken = authToken;
     }
 
     @NotNull
-    public String getAuthToken(){
+    public String getAuthToken() {
         return this.authToken;
     }
 
     @NotNull
-    public Long getId(){
+    public Long getId() {
         return this.id;
     }
 
     @NotNull
-    public UserDataSet getUser(){
+    public UserDataSet getUser() {
         return this.user;
     }
 

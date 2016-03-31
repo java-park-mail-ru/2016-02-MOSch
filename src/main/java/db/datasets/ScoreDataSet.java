@@ -1,13 +1,13 @@
-package dbStuff.dataSets;
+package db.datasets;
 
-/**
- * Created by Olerdrive on 30.03.16.
- */
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
+/**
+ * MOSch-team test server for "Kill The Birds" game
+ */
 @SuppressWarnings("unused")
 @Entity
 @Table(name = "scores")
@@ -15,16 +15,16 @@ public class ScoreDataSet implements Serializable { // Serializable Important to
     private static final long serialVersionUID = -8706689714326132798L;
 
     @Id
-    @JoinColumn (name = "id")
+    @JoinColumn(name = "id")
     private Long id;
 
-    @Column (name = "level", nullable = false)
+    @Column(name = "level", nullable = false)
     private Long level;
 
-    @Column (name = "rating", nullable = false)
+    @Column(name = "rating", nullable = false)
     private Long rating;
 
-    @Column (name = "info", nullable = false)
+    @Column(name = "info", nullable = false)
     private String info;
 
     @OneToOne
@@ -34,13 +34,11 @@ public class ScoreDataSet implements Serializable { // Serializable Important to
     public ScoreDataSet() {
     }
 
-    public ScoreDataSet(@NotNull Long id){
+    public ScoreDataSet(@NotNull Long id) {
         this.id = id;
         this.level = 0L;
         this.rating = 0L;
         this.info = "";
-
-
     }
 
     public void setlevel(@NotNull Long level) {
@@ -48,7 +46,9 @@ public class ScoreDataSet implements Serializable { // Serializable Important to
     }
 
     @NotNull
-    public Long getLevel() { return this.level; }
+    public Long getLevel() {
+        return this.level;
+    }
 
     @NotNull
     public Long getId() {
@@ -71,10 +71,11 @@ public class ScoreDataSet implements Serializable { // Serializable Important to
     }
 
     @NotNull
-    public Long getRating(){ return rating; }
+    public Long getRating() {
+        return rating;
+    }
 
-    public void setRating(@NotNull Long rating) { this.rating = rating; }
-
-
-
+    public void setRating(@NotNull Long rating) {
+        this.rating = rating;
+    }
 }

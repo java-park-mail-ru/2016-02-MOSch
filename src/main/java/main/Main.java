@@ -1,7 +1,5 @@
 package main;
 
-import accountService.AccountServiceImpl;
-import dbStuff.AccountService;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -17,7 +15,6 @@ import rest.Users;
  * MOSch-team test server for "Kill The Birds" game
  */
 public class Main {
-
     @SuppressWarnings("OverlyBroadThrowsClause")
     public static void main(String[] args) throws Exception {
         int port = -1;
@@ -38,7 +35,7 @@ public class Main {
         final Server server = new Server(port);
         final Context ctx = new Context();
         try {
-            final AccountServiceImpl accountService = new AccountServiceImpl();
+            final AccountServiceImpl accountService = new AccountServiceImpl(AccountServiceImpl.CreationStrategy.CREATE_NEW);
             ctx.put(AccountService.class, accountService);
         } catch (RuntimeException e) {
             System.err.println(e.getLocalizedMessage());
