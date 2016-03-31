@@ -1,5 +1,6 @@
 package rest;
 
+import db.datasets.UserDataSet;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -7,16 +8,15 @@ import org.jetbrains.annotations.NotNull;
  */
 @SuppressWarnings("unused")
 public class UserProfile {
-    @NotNull
-    private String login = "";
-    @NotNull
+    //@NotNull
+    private String login;
+    //@NotNull
     private String password;
-    @NotNull
+    //@NotNull
     private Long id;
-
-    public enum RoleEnum {ADMIN, USER}
-
-    @NotNull
+    //@NotNull
+    private Boolean isAdmin;
+    //@NotNull
     private RoleEnum role;
 
     public UserProfile() {
@@ -24,6 +24,15 @@ public class UserProfile {
         password = "";
         id = 0L;
         role = RoleEnum.USER;
+        isAdmin = false;
+    }
+
+    public UserProfile(@NotNull UserDataSet dataSet) {
+        login = dataSet.getUsername();
+        password = dataSet.getPassword();
+        id = dataSet.getId();
+        role = dataSet.getIsAdmin() ? RoleEnum.ADMIN : RoleEnum.USER;
+        isAdmin = dataSet.getIsAdmin();
     }
 
     public UserProfile(@NotNull String login, @NotNull String password, @NotNull Long id) {
@@ -31,6 +40,7 @@ public class UserProfile {
         this.password = password;
         this.id = id;
         this.role = RoleEnum.USER;
+        this.isAdmin = false;
     }
 
     public UserProfile(@NotNull String login, @NotNull String password) {
@@ -38,6 +48,7 @@ public class UserProfile {
         this.password = password;
         this.id = 0L;
         this.role = RoleEnum.USER;
+        this.isAdmin = false;
     }
 
     public UserProfile(@NotNull String login, @NotNull String password, @NotNull Long id, @NotNull RoleEnum role) {
@@ -45,6 +56,7 @@ public class UserProfile {
         this.password = password;
         this.id = id;
         this.role = role;
+        this.isAdmin = false;
     }
 
     @NotNull
@@ -61,20 +73,37 @@ public class UserProfile {
         return password;
     }
 
+    public void setPassword(@NotNull String password) {
+        this.password = password;
+    }
 
     @NotNull
     public Long getId() {
         return id;
     }
 
-    public void setPassword(@NotNull String password) {
-        this.password = password;
+    public void setId(@NotNull Long id) {
+        this.id = id;
     }
 
-    public void setId(@NotNull Long id) { this.id = id; }
+    @NotNull
+    public RoleEnum getRole() {
+        return role;
+    }
+
+    public void setRole(@NotNull RoleEnum role) {
+        this.role = role;
+        this.isAdmin = (role == RoleEnum.ADMIN);
+    }
 
     @NotNull
-    public RoleEnum getRole() { return role;}
+    public Boolean getIsAdmin() {
+        return isAdmin;
+    }
 
-    public void setRole(@NotNull RoleEnum role) {this.role = role;}
+    public void setIsAdmin(@NotNull Boolean admin) {
+        this.isAdmin = admin;
+    }
+
+    public enum RoleEnum {ADMIN, USER}
 }

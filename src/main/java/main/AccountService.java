@@ -1,103 +1,52 @@
 package main;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rest.UserProfile;
 
-import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.security.*;
+import java.util.List;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
-@SuppressWarnings({"unused", "MagicNumber"})
-public class AccountService {
-    private final Map<String, UserProfile> users = new ConcurrentHashMap<>();
-    private final Map<String, UserProfile> activeUsers = new ConcurrentHashMap<>();
+@SuppressWarnings("unused")
+public interface AccountService {
 
-    public AccountService() {
-        users.put("Tolya", new UserProfile("Tolya", "12345", 1L, UserProfile.RoleEnum.ADMIN));
-        users.put("Kolya", new UserProfile("Kolya", "12345", 2L));
-        //noinspection MagicNumber
-        users.put("Lesha", new UserProfile("Lesha", "12345", 3L, UserProfile.RoleEnum.ADMIN));
+    List<UserProfile> getAllUsers();
 
-    }
+    long countUsers();
 
-    public Collection<UserProfile> getAllUsers() {
-        return users.values();
-    }
-
-    public Collection<UserProfile> getAllActiveUsers() {
-        return activeUsers.values();
-    }
-    public int countUsers() {return users.size();}
-    public int countActiveUsers() {return activeUsers.size();}
-
-
-    public boolean addUser(UserProfile userProfile) {
-        final Long id = (long)countUsers()+1;
-        if (users.containsKey(userProfile.getLogin()))
-            return false;
-        userProfile.setId(id);
-        userProfile.setRole(UserProfile.RoleEnum.USER);
-        users.put(userProfile.getLogin(), userProfile);
-        return true;
-    }
-
-    public boolean addActiveUser(UserProfile userProfile, String sessionId) {
-        final UserProfile user = getUser(userProfile.getLogin()); //due to id-less
-
-        if (activeUsers.containsKey(sessionId)) {
-            return false;
-        }
-        activeUsers.put(sessionId, user);
-        return true;
-    }
-
-    public void removeActiveUser(String sessionId){
-        activeUsers.remove(sessionId);
-    }
-
-    public void removeActiveUser(Long id){
-        this.getAllActiveUsers().stream().filter(user -> Objects.equals(user.getId(), id)).forEach(user -> getAllActiveUsers().remove(user));
-    }
-
-    public UserProfile getActiveUser(String sessionId){return activeUsers.get(sessionId);}
-    public UserProfile getUser(String userName) {return users.get(userName);}
     @Nullable
-    public UserProfile getUser(Long id) {
-        for (UserProfile user : this.getAllUsers() )
-        {
-            if (Objects.equals(user.getId(), id))
-                return user;
-        }
-        return null;
+    UserProfile getUserByID(long userID);
 
-    }
+    @Nullable
+    UserProfile getUserByLogin(@NotNull String username);
 
+    @Nullable
+    UserProfile getUserBySessionID(@NotNull String sessionID); // sessionID is the same that the 'auth_token'
 
-    public static String getMD5(String input) {
-        try {
-            final MessageDigest md = MessageDigest.getInstance("MD5");
-            final byte[] messageDigest = md.digest(input.getBytes());
-            // Convert to hex string
-            final StringBuilder sb = new StringBuilder();
-            for (byte aMessageDigest : messageDigest) {
-                if ((0xff & aMessageDigest) < 0x10) {
-                    sb.append('0');
-                }
-                sb.append(Integer.toHexString(0xff & aMessageDigest));
-            }
-            return sb.toString();
-        }
-        catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    @Nullable
+    Long addUser(@NotNull UserProfile userProfile);
 
+    void updateUser(long userID, @NotNull UserProfile user);
 
+    void updateUser(@NotNull String sessionID, @NotNull UserProfile user);
 
+    void removeUser(long userID);
+
+    void removeUser(@NotNull String sessionID);
+
+    boolean isLoggedIn(@NotNull String sessionID);
+
+    @Nullable
+    Long isUserExists(@NotNull String userName, @NotNull String password);
+
+    @Nullable
+    String loginUser(@NotNull String userName, @NotNull String password);
+
+    @Nullable
+    String loginUser(@NotNull String sessionID);
+
+    void logoutUser(@NotNull String sessionID);
 
 }
