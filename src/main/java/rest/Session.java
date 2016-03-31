@@ -24,10 +24,16 @@ public class Session {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response loginUser(UserProfile user, @Context HttpServletRequest request)
+    public Response loginUser(UserProfile user, @Context HttpServletRequest request,
+                              @HeaderParam("auth_token") String currentToken)
             throws IOException {
         final AccountService accountService = ctx.get(AccountService.class);
-        final String authToken = accountService.loginUser(user.getLogin(), user.getPassword());
+        final String authToken;
+        if (currentToken != null) {
+            authToken = accountService.loginUser(currentToken);
+        } else {
+            authToken = accountService.loginUser(user.getLogin(), user.getPassword());
+        }
         if (authToken != null) {
             final UserProfile userProfile = accountService.getUserBySessionID(authToken);
             if (userProfile == null) {
