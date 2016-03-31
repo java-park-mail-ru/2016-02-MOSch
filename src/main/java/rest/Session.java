@@ -7,9 +7,19 @@ import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Collection;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
+import rest.UserProfile;
+
+import javax.ws.rs.core.MediaType.*;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
@@ -22,7 +32,6 @@ public class Session {
     private main.Context ctx;
 
     @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response loginUser(UserProfile user, @Context HttpServletRequest request,
                               @HeaderParam("auth_token") String currentToken)
@@ -31,8 +40,12 @@ public class Session {
         final String authToken;
         if (currentToken != null) {
             authToken = accountService.loginUser(currentToken);
-        } else {
+        } else if (user != null) {
             authToken = accountService.loginUser(user.getLogin(), user.getPassword());
+        } else {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .build();
         }
         if (authToken != null) {
             final UserProfile userProfile = accountService.getUserBySessionID(authToken);
@@ -72,7 +85,10 @@ public class Session {
     public Response checkAuth(@Context HttpServletRequest request,
                               @HeaderParam("auth_token") String currentToken) {
         final AccountService accountService = ctx.get(AccountService.class);
-        final UserProfile userProfile = accountService.getUserBySessionID(currentToken);
+        UserProfile userProfile = null;
+        if (currentToken != null) {
+            userProfile = accountService.getUserBySessionID(currentToken);
+        }
         if (userProfile == null) {
             return Response
                     .status(Response.Status.UNAUTHORIZED)

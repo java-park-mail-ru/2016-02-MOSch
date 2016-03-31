@@ -8,15 +8,15 @@ import org.jetbrains.annotations.NotNull;
  */
 @SuppressWarnings("unused")
 public class UserProfile {
-    @NotNull
+    //@NotNull
     private String login;
-    @NotNull
+    //@NotNull
     private String password;
-    @NotNull
+    //@NotNull
     private Long id;
-    @NotNull
+    //@NotNull
     private Boolean isAdmin;
-    @NotNull
+    //@NotNull
     private RoleEnum role;
 
     public UserProfile() {

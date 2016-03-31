@@ -15,9 +15,12 @@ import rest.Users;
  * MOSch-team test server for "Kill The Birds" game
  */
 public class Main {
+
+    public static final int DEFAULT_PORT = 31072;
+
     @SuppressWarnings("OverlyBroadThrowsClause")
     public static void main(String[] args) throws Exception {
-        int port = -1;
+        int port = DEFAULT_PORT;
         if (args.length == 1) {
             try {
                 port = Integer.parseInt(args[0]);
@@ -27,7 +30,7 @@ public class Main {
             }
         } else {
             System.err.println("Specify port");
-            System.exit(1);
+            System.err.println("Uses the default port 31072");
         }
 
         System.out.append("Starting at port: ").append(String.valueOf(port)).append('\n');

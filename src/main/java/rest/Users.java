@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Objects;
+import rest.UserProfile;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
@@ -28,9 +29,10 @@ public class Users {
                                 @HeaderParam("auth_token") String currentToken) {
         final AccountService accountService = ctx.get(AccountService.class);
         final List<UserProfile> allUsers = accountService.getAllUsers();
+        final String payload = String.format("{\"count\":\"%d\"}", allUsers.size());
         return Response
                 .status(Response.Status.OK)
-                .entity(allUsers.toArray(new UserProfile[allUsers.size()]))
+                .entity(payload)
                 .build();
     }
 
@@ -40,6 +42,11 @@ public class Users {
     public Response getUserById(@PathParam("id") Long id,
                                 @HeaderParam("auth_token") String currentToken) {
         final AccountService accountService = ctx.get(AccountService.class);
+        if (currentToken == null) {
+            return Response
+                    .status(Response.Status.UNAUTHORIZED)
+                    .build();
+        }
         final UserProfile user = accountService.getUserBySessionID(currentToken);
         if (user != null) {
             if (user.getIsAdmin() || Objects.equals(user.getId(), id)) {
@@ -75,6 +82,11 @@ public class Users {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(UserProfile user) {
         final AccountService accountService = ctx.get(AccountService.class);
+        if (user == null) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .build();
+        }
         final Long userID = accountService.addUser(user);
         if (userID != null) {
             final String payload = String.format("{\"id\":\"%d\"}", userID);
@@ -95,6 +107,11 @@ public class Users {
     public Response editUser(@PathParam("id") Long id, UserProfile newUser,
                              @HeaderParam("auth_token") String currentToken) {
         final AccountService accountService = ctx.get(AccountService.class);
+        if (currentToken == null) {
+            return Response
+                    .status(Response.Status.UNAUTHORIZED)
+                    .build();
+        }
         final UserProfile currentUser = accountService.getUserBySessionID(currentToken);
         if (currentUser == null) {
             return Response
@@ -132,6 +149,11 @@ public class Users {
     public Response deleteUser(@PathParam("id") Long id,
                                @HeaderParam("auth_token") String currentToken) {
         final AccountService accountService = ctx.get(AccountService.class);
+        if (currentToken == null) {
+            return Response
+                    .status(Response.Status.UNAUTHORIZED)
+                    .build();
+        }
         final UserProfile currentUser = accountService.getUserBySessionID(currentToken);
         if (currentUser == null) {
             return Response
