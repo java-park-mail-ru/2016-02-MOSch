@@ -8,10 +8,13 @@ import org.hibernate.Session;
 public class ScoreDataSetDAO {
     private final Session session;
 
+    @SuppressWarnings("unused")
     public ScoreDataSetDAO(Session session) {
         this.session = session;
     }
 
+
+    @SuppressWarnings("unused")
     public void save(ScoreDataSet dataSet) {
         session.save(dataSet);
     }

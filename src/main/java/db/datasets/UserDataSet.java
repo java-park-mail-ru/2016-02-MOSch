@@ -21,7 +21,7 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     private Long id;
 
     @Column(name = "username", unique = true, nullable = false)
-    private String login;
+    private String username;
 
     @Column(name = "isAdmin", nullable = false)
     private Boolean isAdmin;
@@ -43,20 +43,20 @@ public class UserDataSet implements Serializable { // Serializable Important to 
 
     public UserDataSet(@NotNull String username) {
         this.id = (long) -1;
-        this.login = username;
+        this.username = username;
         this.isAdmin = false;
     }
 
     public UserDataSet(@NotNull String username, @NotNull String password) {
         this.id = (long) -1;
-        this.login = username;
+        this.username = username;
         this.password = password;
         this.isAdmin = false;
     }
 
     public UserDataSet(@NotNull UserProfile user) {
         this.id = (long) -1;
-        this.login = user.getLogin();
+        this.username = user.getLogin();
         this.isAdmin = user.getIsAdmin();
         this.password = user.getPassword();
     }
@@ -71,12 +71,12 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     }
 
     @NotNull
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLogin(@NotNull String username) {
-        this.login = username;
+    public void setUsername(@NotNull String username) {
+        this.username = username;
     }
 
     @NotNull
@@ -101,7 +101,7 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     public String toString() {
         return "UserDataSet{" +
                 "id=" + id +
-                ", name='" + login + '\'' +
+                ", name='" + username + '\'' +
                 ", is_Admin=" + isAdmin +
                 '}';
     }

@@ -23,7 +23,7 @@ public class UserDataSetDAO {
     public void updateUser(@NotNull Long userID, @NotNull UserDataSet dataSet) {
         final UserDataSet oldDataSet = readUserByID(userID);
         if (oldDataSet != null) {
-            oldDataSet.setLogin(dataSet.getLogin());
+            oldDataSet.setUsername(dataSet.getUsername());
             oldDataSet.setPassword(dataSet.getPassword());
             oldDataSet.setIsAdmin(dataSet.getIsAdmin());
         }
@@ -33,7 +33,10 @@ public class UserDataSetDAO {
     // true
     public void deleteUser(long userID) {
         final UserDataSet user = readUserByID(userID);
-        session.delete(user);
+        if (user!=null) {
+            session.delete(user);
+        }
+        session.flush();
     }
 
     // true
@@ -44,6 +47,7 @@ public class UserDataSetDAO {
     // true
     public List<UserDataSet> readAll() {
         final Criteria criteria = session.createCriteria(UserDataSet.class);
+        //noinspection unchecked
         return (List<UserDataSet>) criteria.list();
     }
 
@@ -66,11 +70,11 @@ public class UserDataSetDAO {
         return (UserDataSet) criteria.add(Restrictions.eq("username", login)).uniqueResult();
     }
 
-    @Nullable
-    public UserDataSet getUserBySession(String sessionID) {
-        // TODO
+//    @Nullable
+//    public UserDataSet getUserBySession(String sessionID) {
+//        // TODO
 //        Criteria criteria = session.createCriteria(UserDataSet.class);
 //        return (UserDataSet) criteria.add(Restrictions.eq("email", email)).uniqueResult();
-        return null;
-    }
+//        return null;
+//    }
 }

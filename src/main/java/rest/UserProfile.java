@@ -28,7 +28,7 @@ public class UserProfile {
     }
 
     public UserProfile(@NotNull UserDataSet dataSet) {
-        login = dataSet.getLogin();
+        login = dataSet.getUsername();
         password = dataSet.getPassword();
         id = dataSet.getId();
         role = dataSet.getIsAdmin() ? RoleEnum.ADMIN : RoleEnum.USER;
@@ -93,6 +93,7 @@ public class UserProfile {
 
     public void setRole(@NotNull RoleEnum role) {
         this.role = role;
+        this.isAdmin = (role == RoleEnum.ADMIN);
     }
 
     @NotNull

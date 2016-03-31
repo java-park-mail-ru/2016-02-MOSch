@@ -15,13 +15,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
-@SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
+@SuppressWarnings({"unused"})
 public class AccountServiceImpl implements AccountService {
     final SessionFactory sessionFactory;
     private final Map<String, UserProfile> loggedUsers = new ConcurrentHashMap<>();
@@ -41,7 +42,7 @@ public class AccountServiceImpl implements AccountService {
                 configuration.setProperty("hibernate.hbm2ddl.auto", "create");
                 break;
             case CREATE_TEST:
-                configuration.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/db_java_test");
+                configuration.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:31070/db_java_test");
                 configuration.setProperty("hibernate.hbm2ddl.auto", "create-drop");
                 break;
         }
@@ -132,7 +133,7 @@ public class AccountServiceImpl implements AccountService {
         final UserDataSet dataSet = new UserDataSet(userProfile);
         if (dao.createUser(dataSet)) {
             result = dataSet.getId();
-            System.out.println("Пользователь добавлен: {" + String.valueOf(dataSet.getId()) + ", " + String.valueOf(dataSet.getLogin())
+            System.out.println("Пользователь добавлен: {" + String.valueOf(dataSet.getId()) + ", " + String.valueOf(dataSet.getUsername())
                     + ", " + String.valueOf(String.valueOf(dataSet.getPassword())) + ", " + String.valueOf(dataSet.getIsAdmin()) + "}\n");
         } else {
             result = null;
@@ -175,6 +176,7 @@ public class AccountServiceImpl implements AccountService {
             if (profile != null) {
                 removeUser(profile.getId());
             }
+            logoutUser(sessionID);
         }
     }
 
@@ -187,7 +189,7 @@ public class AccountServiceImpl implements AccountService {
     public Long isUserExists(@NotNull String userName, @NotNull String password) {
         final UserProfile profile = getUserByLogin(userName);
         if (profile != null) {
-            return (profile.getPassword() == password) ? profile.getId() : null;
+            return (Objects.equals(profile.getPassword(), password)) ? profile.getId() : null;
         }
         return null;
     }
@@ -224,8 +226,11 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void logoutUser(@NotNull String sessionID) {
-        loggedUsers.remove(sessionID);
+        if (loggedUsers.containsKey(sessionID)) {
+            sessionIDs.remove(loggedUsers.get(sessionID).getId());
+            loggedUsers.remove(sessionID);
+        }
     }
 
-    public static enum CreationStrategy {OPEN_OR_CREATE, CREATE_NEW, CREATE_TEST}
+    public enum CreationStrategy {OPEN_OR_CREATE, CREATE_NEW, CREATE_TEST}
 }

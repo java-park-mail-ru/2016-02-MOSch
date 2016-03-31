@@ -27,9 +27,9 @@ public class Session {
     public Response loginUser(UserProfile user, @Context HttpServletRequest request)
             throws IOException {
         final AccountService accountService = ctx.get(AccountService.class);
-        String auth_token = accountService.loginUser(user.getLogin(), user.getPassword());
-        if (auth_token != null) {
-            UserProfile userProfile = accountService.getUserBySessionID(auth_token);
+        final String authToken = accountService.loginUser(user.getLogin(), user.getPassword());
+        if (authToken != null) {
+            final UserProfile userProfile = accountService.getUserBySessionID(authToken);
             if (userProfile == null) {
                 final String serverError = "{\"status\":\"500\",\"message\":\"Server Error\"}";
                 return Response
@@ -37,14 +37,14 @@ public class Session {
                         .entity(serverError)
                         .build();
             } else {
-                String result = String.format("{\"id\":\"%d\", \"auth_token\":\"%s\"}", userProfile.getId(), auth_token);
+                final String result = String.format("{\"id\":\"%d\", \"auth_token\":\"%s\"}", userProfile.getId(), authToken);
                 return Response
                         .status(Response.Status.OK)
                         .entity(result)
                         .build();
             }
         }
-        String wrong = "{\"message\":\"Wrong login or password\"}";
+        final String wrong = "{\"message\":\"Wrong login or password\"}";
         return Response
                 .status(Response.Status.FORBIDDEN)
                 .entity(wrong)
