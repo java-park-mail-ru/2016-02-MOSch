@@ -37,7 +37,7 @@ public class Session {
     public Response loginUser(UserProfile user, @Context HttpServletRequest request,
                               @HeaderParam("auth_token") String currentToken)
             throws IOException {
-        
+
         final AccountService accountService = ctx.get(AccountService.class);
         final String authToken;
         if (currentToken != null) {
