@@ -16,7 +16,7 @@ import rest.Users;
  */
 public class Main {
 
-    public static final int DEFAULT_PORT = 31072;
+    public static final int DEFAULT_PORT = 8080;
 
     @SuppressWarnings("OverlyBroadThrowsClause")
     public static void main(String[] args) throws Exception {
@@ -30,7 +30,7 @@ public class Main {
             }
         } else {
             System.err.println("Specify port");
-            System.err.println("Uses the default port 31072");
+            System.err.println("Uses the default port 8080");
         }
 
         System.out.append("Starting at port: ").append(String.valueOf(port)).append('\n');
@@ -53,7 +53,7 @@ public class Main {
             }
         });
 
-        final ServletContextHandler contextHandler = new ServletContextHandler(server, "/api/", ServletContextHandler.SESSIONS);
+        final ServletContextHandler contextHandler = new ServletContextHandler(server, "/api", ServletContextHandler.SESSIONS);
         final ServletHolder servletHolder = new ServletHolder(new ServletContainer(resourceConfig));
         final HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[]{contextHandler});

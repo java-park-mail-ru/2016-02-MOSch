@@ -42,7 +42,7 @@ public class AccountServiceImpl implements AccountService {
                 configuration.setProperty("hibernate.hbm2ddl.auto", "create");
                 break;
             case CREATE_TEST:
-                configuration.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:31070/db_java_test");
+                configuration.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/db_java_test");
                 configuration.setProperty("hibernate.hbm2ddl.auto", "create-drop");
                 break;
         }
