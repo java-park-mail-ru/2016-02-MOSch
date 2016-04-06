@@ -1,9 +1,6 @@
 package main;
 
-import db.datasets.AuthDataSet;
-import db.datasets.ScoreDataSet;
-import db.datasets.UserDataSet;
-import db.datasets.UserDataSetDAO;
+import db.datasets.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -19,6 +16,8 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import supportClasses.*;
+
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
@@ -32,7 +31,6 @@ public class AccountServiceImpl implements AccountService {
         final Configuration configuration = new Configuration();
         configuration.addAnnotatedClass(UserDataSet.class);
         configuration.addAnnotatedClass(AuthDataSet.class);
-        configuration.addAnnotatedClass(ScoreDataSet.class);
         configuration.configure("hibernate.cfg.xml");
         switch (strategy) {
             case OPEN_OR_CREATE:
@@ -76,6 +74,16 @@ public class AccountServiceImpl implements AccountService {
         final List<UserDataSet> userDS = dao.readAll();
         session.close();
         return userDS.stream().map(UserProfile::new).collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    @Override
+    public List<LoginScoreSet> getTopUsers(){
+        final Session session = sessionFactory.openSession();
+        final UserDataSetDAO dao = new UserDataSetDAO(session);
+        final List<LoginScoreSet> DS = dao.readTop();
+        session.close();
+        return DS;
+
     }
 
     @Override
@@ -130,11 +138,10 @@ public class AccountServiceImpl implements AccountService {
         }
         final Long result;
         final UserDataSetDAO dao = new UserDataSetDAO(session);
-        final UserDataSet dataSet = new UserDataSet(userProfile);
-        if (dao.createUser(dataSet)) {
-            result = dataSet.getId();
-            System.out.println("Пользователь добавлен: {" + String.valueOf(dataSet.getId()) + ", " + String.valueOf(dataSet.getUsername())
-                    + ", " + String.valueOf(String.valueOf(dataSet.getPassword())) + ", " + String.valueOf(dataSet.getIsAdmin()) + "}\n");
+        final UserDataSet userDS = new UserDataSet(userProfile);
+
+        if (dao.createUser(userDS)) {
+            result = userDS.getId();
         } else {
             result = null;
             System.out.println("Пользователь НЕ добавлен");

@@ -29,9 +29,8 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToOne
-    @PrimaryKeyJoinColumn(name = "id")
-    private ScoreDataSet scores;
+    @Column(name = "scores", nullable = false)
+    private Long scores;
 
     @OneToOne
     @PrimaryKeyJoinColumn(name = "id")
@@ -52,6 +51,7 @@ public class UserDataSet implements Serializable { // Serializable Important to 
         this.username = username;
         this.password = password;
         this.isAdmin = false;
+        this.scores = 0L;
     }
 
     public UserDataSet(@NotNull UserProfile user) {
@@ -59,6 +59,7 @@ public class UserDataSet implements Serializable { // Serializable Important to 
         this.username = user.getLogin();
         this.isAdmin = user.getIsAdmin();
         this.password = user.getPassword();
+        this.scores = user.getScores();
     }
 
     @NotNull
@@ -96,6 +97,11 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     public void setIsAdmin(@NotNull Boolean isAdmin) {
         this.isAdmin = isAdmin;
     }
+
+
+    public void setScores(@NotNull Long scores) { this.scores = scores; }
+    @NotNull
+    public Long getScores(){return this.scores;}
 
     @Override
     public String toString() {

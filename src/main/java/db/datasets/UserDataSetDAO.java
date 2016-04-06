@@ -2,10 +2,13 @@ package db.datasets;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import supportClasses.LoginScoreSet;
 
 import java.util.List;
 
@@ -51,6 +54,19 @@ public class UserDataSetDAO {
         return (List<UserDataSet>) criteria.list();
     }
 
+
+    public List<LoginScoreSet> readTop(){
+        final Criteria criteria = session.createCriteria(UserDataSet.class);
+        ProjectionList p1=Projections.projectionList();
+        p1.add(Projections.property("id"));
+        p1.add(Projections.property("username"));
+        p1.add(Projections.property("scores"));
+
+        criteria.setProjection(p1);
+        List<LoginScoreSet> result = criteria.list();
+        return result;
+
+    }
     // true
     public long countUsers() {
         return (long) session.createCriteria(UserDataSet.class).setProjection(Projections.rowCount()).uniqueResult();

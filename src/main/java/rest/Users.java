@@ -9,9 +9,12 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.GenericEntity;
+import jersey.repackaged.com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Objects;
 import rest.UserProfile;
+import supportClasses.LoginScoreSet;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
@@ -28,11 +31,12 @@ public class Users {
     public Response getAllUsers(@Context HttpServletRequest request,
                                 @HeaderParam("auth_token") String currentToken) {
         final AccountService accountService = ctx.get(AccountService.class);
-        final List<UserProfile> allUsers = accountService.getAllUsers();
+        final List<LoginScoreSet> allUsers = accountService.getTopUsers();
         final String payload = String.format("{\"count\":\"%d\"}", allUsers.size());
+
         return Response
                 .status(Response.Status.OK)
-                .entity(payload)
+                .entity(allUsers.toArray(new LoginScoreSet[allUsers.size()]))
                 .build();
     }
 

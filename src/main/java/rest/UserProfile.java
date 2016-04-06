@@ -18,6 +18,8 @@ public class UserProfile {
     private Boolean isAdmin;
     @NotNull
     private RoleEnum role;
+    @NotNull
+    private Long scores;
 
     public UserProfile() {
         login = "";
@@ -25,6 +27,7 @@ public class UserProfile {
         id = 0L;
         role = RoleEnum.USER;
         isAdmin = false;
+        scores = 0L;
     }
 
     public UserProfile(@NotNull UserDataSet dataSet) {
@@ -33,6 +36,7 @@ public class UserProfile {
         id = dataSet.getId();
         role = dataSet.getIsAdmin() ? RoleEnum.ADMIN : RoleEnum.USER;
         isAdmin = dataSet.getIsAdmin();
+        scores = dataSet.getScores();
     }
 
     public UserProfile(@NotNull String login, @NotNull String password, @NotNull Long id) {
@@ -49,6 +53,7 @@ public class UserProfile {
         this.id = 0L;
         this.role = RoleEnum.USER;
         this.isAdmin = false;
+        this.scores = 0L;
     }
 
     public UserProfile(@NotNull String login, @NotNull String password, @NotNull Long id, @NotNull RoleEnum role) {
@@ -100,10 +105,13 @@ public class UserProfile {
     public Boolean getIsAdmin() {
         return isAdmin;
     }
-
     public void setIsAdmin(@NotNull Boolean admin) {
         this.isAdmin = admin;
     }
+
+    public void setScores(@NotNull Long scores) {this.scores = scores;}
+    @NotNull
+    public Long getScores(){return this.scores; }
 
     public enum RoleEnum {ADMIN, USER}
 }
