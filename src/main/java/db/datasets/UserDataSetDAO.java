@@ -29,8 +29,10 @@ public class UserDataSetDAO {
     public void updateUser(@NotNull Long userID, @NotNull UserDataSet dataSet) {
         final UserDataSet oldDataSet = readUserByID(userID);
         if (oldDataSet != null) {
-            oldDataSet.setRate(dataSet.getRate());
-            oldDataSet.setLevel(dataSet.getLevel());
+            if (oldDataSet.getRate() < dataSet.getRate()) {
+                oldDataSet.setRate(dataSet.getRate());
+                oldDataSet.setLevel(dataSet.getLevel());
+            }
         }
         session.flush();
     }
