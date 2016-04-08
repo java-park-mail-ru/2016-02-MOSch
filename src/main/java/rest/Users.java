@@ -1,5 +1,8 @@
 package rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import main.AccountService;
 
 import javax.inject.Inject;
@@ -15,7 +18,7 @@ import java.util.List;
 import java.util.Objects;
 import rest.UserProfile;
 import supportClasses.LoginScoreSet;
-
+import java.lang.reflect.Type;
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
@@ -33,10 +36,13 @@ public class Users {
         final AccountService accountService = ctx.get(AccountService.class);
         final List<LoginScoreSet> allUsers = accountService.getTopUsers();
         final String payload = String.format("{\"count\":\"%d\"}", allUsers.size());
-
+        final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        GenericEntity<List<LoginScoreSet>> entity =
+                new GenericEntity<List<LoginScoreSet>>(Lists.newArrayList(allUsers)) {};
         return Response
-                .status(Response.Status.OK)
-                .entity(allUsers.toArray(new LoginScoreSet[allUsers.size()]))
+                .ok(entity)
+                //.status(Response.Status.OK)
+                //.entity(allUsers.toArray(new LoginScoreSet[allUsers.size()]))
                 .build();
     }
 

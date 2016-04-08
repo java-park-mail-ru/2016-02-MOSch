@@ -112,5 +112,19 @@
         <artifactId>jersey-test-framework-provider-jetty</artifactId>
         <version>2.22.2</version>
         </dependency>
+
+        <!--  Gson: Java to Json conversion -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.2</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.cedarsoftware</groupId>
+            <artifactId>json-io</artifactId>
+            <version>4.4.0</version>
+        </dependency>
     </dependencies>
 </project>

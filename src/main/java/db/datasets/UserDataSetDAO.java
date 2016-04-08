@@ -86,6 +86,11 @@ public class UserDataSetDAO {
         return (UserDataSet) criteria.add(Restrictions.eq("username", login)).uniqueResult();
     }
 
+    public UserDataSet getByToken(String token) {
+        final Criteria criteria = session.createCriteria(UserDataSet.class);
+        return (UserDataSet) criteria.add(Restrictions.eq("authToken", token)).uniqueResult();
+    }
+
 //    @Nullable
 //    public UserDataSet getUserBySession(String sessionID) {
 //        // TODO

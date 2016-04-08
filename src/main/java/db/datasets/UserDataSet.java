@@ -5,9 +5,21 @@ import rest.UserProfile;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Blob;
+import java.util.Date;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
+ * Users {
+ id: string
+ login: string
+ password: string
+ level: int
+ rate: int
+ auth_token: string
+ expires: date
+ info: text
+ }
  */
 @SuppressWarnings("unused")
 @Entity
@@ -32,9 +44,18 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     @Column(name = "scores", nullable = false)
     private Long scores;
 
-    @OneToOne
-    @PrimaryKeyJoinColumn(name = "id")
-    private AuthDataSet auth;
+    @Column(name = "level", nullable = false)
+    private Long level;
+
+    @Column(name = "auth_token", unique = true, nullable = false)
+    private String authToken;
+
+    @SuppressWarnings("FieldCanBeLocal")
+    @Column(name = "date", columnDefinition = "DATETIME", nullable = false)
+    private Date date;
+
+    @Column(name = "info", columnDefinition="TEXT", nullable = false)
+    private String info;
 
     //Important to Hibernate!
     public UserDataSet() {
@@ -52,6 +73,10 @@ public class UserDataSet implements Serializable { // Serializable Important to 
         this.password = password;
         this.isAdmin = false;
         this.scores = 0L;
+        this.level = 0L;
+        this.authToken="";
+        this.date = new Date();
+        this.info = "";
     }
 
     public UserDataSet(@NotNull UserProfile user) {
@@ -66,7 +91,6 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     public Long getId() {
         return id;
     }
-
     public void setId(@NotNull Long id) {
         this.id = id;
     }
@@ -75,7 +99,6 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     public String getUsername() {
         return username;
     }
-
     public void setUsername(@NotNull String username) {
         this.username = username;
     }
@@ -84,7 +107,6 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     public String getPassword() {
         return password;
     }
-
     public void setPassword(@NotNull String password) {
         this.password = password;
     }
@@ -93,15 +115,27 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     public Boolean getIsAdmin() {
         return isAdmin;
     }
-
     public void setIsAdmin(@NotNull Boolean isAdmin) {
         this.isAdmin = isAdmin;
     }
 
-
-    public void setScores(@NotNull Long scores) { this.scores = scores; }
     @NotNull
     public Long getScores(){return this.scores;}
+    public void setScores(@NotNull Long scores) { this.scores = scores; }
+
+    @NotNull
+    public Long getLevel(){return this.level;}
+    public void setLevel(@NotNull Long level) { this.level = level; }
+
+    @NotNull
+    public String getAuthToken() {
+        return this.authToken;
+    }
+    public void setAuthToken(@NotNull String authToken) {
+        this.authToken = authToken;
+    }
+
+
 
     @Override
     public String toString() {

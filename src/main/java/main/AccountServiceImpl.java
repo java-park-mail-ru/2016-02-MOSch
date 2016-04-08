@@ -1,6 +1,7 @@
 package main;
 
 import db.datasets.*;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -30,7 +31,6 @@ public class AccountServiceImpl implements AccountService {
     public AccountServiceImpl(CreationStrategy strategy) {
         final Configuration configuration = new Configuration();
         configuration.addAnnotatedClass(UserDataSet.class);
-        configuration.addAnnotatedClass(AuthDataSet.class);
         configuration.configure("hibernate.cfg.xml");
         switch (strategy) {
             case OPEN_OR_CREATE:

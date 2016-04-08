@@ -1,5 +1,6 @@
-package db.datasets;
+package oldDB;
 
+import db.datasets.UserDataSet;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import java.util.Date;
 @SuppressWarnings("unused")
 @Entity
 @Table(name = "auths")
-public class AuthDataSet implements Serializable { // Serializable Important to Hibernate!
+public class AuthDataSet_old implements Serializable { // Serializable Important to Hibernate!
     private static final long serialVersionUID = -8706689714326132798L;
 
     @Id
@@ -30,10 +31,10 @@ public class AuthDataSet implements Serializable { // Serializable Important to 
     @PrimaryKeyJoinColumn(name = "id")
     private UserDataSet user;
 
-    public AuthDataSet() {
+    public AuthDataSet_old() {
     }
 
-    public AuthDataSet(UserDataSet userDS) {
+    public AuthDataSet_old(UserDataSet userDS) {
         this.id = userDS.getId();
         this.authToken = "";
         this.date = new Date();
