@@ -125,7 +125,7 @@ public class UserProfile {
         this.isAdmin = admin;
     }
 
-    public void setRate(@NotNull Long scores) {this.rate = rate;}
+    public void setRate(@NotNull Long rate) {this.rate = rate;}
     @NotNull
     public Long getRate(){return this.rate; }
 
