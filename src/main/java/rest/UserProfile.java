@@ -54,6 +54,14 @@ public class UserProfile {
         this.isAdmin = false;
     }
 
+    public UserProfile(@NotNull Long rate, @NotNull Long level){
+        this.login = "";
+        this.password = "";
+        this.id = -1L;
+        this.rate = rate;
+        this.level = level;
+    }
+
     public UserProfile(@NotNull String login, @NotNull String password) {
         this.login = login;
         this.password = password;
