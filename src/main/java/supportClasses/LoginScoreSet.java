@@ -1,5 +1,6 @@
 package supportClasses;
 
+import db.datasets.UserDataSet;
 import org.jetbrains.annotations.NotNull;
 import org.mockito.internal.matchers.Not;
 
@@ -34,6 +35,13 @@ public class LoginScoreSet {
         this.username = username;
         this.rate = rate;
         this.level = level;
+    }
+
+    public LoginScoreSet(@NotNull UserDataSet uDS){
+        this.id = uDS.getId();
+        this.username = uDS.getUsername();
+        this.rate = uDS.getRate();
+        this.level = uDS.getLevel();
     }
 
     @Override

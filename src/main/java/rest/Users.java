@@ -17,6 +17,7 @@ import javax.ws.rs.core.GenericEntity;
 import jersey.repackaged.com.google.common.collect.Lists;
 
 import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import rest.UserProfile;
@@ -42,8 +43,8 @@ public class Users {
         LoginScoreSet test = new LoginScoreSet(1L, "test", 0L,0L);
         final String payload = String.format("{\"count\":\"%d\"}", allUsers.size());
         final Gson gson = new Gson();
+        String entity = gson.toJson(allUsers);
 
-        String entity = gson.toJson(allUsers.get(0));
         return Response
                 //.ok(entity)
                 .status(Response.Status.OK)

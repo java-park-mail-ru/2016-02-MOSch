@@ -124,8 +124,8 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     }
 
     @NotNull
-    public Long getScores(){return this.rate;}
-    public void setScores(@NotNull Long scores) { this.rate = scores; }
+    public Long getRate(){return this.rate;}
+    public void setRate(@NotNull Long scores) { this.rate = scores; }
 
     @NotNull
     public Long getLevel(){return this.level;}

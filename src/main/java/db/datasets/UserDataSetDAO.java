@@ -1,15 +1,18 @@
 package db.datasets;
 
+import com.sun.corba.se.spi.servicecontext.UEInfoServiceContext;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Projection;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.annotations.common.util.impl.Log;
+import org.hibernate.criterion.*;
+import org.hibernate.transform.ResultTransformer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import supportClasses.LoginScoreSet;
 
+import javax.jws.soap.SOAPBinding;
+import java.awt.image.AreaAveragingScaleFilter;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,9 +29,8 @@ public class UserDataSetDAO {
     public void updateUser(@NotNull Long userID, @NotNull UserDataSet dataSet) {
         final UserDataSet oldDataSet = readUserByID(userID);
         if (oldDataSet != null) {
-            oldDataSet.setUsername(dataSet.getUsername());
-            oldDataSet.setPassword(dataSet.getPassword());
-            oldDataSet.setIsAdmin(dataSet.getIsAdmin());
+            oldDataSet.setRate(dataSet.getRate());
+            oldDataSet.setLevel(dataSet.getLevel());
         }
         session.flush();
     }
@@ -50,21 +52,29 @@ public class UserDataSetDAO {
     // true
     public List<UserDataSet> readAll() {
         final Criteria criteria = session.createCriteria(UserDataSet.class);
-        //noinspection unchecked
+
         return (List<UserDataSet>) criteria.list();
     }
 
 
     public List<LoginScoreSet> readTop(){
         final Criteria criteria = session.createCriteria(UserDataSet.class);
-        ProjectionList p1=Projections.projectionList();
-        p1.add(Projections.property("id"), "name");
-        p1.add(Projections.property("username"), "username");
-        p1.add(Projections.property("rate"), "rate");
-        p1.add(Projections.property("level"), "level");
+        //ProjectionList p1=Projections.projectionList();
+        //p1.add(Projections.property("id"), "name");
+        //p1.add(Projections.property("username"), "username");
+        //p1.add(Projections.property("rate"), "rate");
+        //p1.add(Projections.property("level"), "level");
 
-        criteria.setProjection(p1);
-        List<LoginScoreSet> result = criteria.list();
+        //criteria.setProjection(p1);
+
+        criteria.addOrder(Order.desc("rate"));
+        List dsList= criteria.list();
+
+        ArrayList<LoginScoreSet> result = new ArrayList<LoginScoreSet>(dsList.size());
+
+        for (Object uDS:dsList) {
+            result.add(new LoginScoreSet((UserDataSet)uDS));
+        }
         return result;
 
     }

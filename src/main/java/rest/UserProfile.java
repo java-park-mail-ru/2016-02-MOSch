@@ -42,7 +42,7 @@ public class UserProfile {
         id = dataSet.getId();
         role = dataSet.getIsAdmin() ? RoleEnum.ADMIN : RoleEnum.USER;
         isAdmin = dataSet.getIsAdmin();
-        rate = dataSet.getScores();
+        rate = dataSet.getRate();
         level = dataSet.getLevel();
     }
 
