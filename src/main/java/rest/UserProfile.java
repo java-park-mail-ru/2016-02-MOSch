@@ -18,8 +18,13 @@ public class UserProfile {
     private Boolean isAdmin;
     @NotNull
     private RoleEnum role;
+
     @NotNull
-    private Long scores;
+    private Long rate;
+
+    @NotNull
+    private Long level;
+
 
     public UserProfile() {
         login = "";
@@ -27,7 +32,8 @@ public class UserProfile {
         id = 0L;
         role = RoleEnum.USER;
         isAdmin = false;
-        scores = 0L;
+        rate = 0L;
+        level = 0L;
     }
 
     public UserProfile(@NotNull UserDataSet dataSet) {
@@ -36,7 +42,8 @@ public class UserProfile {
         id = dataSet.getId();
         role = dataSet.getIsAdmin() ? RoleEnum.ADMIN : RoleEnum.USER;
         isAdmin = dataSet.getIsAdmin();
-        scores = dataSet.getScores();
+        rate = dataSet.getScores();
+        level = dataSet.getLevel();
     }
 
     public UserProfile(@NotNull String login, @NotNull String password, @NotNull Long id) {
@@ -53,7 +60,8 @@ public class UserProfile {
         this.id = 0L;
         this.role = RoleEnum.USER;
         this.isAdmin = false;
-        this.scores = 0L;
+        this.rate = 0L;
+        this.level = 0L;
     }
 
     public UserProfile(@NotNull String login, @NotNull String password, @NotNull Long id, @NotNull RoleEnum role) {
@@ -109,9 +117,14 @@ public class UserProfile {
         this.isAdmin = admin;
     }
 
-    public void setScores(@NotNull Long scores) {this.scores = scores;}
+    public void setRate(@NotNull Long scores) {this.rate = rate;}
     @NotNull
-    public Long getScores(){return this.scores; }
+    public Long getRate(){return this.rate; }
+
+    public void setLevel(@NotNull Long level) { this.level = level;}
+
+    @NotNull
+    public Long getLevel(){return this.level;}
 
     public enum RoleEnum {ADMIN, USER}
 }

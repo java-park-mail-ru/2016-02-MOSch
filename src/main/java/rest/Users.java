@@ -3,6 +3,7 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.mysql.jdbc.log.Log;
 import main.AccountService;
 
 import javax.inject.Inject;
@@ -14,6 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.GenericEntity;
 import jersey.repackaged.com.google.common.collect.Lists;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import rest.UserProfile;
@@ -35,14 +38,16 @@ public class Users {
                                 @HeaderParam("auth_token") String currentToken) {
         final AccountService accountService = ctx.get(AccountService.class);
         final List<LoginScoreSet> allUsers = accountService.getTopUsers();
+
+        LoginScoreSet test = new LoginScoreSet(1L, "test", 0L,0L);
         final String payload = String.format("{\"count\":\"%d\"}", allUsers.size());
-        final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        GenericEntity<List<LoginScoreSet>> entity =
-                new GenericEntity<List<LoginScoreSet>>(Lists.newArrayList(allUsers)) {};
+        final Gson gson = new Gson();
+
+        String entity = gson.toJson(allUsers.get(0));
         return Response
-                .ok(entity)
-                //.status(Response.Status.OK)
-                //.entity(allUsers.toArray(new LoginScoreSet[allUsers.size()]))
+                //.ok(entity)
+                .status(Response.Status.OK)
+                .entity(entity)
                 .build();
     }
 

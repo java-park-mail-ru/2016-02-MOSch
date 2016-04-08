@@ -58,9 +58,10 @@ public class UserDataSetDAO {
     public List<LoginScoreSet> readTop(){
         final Criteria criteria = session.createCriteria(UserDataSet.class);
         ProjectionList p1=Projections.projectionList();
-        p1.add(Projections.property("id"));
-        p1.add(Projections.property("username"));
-        p1.add(Projections.property("scores"));
+        p1.add(Projections.property("id"), "name");
+        p1.add(Projections.property("username"), "username");
+        p1.add(Projections.property("rate"), "rate");
+        p1.add(Projections.property("level"), "level");
 
         criteria.setProjection(p1);
         List<LoginScoreSet> result = criteria.list();

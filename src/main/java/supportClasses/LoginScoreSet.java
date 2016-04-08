@@ -16,18 +16,29 @@ public class LoginScoreSet {
     private String username;
 
     @NotNull
-    private Long scores;
+    private Long rate;
+
+    @NotNull
+    private Long level;
 
 
     public LoginScoreSet(){
         id = -1L;
         username = "";
-        scores = 0L;
+        rate = 0L;
+        level = 0L;
     }
 
-    public LoginScoreSet(@NotNull Long id, @NotNull String username, @NotNull Long scores){
+    public LoginScoreSet(@NotNull Long id, @NotNull String username, @NotNull Long rate, @NotNull Long level){
         this.id = id;
         this.username = username;
-        this.scores = scores;
+        this.rate = rate;
+        this.level = level;
+    }
+
+    @Override
+    public String toString() {
+        return "id=" + id + ", username=" + username + ", rate="
+                + rate + ", level=" + level;
     }
 }

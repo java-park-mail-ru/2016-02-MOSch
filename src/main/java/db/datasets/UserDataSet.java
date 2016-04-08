@@ -41,13 +41,13 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "scores", nullable = false)
-    private Long scores;
+    @Column(name = "rate", nullable = false)
+    private Long rate;
 
     @Column(name = "level", nullable = false)
     private Long level;
 
-    @Column(name = "auth_token", unique = true, nullable = false)
+    @Column(name = "auth_token", unique = false, nullable = false)
     private String authToken;
 
     @SuppressWarnings("FieldCanBeLocal")
@@ -72,9 +72,9 @@ public class UserDataSet implements Serializable { // Serializable Important to 
         this.username = username;
         this.password = password;
         this.isAdmin = false;
-        this.scores = 0L;
+        this.rate = 0L;
         this.level = 0L;
-        this.authToken="";
+        this.authToken = "";
         this.date = new Date();
         this.info = "";
     }
@@ -84,7 +84,11 @@ public class UserDataSet implements Serializable { // Serializable Important to 
         this.username = user.getLogin();
         this.isAdmin = user.getIsAdmin();
         this.password = user.getPassword();
-        this.scores = user.getScores();
+        this.rate = user.getRate();
+        this.level = user.getLevel();
+        this.authToken = "";
+        this.date = new Date();
+        this.info = "";
     }
 
     @NotNull
@@ -120,8 +124,8 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     }
 
     @NotNull
-    public Long getScores(){return this.scores;}
-    public void setScores(@NotNull Long scores) { this.scores = scores; }
+    public Long getScores(){return this.rate;}
+    public void setScores(@NotNull Long scores) { this.rate = scores; }
 
     @NotNull
     public Long getLevel(){return this.level;}
