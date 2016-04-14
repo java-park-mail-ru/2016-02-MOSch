@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "ClassWithTooManyConstructors"})
 public class UserProfile {
     @NotNull
     private String login = "";
@@ -15,15 +15,15 @@ public class UserProfile {
     @NotNull
     private Long id;
     @NotNull
-    private Boolean isAdmin;
+    private Boolean isAdmin = false;
     @NotNull
-    private RoleEnum role;
+    private RoleEnum role = RoleEnum.USER;
 
     @NotNull
-    private Long rate;
+    private Long rate = 0L;
 
     @NotNull
-    private Long level;
+    private Long level = 0L;
 
 
     public UserProfile() {

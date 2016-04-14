@@ -41,7 +41,7 @@ public class Users {
         final List<LoginScoreSet> allUsers = accountService.getTopUsers();
 
         final Gson gson = new Gson();
-        String entity = gson.toJson(allUsers);
+        final String entity = gson.toJson(allUsers);
 
         return Response
                 .status(Response.Status.OK)

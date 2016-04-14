@@ -55,6 +55,7 @@ public class UserDataSetDAO {
     public List<UserDataSet> readAll() {
         final Criteria criteria = session.createCriteria(UserDataSet.class);
 
+        //noinspection unchecked
         return (List<UserDataSet>) criteria.list();
     }
 
@@ -62,9 +63,9 @@ public class UserDataSetDAO {
     public List<LoginScoreSet> readTop(){
         final Criteria criteria = session.createCriteria(UserDataSet.class);
         criteria.addOrder(Order.desc("rate"));
-        List dsList= criteria.list();
+        final List dsList= criteria.list();
 
-        ArrayList<LoginScoreSet> result = new ArrayList<>(dsList.size());
+        final ArrayList<LoginScoreSet> result = new ArrayList<>(dsList.size());
 
         for (Object uDS:dsList) {
             result.add(new LoginScoreSet((UserDataSet)uDS));

@@ -14,7 +14,7 @@ import java.util.List;
 public interface AccountService {
 
     List<UserProfile> getAllUsers();
-    public List<LoginScoreSet> getTopUsers();
+    List<LoginScoreSet> getTopUsers();
 
     long countUsers();
 

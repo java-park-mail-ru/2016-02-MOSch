@@ -11,16 +11,16 @@ import java.util.List;
  */
 public class LoginScoreSet {
     @NotNull
-    private Long id;
+    private final Long id;
 
     @NotNull
-    private String username;
+    private final String username;
 
     @NotNull
-    private Long rate;
+    private final Long rate;
 
     @NotNull
-    private Long level;
+    private final Long level;
 
 
     public LoginScoreSet(){
