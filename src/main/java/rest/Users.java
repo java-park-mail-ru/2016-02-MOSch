@@ -40,13 +40,10 @@ public class Users {
         final AccountService accountService = ctx.get(AccountService.class);
         final List<LoginScoreSet> allUsers = accountService.getTopUsers();
 
-        LoginScoreSet test = new LoginScoreSet(1L, "test", 0L,0L);
-        final String payload = String.format("{\"count\":\"%d\"}", allUsers.size());
         final Gson gson = new Gson();
         String entity = gson.toJson(allUsers);
 
         return Response
-                //.ok(entity)
                 .status(Response.Status.OK)
                 .entity(entity)
                 .build();

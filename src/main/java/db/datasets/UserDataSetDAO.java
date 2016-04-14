@@ -61,18 +61,10 @@ public class UserDataSetDAO {
 
     public List<LoginScoreSet> readTop(){
         final Criteria criteria = session.createCriteria(UserDataSet.class);
-        //ProjectionList p1=Projections.projectionList();
-        //p1.add(Projections.property("id"), "name");
-        //p1.add(Projections.property("username"), "username");
-        //p1.add(Projections.property("rate"), "rate");
-        //p1.add(Projections.property("level"), "level");
-
-        //criteria.setProjection(p1);
-
         criteria.addOrder(Order.desc("rate"));
         List dsList= criteria.list();
 
-        ArrayList<LoginScoreSet> result = new ArrayList<LoginScoreSet>(dsList.size());
+        ArrayList<LoginScoreSet> result = new ArrayList<>(dsList.size());
 
         for (Object uDS:dsList) {
             result.add(new LoginScoreSet((UserDataSet)uDS));
