@@ -1,9 +1,6 @@
 package rest;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.mysql.jdbc.log.Log;
 import main.AccountService;
 
 import javax.inject.Inject;
@@ -13,18 +10,12 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.GenericEntity;
-import jersey.repackaged.com.google.common.collect.Lists;
-
-import java.util.Collection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import rest.UserProfile;
-import supportClasses.LoginScoreSet;
-import java.lang.reflect.Type;
+import supportclasses.LoginScoreSet;
+
 /**
- * MOSch-team test server for "Kill The Birds" game
+ * MOSch-team test server for "Build The Tower" game
  */
 @SuppressWarnings("unused")
 @Singleton

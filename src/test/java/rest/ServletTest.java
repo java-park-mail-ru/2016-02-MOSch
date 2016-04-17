@@ -1,20 +1,8 @@
 package rest;
 
-import main.AccountService;
-import main.AccountServiceImpl;
 
 import org.glassfish.jersey.test.JerseyTest;
 
-import main.Context;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.glassfish.jersey.server.ResourceConfig;
-
-import org.junit.Test;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Application;
-
-import static org.mockito.Mockito.mock;
 /**
  * Created by KOPTE3 on 30.03.2016.
  */

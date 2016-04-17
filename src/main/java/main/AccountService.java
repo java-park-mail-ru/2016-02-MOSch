@@ -3,7 +3,7 @@ package main;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rest.UserProfile;
-import supportClasses.LoginScoreSet;
+import supportclasses.LoginScoreSet;
 
 import java.util.List;
 

@@ -17,12 +17,12 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import supportClasses.*;
+import supportclasses.*;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
-@SuppressWarnings({"unused"})
+
 public class AccountServiceImpl implements AccountService {
     final SessionFactory sessionFactory;
     private final Map<String, UserProfile> loggedUsers = new ConcurrentHashMap<>();
@@ -80,9 +80,9 @@ public class AccountServiceImpl implements AccountService {
     public List<LoginScoreSet> getTopUsers(){
         final Session session = sessionFactory.openSession();
         final UserDataSetDAO dao = new UserDataSetDAO(session);
-        final List<LoginScoreSet> DS = dao.readTop();
+        final List<LoginScoreSet> ds = dao.readTop();
         session.close();
-        return DS;
+        return ds;
 
     }
 

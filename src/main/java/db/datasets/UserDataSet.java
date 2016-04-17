@@ -5,7 +5,6 @@ import rest.UserProfile;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Date;
 
 /**
@@ -50,7 +49,6 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     @Column(name = "auth_token", unique = false, nullable = false)
     private String authToken;
 
-    @SuppressWarnings("FieldCanBeLocal")
     @Column(name = "date", columnDefinition = "DATETIME", nullable = false)
     private Date date;
 

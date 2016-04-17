@@ -1,17 +1,11 @@
 package db.datasets;
 
-import com.sun.corba.se.spi.servicecontext.UEInfoServiceContext;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.annotations.common.util.impl.Log;
 import org.hibernate.criterion.*;
-import org.hibernate.transform.ResultTransformer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import supportClasses.LoginScoreSet;
-
-import javax.jws.soap.SOAPBinding;
-import java.awt.image.AreaAveragingScaleFilter;
+import supportclasses.LoginScoreSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,16 +86,9 @@ public class UserDataSetDAO {
         return (UserDataSet) criteria.add(Restrictions.eq("username", login)).uniqueResult();
     }
 
-    public UserDataSet getByToken(String token) {
-        final Criteria criteria = session.createCriteria(UserDataSet.class);
-        return (UserDataSet) criteria.add(Restrictions.eq("authToken", token)).uniqueResult();
-    }
 
 //    @Nullable
 //    public UserDataSet getUserBySession(String sessionID) {
-//        // TODO
-//        Criteria criteria = session.createCriteria(UserDataSet.class);
-//        return (UserDataSet) criteria.add(Restrictions.eq("email", email)).uniqueResult();
-//        return null;
+//        TODO
 //    }
 }
