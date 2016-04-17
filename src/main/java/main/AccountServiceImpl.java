@@ -193,7 +193,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Long isUserExists(@NotNull String userName, @NotNull String password) {
+    public Long getUserID(@NotNull String userName, @NotNull String password) {
         final UserProfile profile = getUserByLogin(userName);
         if (profile != null) {
             return (Objects.equals(profile.getPassword(), password)) ? profile.getId() : null;
@@ -203,7 +203,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public String loginUser(@NotNull String userName, @NotNull String password) {
-        final Long userID = isUserExists(userName, password);
+        final Long userID = getUserID(userName, password);
         if (userID != null) {
             if (sessionIDs.containsKey(userID)) {
                 return sessionIDs.get(userID);

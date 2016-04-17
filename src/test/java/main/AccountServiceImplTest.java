@@ -134,9 +134,9 @@ public class AccountServiceImplTest {
         accountService.addUser(user4);
         accountService.addUser(user5);
 
-        assertNotNull(accountService.isUserExists(user2.getLogin(), user2.getPassword()));
-        assertNull(accountService.isUserExists(user2.getLogin(), "wrong"));
-        assertNull(accountService.isUserExists("wrong", "wrong"));
+        assertNotNull(accountService.getUserID(user2.getLogin(), user2.getPassword()));
+        assertNull(accountService.getUserID(user2.getLogin(), "wrong"));
+        assertNull(accountService.getUserID("wrong", "wrong"));
     }
 
     @Test

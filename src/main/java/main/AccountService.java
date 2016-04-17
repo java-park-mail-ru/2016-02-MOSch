@@ -41,7 +41,7 @@ public interface AccountService {
     boolean isLoggedIn(@NotNull String sessionID);
 
     @Nullable
-    Long isUserExists(@NotNull String userName, @NotNull String password);
+    Long getUserID(@NotNull String userName, @NotNull String password);
 
     @Nullable
     String loginUser(@NotNull String userName, @NotNull String password);
