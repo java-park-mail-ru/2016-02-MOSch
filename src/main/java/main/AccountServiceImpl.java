@@ -130,6 +130,7 @@ public class AccountServiceImpl implements AccountService {
             final UserProfile profile = getUserBySessionID(sessionID);
             if (profile != null) {
                 updateUser(profile.getId(), user);
+                loggedUsers.put(sessionID, user);
             }
         }
     }
