@@ -9,12 +9,10 @@ import java.util.concurrent.atomic.AtomicLong;
  * Created by Olerdrive on 18.04.16.
  */
 public final class MD5Hash {
-    private static String md5String;
     private static AtomicLong counter = new AtomicLong(0);
 
     private MD5Hash(){
         counter = new AtomicLong(0);
-
     }
 
     @SuppressWarnings("MagicNumber")
@@ -38,15 +36,10 @@ public final class MD5Hash {
         }
     }
 
-    private static void setMD5(String hash){
-        md5String = hash;
-    }
 
     @NotNull
     public static String getHashString(String input){
-        String hash = generateMD5(input);
-        setMD5(hash);
-        return md5String;
+        return generateMD5(input);
     }
 
 

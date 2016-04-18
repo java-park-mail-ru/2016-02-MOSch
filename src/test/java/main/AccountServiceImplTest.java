@@ -4,8 +4,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import rest.UserProfile;
+import supportclasses.MD5Hash;
 
 import java.util.List;
+
 
 import static org.junit.Assert.*;
 
@@ -322,16 +324,16 @@ public class AccountServiceImplTest {
 
     @Test
     public void testGetMD5() throws Exception {
-        final int len1 = AccountServiceImpl.getMD5("").length();
+        final int len1 = MD5Hash.getHashString("").length();
         assertEquals(32, len1);
-        final int len2 = AccountServiceImpl.getMD5("mystring").length();
+        final int len2 = MD5Hash.getHashString("mystring").length();
         assertEquals(32, len2);
     }
 
     @Test(expected = NullPointerException.class)
     public void testGetMD5ofNull() throws Exception {
         //noinspection ConstantConditions
-        AccountServiceImpl.getMD5(null);
+        MD5Hash.getHashString(null);
     }
 
     @After

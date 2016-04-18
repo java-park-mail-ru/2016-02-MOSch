@@ -2,15 +2,11 @@ package main;
 
 import db.datasets.*;
 
-import org.eclipse.jetty.util.security.Credential;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.jetbrains.annotations.NotNull;
 import rest.UserProfile;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -178,7 +174,7 @@ public class AccountServiceImpl implements AccountService {
             if (sessionIDs.containsKey(userID)) {
                 return sessionIDs.get(userID);
             } else {
-                String sessionID = MD5Hash.getHashString(userName);
+                final String sessionID = MD5Hash.getHashString(userName);
                 sessionIDs.put(userID, sessionID);
                 loggedUsers.put(sessionID, getUserByID(userID));
                 return sessionID;
