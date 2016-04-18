@@ -38,7 +38,7 @@ public class Main {
         final Server server = new Server(port);
         final Context ctx = new Context();
         try {
-            final AccountServiceImpl accountService = new AccountServiceImpl(AccountServiceImpl.CreationStrategy.CREATE_NEW);
+            final AccountServiceImpl accountService = new AccountServiceImpl("hibernate.cfg.xml");
             ctx.put(AccountService.class, accountService);
         } catch (RuntimeException e) {
             System.err.println(e.getLocalizedMessage());

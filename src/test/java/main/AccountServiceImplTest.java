@@ -24,7 +24,7 @@ public class AccountServiceImplTest {
 
     @Before
     public void setUp() {
-        accountService = new AccountServiceImpl(AccountServiceImpl.CreationStrategy.CREATE_TEST);
+        accountService = new AccountServiceImpl("test_hibernate.cfg.xml");
         user1.setRole(UserProfile.RoleEnum.ADMIN);
     }
 

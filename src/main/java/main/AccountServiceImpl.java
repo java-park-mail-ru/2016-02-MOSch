@@ -2,6 +2,7 @@ package main;
 
 import db.datasets.*;
 
+import org.eclipse.jetty.util.security.Credential;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -28,22 +29,10 @@ public class AccountServiceImpl implements AccountService {
     private final Map<String, UserProfile> loggedUsers = new ConcurrentHashMap<>();
     private final Map<Long, String> sessionIDs = new ConcurrentHashMap<>();
 
-    public AccountServiceImpl(CreationStrategy strategy) {
+    public AccountServiceImpl(@NotNull String config) {
         final Configuration configuration = new Configuration();
         configuration.addAnnotatedClass(UserDataSet.class);
-        configuration.configure("hibernate.cfg.xml");
-        switch (strategy) {
-            case OPEN_OR_CREATE:
-                configuration.setProperty("hibernate.hbm2ddl.auto", "validate");
-                break;
-            case CREATE_NEW:
-                configuration.setProperty("hibernate.hbm2ddl.auto", "create");
-                break;
-            case CREATE_TEST:
-                configuration.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/db_java_test");
-                configuration.setProperty("hibernate.hbm2ddl.auto", "create-drop");
-                break;
-        }
+        configuration.configure(config);
         sessionFactory = configuration.buildSessionFactory();
     }
 
@@ -208,11 +197,7 @@ public class AccountServiceImpl implements AccountService {
             if (sessionIDs.containsKey(userID)) {
                 return sessionIDs.get(userID);
             } else {
-                String sessionID = getMD5(userName);
-                int temp = 0;
-                while (loggedUsers.containsKey(sessionID)) {
-                    sessionID = getMD5(userName + String.valueOf(temp++));
-                }
+                String sessionID = MD5Hash.getHashString(userName);
                 sessionIDs.put(userID, sessionID);
                 loggedUsers.put(sessionID, getUserByID(userID));
                 return sessionID;
@@ -239,5 +224,4 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
-    public enum CreationStrategy {OPEN_OR_CREATE, CREATE_NEW, CREATE_TEST}
 }
