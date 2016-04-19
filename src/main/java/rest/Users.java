@@ -101,6 +101,7 @@ public class Users {
         }
         return Response
                 .status(Response.Status.BAD_REQUEST)
+                .entity("Incorrect username or password")
                 .build();
     }
 

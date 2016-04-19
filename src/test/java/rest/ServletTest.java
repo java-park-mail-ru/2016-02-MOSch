@@ -1,18 +1,22 @@
 package rest;
 
 
+import com.google.gson.Gson;
 import main.AccountService;
 import main.AccountServiceImpl;
 import main.Context;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -21,7 +25,6 @@ import static org.mockito.Mockito.when;
 /**
  * Created by KOPTE3 on 30.03.2016.
  */
-
 @SuppressWarnings("unused")
 public class ServletTest extends JerseyTest {
     @Override
@@ -47,9 +50,28 @@ public class ServletTest extends JerseyTest {
     }
 
     @Test
-    public void testSignInUser() {
-        final UserProfile user = new UserProfile("test1", "testpass1");
-        final String result = target("user").request(MediaType.APPLICATION_JSON).get(String.class);
-        assertEquals("[]", result);
+    public void testSignInUser() throws Exception {
+        final Gson gson = new Gson();
+        final UserProfile user1 = new UserProfile("test1", "testpass1");
+        final UserProfile user2 = new UserProfile("test2", "testpass2");
+        final RegisterInfo accepted1 = new RegisterInfo(1L);
+        final RegisterInfo accepted2 = new RegisterInfo(2L);
+        final RegisterInfo result1 = gson.fromJson(target("user").request(MediaType.APPLICATION_JSON).put(Entity.json(user1), String.class), RegisterInfo.class);
+        final RegisterInfo result2 = gson.fromJson(target("user").request(MediaType.APPLICATION_JSON).put(Entity.json(user2), String.class), RegisterInfo.class);
+
+        assertEquals(accepted1.id, result1.id);
+        assertEquals(accepted2.id, result2.id);
+        final UserProfile user3 = new UserProfile();
+        final Response response = target("user").request(MediaType.APPLICATION_JSON).put(Entity.json(user3));
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    private class RegisterInfo {
+        @NotNull
+        private final Long id;
+
+        public RegisterInfo(Long id) {
+            this.id = id;
+        }
     }
 }

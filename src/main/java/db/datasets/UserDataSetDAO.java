@@ -60,6 +60,7 @@ public class UserDataSetDAO {
     public List<LoginScoreSet> readTop() {
         final Criteria criteria = session.createCriteria(UserDataSet.class);
         criteria.addOrder(Order.desc("rate"));
+        criteria.addOrder(Order.asc("username"));
         final List dsList = criteria.list();
 
         final ArrayList<LoginScoreSet> result = new ArrayList<>(dsList.size());

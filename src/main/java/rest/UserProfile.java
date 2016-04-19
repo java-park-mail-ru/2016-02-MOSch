@@ -2,6 +2,8 @@ package rest;
 
 import db.datasets.UserDataSet;
 import org.jetbrains.annotations.NotNull;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
@@ -145,4 +147,16 @@ public class UserProfile {
     }
 
     public enum RoleEnum {ADMIN, USER}
+
+    public boolean checkLogin() {
+        final Pattern p = Pattern.compile("^[A-Za-z0-9]{1,32}$");
+        final Matcher m = p.matcher(this.login);
+        return m.matches();
+    }
+
+    public boolean checkPassword() {
+        final Pattern p = Pattern.compile("^[A-Za-z0-9]{6,32}$");
+        final Matcher m = p.matcher(this.password);
+        return m.matches();
+    }
 }

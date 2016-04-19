@@ -100,6 +100,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Long addUser(@NotNull UserProfile userProfile) {
+        if (!userProfile.checkLogin()) {
+            return null;
+        }
+        if (!userProfile.checkPassword()) {
+            return null;
+        }
         final Session session = sessionFactory.openSession();
         if (getUserByLogin(userProfile.getLogin()) != null) {
             return null;
