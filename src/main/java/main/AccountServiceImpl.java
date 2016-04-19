@@ -1,12 +1,15 @@
 package main;
 
-import db.datasets.*;
-
+import db.datasets.UserDataSet;
+import db.datasets.UserDataSetDAO;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.jetbrains.annotations.NotNull;
 import rest.UserProfile;
+import supportClasses.LoginScoreSet;
+import supportClasses.MD5Hash;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +17,6 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import supportclasses.*;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
@@ -43,7 +45,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<LoginScoreSet> getTopUsers(){
+    public List<LoginScoreSet> getTopUsers() {
         final Session session = sessionFactory.openSession();
         final UserDataSetDAO dao = new UserDataSetDAO(session);
         final List<LoginScoreSet> ds = dao.readTop();

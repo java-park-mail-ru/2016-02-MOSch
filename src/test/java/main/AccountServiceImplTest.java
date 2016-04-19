@@ -4,10 +4,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import rest.UserProfile;
-import supportclasses.MD5Hash;
+import supportClasses.MD5Hash;
 
 import java.util.List;
-
 
 import static org.junit.Assert.*;
 

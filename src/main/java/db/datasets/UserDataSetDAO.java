@@ -2,10 +2,13 @@ package db.datasets;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.*;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import supportclasses.LoginScoreSet;
+import supportClasses.LoginScoreSet;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +37,7 @@ public class UserDataSetDAO {
     // true
     public void deleteUser(long userID) {
         final UserDataSet user = readUserByID(userID);
-        if (user!=null) {
+        if (user != null) {
             session.delete(user);
         }
         session.flush();
@@ -54,19 +57,20 @@ public class UserDataSetDAO {
     }
 
 
-    public List<LoginScoreSet> readTop(){
+    public List<LoginScoreSet> readTop() {
         final Criteria criteria = session.createCriteria(UserDataSet.class);
         criteria.addOrder(Order.desc("rate"));
-        final List dsList= criteria.list();
+        final List dsList = criteria.list();
 
         final ArrayList<LoginScoreSet> result = new ArrayList<>(dsList.size());
 
-        for (Object uDS:dsList) {
-            result.add(new LoginScoreSet((UserDataSet)uDS));
+        for (Object uDS : dsList) {
+            result.add(new LoginScoreSet((UserDataSet) uDS));
         }
         return result;
 
     }
+
     // true
     public long countUsers() {
         return (long) session.createCriteria(UserDataSet.class).setProjection(Projections.rowCount()).uniqueResult();

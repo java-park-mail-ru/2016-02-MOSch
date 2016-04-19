@@ -3,7 +3,7 @@ package main;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rest.UserProfile;
-import supportclasses.LoginScoreSet;
+import supportClasses.LoginScoreSet;
 
 import java.util.List;
 
@@ -14,6 +14,7 @@ import java.util.List;
 public interface AccountService {
 
     List<UserProfile> getAllUsers();
+
     List<LoginScoreSet> getTopUsers();
 
     long countUsers();

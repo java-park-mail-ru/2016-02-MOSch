@@ -1,4 +1,4 @@
-package supportclasses;
+package supportClasses;
 
 import db.datasets.UserDataSet;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ public class LoginScoreSet {
     private final Long level;
 
 
-    public LoginScoreSet(@NotNull UserDataSet uDS){
+    public LoginScoreSet(@NotNull UserDataSet uDS) {
         this.id = uDS.getId();
         this.username = uDS.getUsername();
         this.rate = uDS.getRate();

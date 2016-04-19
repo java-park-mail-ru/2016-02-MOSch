@@ -1,4 +1,5 @@
-package supportclasses;
+package supportClasses;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.security.MessageDigest;
@@ -11,13 +12,13 @@ import java.util.concurrent.atomic.AtomicLong;
 public final class MD5Hash {
     private static AtomicLong counter = new AtomicLong(0);
 
-    private MD5Hash(){
+    private MD5Hash() {
         counter = new AtomicLong(0);
     }
 
     @SuppressWarnings("MagicNumber")
     @NotNull
-    private static String generateMD5(String input){
+    private static String generateMD5(String input) {
         try {
             final MessageDigest md = MessageDigest.getInstance("MD5");
             input += String.valueOf(counter.getAndIncrement());
@@ -38,10 +39,9 @@ public final class MD5Hash {
 
 
     @NotNull
-    public static String getHashString(String input){
+    public static String getHashString(String input) {
         return generateMD5(input);
     }
-
 
 
 }

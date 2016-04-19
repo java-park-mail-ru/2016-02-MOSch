@@ -54,7 +54,7 @@ public class UserProfile {
         this.isAdmin = false;
     }
 
-    public UserProfile(@NotNull Long rate, @NotNull Long level){
+    public UserProfile(@NotNull Long rate, @NotNull Long level) {
         this.login = "";
         this.password = "";
         this.id = -1L;
@@ -121,18 +121,28 @@ public class UserProfile {
     public Boolean getIsAdmin() {
         return isAdmin;
     }
+
     public void setIsAdmin(@NotNull Boolean admin) {
         this.isAdmin = admin;
     }
 
-    public void setRate(@NotNull Long rate) {this.rate = rate;}
     @NotNull
-    public Long getRate(){return this.rate; }
+    public Long getRate() {
+        return this.rate;
+    }
 
-    public void setLevel(@NotNull Long level) { this.level = level;}
+    public void setRate(@NotNull Long rate) {
+        this.rate = rate;
+    }
 
     @NotNull
-    public Long getLevel(){return this.level;}
+    public Long getLevel() {
+        return this.level;
+    }
+
+    public void setLevel(@NotNull Long level) {
+        this.level = level;
+    }
 
     public enum RoleEnum {ADMIN, USER}
 }

@@ -2,6 +2,7 @@ package rest;
 
 import com.google.gson.Gson;
 import main.AccountService;
+import supportClasses.LoginScoreSet;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -12,7 +13,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Objects;
-import supportclasses.LoginScoreSet;
 
 /**
  * MOSch-team test server for "Build The Tower" game
