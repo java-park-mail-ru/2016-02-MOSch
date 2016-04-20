@@ -12,12 +12,14 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public interface AccountService {
-
+    @Nullable
     List<UserProfile> getAllUsers();
 
+    @Nullable
     List<LoginScoreSet> getTopUsers();
 
-    long countUsers();
+    @Nullable
+    Long countUsers();
 
     @Nullable
     UserProfile getUserByID(long userID);

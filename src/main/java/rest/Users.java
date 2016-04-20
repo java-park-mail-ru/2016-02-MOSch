@@ -2,7 +2,7 @@ package rest;
 
 import com.google.gson.Gson;
 import main.AccountService;
-import supportClasses.LoginScoreSet;
+import supportclasses.LoginScoreSet;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
