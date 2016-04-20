@@ -76,7 +76,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Long countUsers() {
+    public long countUsers() {
         try(Session session = sessionFactory.openSession()) {
             try {
                 final Transaction transaction = session.beginTransaction();
@@ -89,7 +89,7 @@ public class AccountServiceImpl implements AccountService {
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
                     session.getTransaction().rollback();
                 }
-                return null;
+                return -1L;
             }
         }
     }

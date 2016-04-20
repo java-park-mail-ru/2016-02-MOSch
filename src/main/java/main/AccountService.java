@@ -18,8 +18,7 @@ public interface AccountService {
     @Nullable
     List<LoginScoreSet> getTopUsers();
 
-    @Nullable
-    Long countUsers();
+    long countUsers();
 
     @Nullable
     UserProfile getUserByID(long userID);
