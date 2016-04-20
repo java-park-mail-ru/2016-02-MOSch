@@ -185,32 +185,35 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void updateUser(long userID, @NotNull UserProfile user) {
+    public boolean updateUser(long userID, @NotNull UserProfile user) {
         try(Session session = sessionFactory.openSession()) {
             try {
                 final Transaction transaction = session.beginTransaction();
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
                 dao.updateUser(userID, new UserDataSet(user));
                 transaction.commit();
+                return true;
             }
             catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
                     session.getTransaction().rollback();
                 }
+                return false;
             }
         }
     }
 
     @Override
-    public void updateUser(@NotNull String sessionID, @NotNull UserProfile user) {
+    public boolean updateUser(@NotNull String sessionID, @NotNull UserProfile user) {
         if (isLoggedIn(sessionID)) {
             final UserProfile profile = getUserBySessionID(sessionID);
-            if (profile != null) {
-                updateUser(profile.getId(), user);
+            if (profile != null && updateUser(profile.getId(), user) ) {
                 loggedUsers.put(sessionID, user);
+                return true;
             }
         }
+        return false;
     }
 
     @Override

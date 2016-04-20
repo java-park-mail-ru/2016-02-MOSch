@@ -32,9 +32,9 @@ public interface AccountService {
     @Nullable
     Long addUser(@NotNull UserProfile userProfile);
 
-    void updateUser(long userID, @NotNull UserProfile user);
+    boolean updateUser(long userID, @NotNull UserProfile user);
 
-    void updateUser(@NotNull String sessionID, @NotNull UserProfile user);
+    boolean updateUser(@NotNull String sessionID, @NotNull UserProfile user);
 
     void removeUser(long userID);
 
