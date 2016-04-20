@@ -43,7 +43,6 @@ public class AccountServiceImpl implements AccountService {
             final UserDataSetDAO dao = new UserDataSetDAO(session);
             userDS = dao.readAll();
             transaction.commit();
-            session.close();
         }
         return userDS.stream().map(UserProfile::new).collect(Collectors.toCollection(LinkedList::new));
     }
@@ -56,7 +55,6 @@ public class AccountServiceImpl implements AccountService {
             final UserDataSetDAO dao = new UserDataSetDAO(session);
             ds = dao.readTop();
             transaction.commit();
-            session.close();
         }
         return ds;
 
@@ -69,7 +67,6 @@ public class AccountServiceImpl implements AccountService {
             Transaction transaction = session.beginTransaction();
             result = new UserDataSetDAO(session).countUsers();
             transaction.commit();
-            session.close();
         }
         return result;
     }
@@ -82,7 +79,6 @@ public class AccountServiceImpl implements AccountService {
             final UserDataSetDAO dao = new UserDataSetDAO(session);
             dataSet = dao.readUserByID(userID);
             transaction.commit();
-            session.close();
         }
         if (dataSet != null) {
             return new UserProfile(dataSet);
@@ -99,7 +95,6 @@ public class AccountServiceImpl implements AccountService {
             final UserDataSetDAO dao = new UserDataSetDAO(session);
             dataSet = dao.readUserByLogin(username);
             transaction.commit();
-            session.close();
         }
         if (dataSet != null) {
             return new UserProfile(dataSet);
@@ -140,7 +135,6 @@ public class AccountServiceImpl implements AccountService {
                 result = null;
             }
             transaction.commit();
-            session.close();
         }
         return result;
     }
@@ -152,7 +146,6 @@ public class AccountServiceImpl implements AccountService {
             final UserDataSetDAO dao = new UserDataSetDAO(session);
             dao.updateUser(userID, new UserDataSet(user));
             transaction.commit();
-            session.close();
         }
     }
 
@@ -169,13 +162,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void removeUser(long userID) {
-        try(Session session = sessionFactory.openSession()) {
-            final UserDataSetDAO dao = new UserDataSetDAO(session);
-            Transaction transaction =   session.beginTransaction();
-            dao.deleteUser(userID);
-            transaction.commit();
-            session.close();
-        }
+        final Session session = sessionFactory.openSession();
+        final UserDataSetDAO dao = new UserDataSetDAO(session);
+        dao.deleteUser(userID);
+        session.close();
     }
 
     @Override
