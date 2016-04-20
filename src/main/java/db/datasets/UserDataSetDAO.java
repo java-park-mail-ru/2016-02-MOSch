@@ -7,7 +7,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import supportClasses.LoginScoreSet;
+import supportclasses.*;
 
 import java.util.ArrayList;
 import java.util.List;

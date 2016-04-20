@@ -1,4 +1,4 @@
-package supportClasses;
+package supportclasses;
 
 import db.datasets.UserDataSet;
 import org.jetbrains.annotations.NotNull;

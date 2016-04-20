@@ -5,10 +5,10 @@ import db.datasets.UserDataSetDAO;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.Transaction;
 import org.jetbrains.annotations.NotNull;
 import rest.UserProfile;
-import supportClasses.LoginScoreSet;
-import supportClasses.MD5Hash;
+import supportclasses.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -37,38 +37,49 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<UserProfile> getAllUsers() {
-        final Session session = sessionFactory.openSession();
-        final UserDataSetDAO dao = new UserDataSetDAO(session);
-        final List<UserDataSet> userDS = dao.readAll();
-        session.close();
+        List<UserDataSet> userDS;
+        try (Session session = sessionFactory.openSession()){
+            Transaction transaction = session.beginTransaction();
+            final UserDataSetDAO dao = new UserDataSetDAO(session);
+            userDS = dao.readAll();
+            transaction.commit();
+        }
         return userDS.stream().map(UserProfile::new).collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     public List<LoginScoreSet> getTopUsers() {
-        final Session session = sessionFactory.openSession();
-        final UserDataSetDAO dao = new UserDataSetDAO(session);
-        final List<LoginScoreSet> ds = dao.readTop();
-        session.close();
+        List<LoginScoreSet> ds;
+        try(Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            final UserDataSetDAO dao = new UserDataSetDAO(session);
+            ds = dao.readTop();
+            transaction.commit();
+        }
         return ds;
 
     }
 
     @Override
     public long countUsers() {
-        //noinspection HibernateResourceOpenedButNotSafelyClosed
-        final Session session = sessionFactory.openSession();
-        final Long result = new UserDataSetDAO(session).countUsers();
-        session.close();
+        Long result;
+        try(Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            result = new UserDataSetDAO(session).countUsers();
+            transaction.commit();
+        }
         return result;
     }
 
     @Override
     public UserProfile getUserByID(long userID) {
-        final Session session = sessionFactory.openSession();
-        final UserDataSetDAO dao = new UserDataSetDAO(session);
-        final UserDataSet dataSet = dao.readUserByID(userID);
-        session.close();
+        UserDataSet dataSet;
+        try(Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            final UserDataSetDAO dao = new UserDataSetDAO(session);
+            dataSet = dao.readUserByID(userID);
+            transaction.commit();
+        }
         if (dataSet != null) {
             return new UserProfile(dataSet);
         } else {
@@ -78,10 +89,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public UserProfile getUserByLogin(@NotNull String username) {
-        final Session session = sessionFactory.openSession();
-        final UserDataSetDAO dao = new UserDataSetDAO(session);
-        final UserDataSet dataSet = dao.readUserByLogin(username);
-        session.close();
+        UserDataSet dataSet;
+        try(Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            final UserDataSetDAO dao = new UserDataSetDAO(session);
+            dataSet = dao.readUserByLogin(username);
+            transaction.commit();
+        }
         if (dataSet != null) {
             return new UserProfile(dataSet);
         } else {
@@ -100,36 +114,39 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Long addUser(@NotNull UserProfile userProfile) {
+        Long result;
         if (!userProfile.checkLogin()) {
             return null;
         }
         if (!userProfile.checkPassword()) {
             return null;
         }
-        final Session session = sessionFactory.openSession();
-        if (getUserByLogin(userProfile.getLogin()) != null) {
-            return null;
-        }
-        final Long result;
-        final UserDataSetDAO dao = new UserDataSetDAO(session);
-        final UserDataSet userDS = new UserDataSet(userProfile);
+        try(Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            if (getUserByLogin(userProfile.getLogin()) != null) {
+                return null;
+            }
+            final UserDataSetDAO dao = new UserDataSetDAO(session);
+            final UserDataSet userDS = new UserDataSet(userProfile);
 
-        if (dao.createUser(userDS)) {
-            result = userDS.getId();
-        } else {
-            result = null;
-            System.out.println("Пользователь НЕ добавлен");
+            if (dao.createUser(userDS)) {
+                result = userDS.getId();
+            } else {
+                result = null;
+            }
+            transaction.commit();
         }
-        session.close();
         return result;
     }
 
     @Override
     public void updateUser(long userID, @NotNull UserProfile user) {
-        final Session session = sessionFactory.openSession();
-        final UserDataSetDAO dao = new UserDataSetDAO(session);
-        dao.updateUser(userID, new UserDataSet(user));
-        session.close();
+        try(Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            final UserDataSetDAO dao = new UserDataSetDAO(session);
+            dao.updateUser(userID, new UserDataSet(user));
+            transaction.commit();
+        }
     }
 
     @Override
