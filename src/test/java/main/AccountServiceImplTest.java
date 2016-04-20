@@ -2,9 +2,9 @@ package main;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import rest.UserProfile;
-import supportClasses.MD5Hash;
 
 import java.util.List;
 
@@ -113,6 +113,7 @@ public class AccountServiceImplTest {
     }
 
     @Test
+    @Ignore
     public void testUpdateUser() throws Exception {
         final Long id1 = accountService.addUser(user1);
         final Long id2 = accountService.addUser(user2);
@@ -262,6 +263,7 @@ public class AccountServiceImplTest {
     }
 
     @Test
+    @Ignore
     public void testUpdateUserBySessionID() throws Exception {
         accountService.addUser(user1);
         final Long id2 = accountService.addUser(user2);
@@ -319,20 +321,6 @@ public class AccountServiceImplTest {
         assertEquals("login2", profile2.getLogin());
         assertEquals("login5", profile5.getLogin());
         assertNull(accountService.getUserBySessionID("wrong"));
-    }
-
-    @Test
-    public void testGetMD5() throws Exception {
-        final int len1 = MD5Hash.getHashString("").length();
-        assertEquals(32, len1);
-        final int len2 = MD5Hash.getHashString("mystring").length();
-        assertEquals(32, len2);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testGetMD5ofNull() throws Exception {
-        //noinspection ConstantConditions
-        MD5Hash.getHashString(null);
     }
 
     @After
