@@ -4,9 +4,24 @@
 .mtj.tmp/
 
 # Package Files #
- .idea/
+ .idea
+ .idea/*
+ .idea\*
+/.idea
+ lib
+ lib/*
+ lib\*
+/lib
+ target
+ target/*
+ target\*
+/target
 *.war
 *.ear
+*.iml
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/.idea
+*.sqlite
+*.jar
