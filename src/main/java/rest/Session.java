@@ -90,6 +90,7 @@ public class Session {
         }
         return Response
                 .status(Response.Status.OK)
+                .entity("{}")
                 .build();
     }
 
