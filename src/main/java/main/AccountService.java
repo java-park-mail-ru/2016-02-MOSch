@@ -27,7 +27,7 @@ public interface AccountService {
     UserProfile getUserByLogin(@NotNull String username);
 
     @Nullable
-    UserProfile getUserBySessionID(@NotNull String sessionID); // sessionID is the same that the 'auth_token'
+    UserProfile getUserBySessionID(@NotNull String sessionID);
 
     @Nullable
     Long addUser(@NotNull UserProfile userProfile);
@@ -45,8 +45,7 @@ public interface AccountService {
     @Nullable
     Long getUserID(@NotNull String userName, @NotNull String password);
 
-    @Nullable
-    String loginUser(@NotNull String userName, @NotNull String password);
+    boolean loginUser(@NotNull String userName, @NotNull String password, @NotNull String sessionID);
 
     @Nullable
     String loginUser(@NotNull String sessionID);

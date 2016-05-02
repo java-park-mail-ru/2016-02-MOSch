@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings({"unused", "ClassWithTooManyConstructors"})
 public class UserProfile {
     @NotNull
-    private String login = "";
+    private String username = "";
     @NotNull
     private String password = "";
     @NotNull
@@ -29,7 +29,7 @@ public class UserProfile {
 
 
     public UserProfile() {
-        login = "";
+        username = "";
         password = "";
         id = 0L;
         role = RoleEnum.USER;
@@ -39,7 +39,7 @@ public class UserProfile {
     }
 
     public UserProfile(@NotNull UserDataSet dataSet) {
-        login = dataSet.getUsername();
+        username = dataSet.getUsername();
         password = dataSet.getPassword();
         id = dataSet.getId();
         role = dataSet.getIsAdmin() ? RoleEnum.ADMIN : RoleEnum.USER;
@@ -48,8 +48,8 @@ public class UserProfile {
         level = dataSet.getLevel();
     }
 
-    public UserProfile(@NotNull String login, @NotNull String password, @NotNull Long id) {
-        this.login = login;
+    public UserProfile(@NotNull String username, @NotNull String password, @NotNull Long id) {
+        this.username = username;
         this.password = password;
         this.id = id;
         this.role = RoleEnum.USER;
@@ -57,15 +57,15 @@ public class UserProfile {
     }
 
     public UserProfile(@NotNull Long rate, @NotNull Long level) {
-        this.login = "";
+        this.username = "";
         this.password = "";
         this.id = -1L;
         this.rate = rate;
         this.level = level;
     }
 
-    public UserProfile(@NotNull String login, @NotNull String password) {
-        this.login = login;
+    public UserProfile(@NotNull String username, @NotNull String password) {
+        this.username = username;
         this.password = password;
         this.id = 0L;
         this.role = RoleEnum.USER;
@@ -74,8 +74,8 @@ public class UserProfile {
         this.level = 0L;
     }
 
-    public UserProfile(@NotNull String login, @NotNull String password, @NotNull Long id, @NotNull RoleEnum role) {
-        this.login = login;
+    public UserProfile(@NotNull String username, @NotNull String password, @NotNull Long id, @NotNull RoleEnum role) {
+        this.username = username;
         this.password = password;
         this.id = id;
         this.role = role;
@@ -83,12 +83,12 @@ public class UserProfile {
     }
 
     @NotNull
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLogin(@NotNull String login) {
-        this.login = login;
+    public void setUsername(@NotNull String username) {
+        this.username = username;
     }
 
     @NotNull
@@ -150,7 +150,7 @@ public class UserProfile {
 
     public boolean checkLogin() {
         final Pattern p = Pattern.compile("^[A-Za-z0-9]{1,32}$");
-        final Matcher m = p.matcher(this.login);
+        final Matcher m = p.matcher(this.username);
         return m.matches();
     }
 

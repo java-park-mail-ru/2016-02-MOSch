@@ -7,6 +7,7 @@ import supportclasses.LoginScoreSet;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -26,14 +27,12 @@ public class Users {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllUsers(@Context HttpServletRequest request,
-                                @HeaderParam("auth_token") String currentToken) {
+    public Response getAllUsers() {
         final AccountService accountService = ctx.get(AccountService.class);
-        final List<LoginScoreSet> allUsers = accountService.getTopUsers();
 
+        final List<LoginScoreSet> allUsers = accountService.getTopUsers();
         final Gson gson = new Gson();
         final String entity = gson.toJson(allUsers);
-
         return Response
                 .status(Response.Status.OK)
                 .entity(entity)
@@ -43,15 +42,21 @@ public class Users {
     @GET
     @Path("{id: [0-9]+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserById(@PathParam("id") Long id,
-                                @HeaderParam("auth_token") String currentToken) {
+    public Response getUserById(@Context HttpServletRequest request,
+                                @PathParam("id") Long id) {
         final AccountService accountService = ctx.get(AccountService.class);
-        if (currentToken == null) {
+
+        final HttpSession session = request.getSession(false);
+        String sessionID = null;
+        if (session != null) {
+            sessionID = session.getId();
+        }
+        if (sessionID == null) {
             return Response
                     .status(Response.Status.UNAUTHORIZED)
                     .build();
         }
-        final UserProfile user = accountService.getUserBySessionID(currentToken);
+        final UserProfile user = accountService.getUserBySessionID(sessionID);
         if (user != null) {
             if (user.getIsAdmin() || Objects.equals(user.getId(), id)) {
                 final UserProfile lookFor = accountService.getUserByID(id);
@@ -61,14 +66,14 @@ public class Users {
                             .entity(lookFor)
                             .build();
                 } else {
-                    final String notFound = "{\"status\":\"404\",\"message\":\"User not found\"}";
+                    final String notFound = "{\"message\":\"User not found\"}";
                     return Response
                             .status(Response.Status.NOT_FOUND)
                             .entity(notFound)
                             .build();
                 }
             }
-            final String accessDenied = "{\"status\":\"403\",\"message\":\"Access denied\"}";
+            final String accessDenied = "{\"message\":\"Access denied\"}";
             return Response
                     .status(Response.Status.FORBIDDEN)
                     .entity(accessDenied)
@@ -81,11 +86,12 @@ public class Users {
         }
     }
 
-    @PUT
+    @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(UserProfile user) {
         final AccountService accountService = ctx.get(AccountService.class);
+
         if (user == null) {
             return Response
                     .status(Response.Status.BAD_REQUEST)
@@ -98,26 +104,34 @@ public class Users {
                     .status(Response.Status.OK)
                     .entity(payload)
                     .build();
+        } else {
+            final String wrong = "{\"message\":\"Incorrect login or password\"}";
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity(wrong)
+                    .build();
         }
-        return Response
-                .status(Response.Status.BAD_REQUEST)
-                .entity("Incorrect username or password")
-                .build();
     }
 
-    @POST
+    @PUT
     @Path("{id :[0-9]+}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response editUser(@PathParam("id") Long id, UserProfile newUser,
-                             @HeaderParam("auth_token") String currentToken) {
+    public Response editUser(@Context HttpServletRequest request,
+                             @PathParam("id") Long id, UserProfile newUser) {
         final AccountService accountService = ctx.get(AccountService.class);
-        if (currentToken == null) {
+
+        final HttpSession session = request.getSession(false);
+        String sessionID = null;
+        if (session != null) {
+            sessionID = session.getId();
+        }
+        if (sessionID == null) {
             return Response
                     .status(Response.Status.UNAUTHORIZED)
                     .build();
         }
-        final UserProfile currentUser = accountService.getUserBySessionID(currentToken);
+        final UserProfile currentUser = accountService.getUserBySessionID(sessionID);
         if (currentUser == null) {
             return Response
                     .status(Response.Status.UNAUTHORIZED)
@@ -133,14 +147,14 @@ public class Users {
                         .entity(payload)
                         .build();
             } else {
-                final String notFound = "{\"status\":\"404\",\"message\":\"User not found\"}";
+                final String notFound = "{\"message\":\"User not found\"}";
                 return Response
                         .status(Response.Status.NOT_FOUND)
                         .entity(notFound)
                         .build();
             }
         } else {
-            final String accessDenied = "{\"status\":\"403\",\"message\":\"Access denied\"}";
+            final String accessDenied = "{\"message\":\"Access denied\"}";
             return Response
                     .status(Response.Status.FORBIDDEN)
                     .entity(accessDenied)
@@ -151,15 +165,21 @@ public class Users {
     @DELETE
     @Path("{id :[0-9]+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteUser(@PathParam("id") Long id,
-                               @HeaderParam("auth_token") String currentToken) {
+    public Response deleteUser(@Context HttpServletRequest request,
+                               @PathParam("id") Long id) {
         final AccountService accountService = ctx.get(AccountService.class);
-        if (currentToken == null) {
+
+        final HttpSession session = request.getSession(false);
+        String sessionID = null;
+        if (session != null) {
+            sessionID = session.getId();
+        }
+        if (sessionID == null) {
             return Response
                     .status(Response.Status.UNAUTHORIZED)
                     .build();
         }
-        final UserProfile currentUser = accountService.getUserBySessionID(currentToken);
+        final UserProfile currentUser = accountService.getUserBySessionID(sessionID);
         if (currentUser == null) {
             return Response
                     .status(Response.Status.UNAUTHORIZED)
@@ -169,20 +189,20 @@ public class Users {
             final UserProfile oldUser = accountService.getUserByID(id);
             if (oldUser != null) {
                 accountService.removeUser(id);
-                final String success = "{\"status\":\"200\",\"message\":\"Successfully removed\"}";
+                final String success = "{\"message\":\"Successfully removed\"}";
                 return Response
                         .status(Response.Status.OK)
                         .entity(success)
                         .build();
             } else {
-                final String notFound = "{\"status\":\"404\",\"message\":\"User not found\"}";
+                final String notFound = "{\"message\":\"User not found\"}";
                 return Response
                         .status(Response.Status.NOT_FOUND)
                         .entity(notFound)
                         .build();
             }
         } else {
-            final String accessDenied = "{\"status\":\"403\",\"message\":\"Access denied\"}";
+            final String accessDenied = "{\"message\":\"Access denied\"}";
             return Response
                     .status(Response.Status.FORBIDDEN)
                     .entity(accessDenied)

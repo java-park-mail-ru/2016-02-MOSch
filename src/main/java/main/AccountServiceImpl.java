@@ -2,13 +2,15 @@ package main;
 
 import db.datasets.UserDataSet;
 import db.datasets.UserDataSetDAO;
-import org.hibernate.*;
-import org.hibernate.cfg.Configuration;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.resource.transaction.spi.*;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.jetbrains.annotations.NotNull;
 import rest.UserProfile;
-import supportclasses.*;
+import supportclasses.LoginScoreSet;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,8 +38,8 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public List<UserProfile> getAllUsers(){
-        try(Session session = sessionFactory.openSession()) {
+    public List<UserProfile> getAllUsers() {
+        try (Session session = sessionFactory.openSession()) {
             try {
                 final Transaction transaction = session.beginTransaction();
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
@@ -57,7 +59,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<LoginScoreSet> getTopUsers() {
-        try(Session session = sessionFactory.openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             try {
                 final Transaction transaction = session.beginTransaction();
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
@@ -77,14 +79,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public long countUsers() {
-        try(Session session = sessionFactory.openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             try {
                 final Transaction transaction = session.beginTransaction();
                 final Long result = new UserDataSetDAO(session).countUsers();
                 transaction.commit();
                 return result;
-            }
-            catch (HibernateException e) {
+            } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
                     session.getTransaction().rollback();
@@ -106,8 +107,7 @@ public class AccountServiceImpl implements AccountService {
                 if (dataSet != null) {
                     return new UserProfile(dataSet);
                 } else return null;
-            }
-            catch (HibernateException e) {
+            } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
                     session.getTransaction().rollback();
@@ -119,7 +119,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public UserProfile getUserByLogin(@NotNull String username) {
-        try(Session session = sessionFactory.openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             try {
                 final Transaction transaction = session.beginTransaction();
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
@@ -128,8 +128,7 @@ public class AccountServiceImpl implements AccountService {
                 if (dataSet != null) {
                     return new UserProfile(dataSet);
                 } else return null;
-            }
-            catch (HibernateException e) {
+            } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
                     session.getTransaction().rollback();
@@ -156,10 +155,10 @@ public class AccountServiceImpl implements AccountService {
         if (!userProfile.checkPassword()) {
             return null;
         }
-        try(Session session = sessionFactory.openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             try {
                 final Transaction transaction = session.beginTransaction();
-                if (getUserByLogin(userProfile.getLogin()) != null) {
+                if (getUserByLogin(userProfile.getUsername()) != null) {
                     return null;
                 }
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
@@ -173,8 +172,7 @@ public class AccountServiceImpl implements AccountService {
                 }
                 transaction.commit();
                 return result;
-            }
-            catch (HibernateException e) {
+            } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
                     session.getTransaction().rollback();
@@ -186,14 +184,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void updateUser(long userID, @NotNull UserProfile user) {
-        try(Session session = sessionFactory.openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             try {
                 final Transaction transaction = session.beginTransaction();
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
                 dao.updateUser(userID, new UserDataSet(user));
                 transaction.commit();
-            }
-            catch (HibernateException e) {
+            } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
                     session.getTransaction().rollback();
@@ -221,8 +218,7 @@ public class AccountServiceImpl implements AccountService {
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
                 dao.deleteUser(userID);
                 transaction.commit();
-            }
-            catch (HibernateException e) {
+            } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
                     session.getTransaction().rollback();
@@ -257,19 +253,18 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String loginUser(@NotNull String userName, @NotNull String password) {
+    public boolean loginUser(@NotNull String userName, @NotNull String password, @NotNull String sessionID) {
         final Long userID = getUserID(userName, password);
         if (userID != null) {
             if (sessionIDs.containsKey(userID)) {
-                return sessionIDs.get(userID);
+                return true;
             } else {
-                final String sessionID = MD5Hash.getHashString(userName);
                 sessionIDs.put(userID, sessionID);
                 loggedUsers.put(sessionID, getUserByID(userID));
-                return sessionID;
+                return true;
             }
         } else {
-            return null;
+            return false;
         }
     }
 
@@ -289,5 +284,4 @@ public class AccountServiceImpl implements AccountService {
             loggedUsers.remove(sessionID);
         }
     }
-
 }

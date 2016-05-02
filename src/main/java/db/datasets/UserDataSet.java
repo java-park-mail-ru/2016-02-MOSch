@@ -79,7 +79,7 @@ public class UserDataSet implements Serializable { // Serializable Important to 
 
     public UserDataSet(@NotNull UserProfile user) {
         this.id = (long) -1;
-        this.username = user.getLogin();
+        this.username = user.getUsername();
         this.isAdmin = user.getIsAdmin();
         this.password = user.getPassword();
         this.rate = user.getRate();
