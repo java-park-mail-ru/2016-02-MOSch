@@ -18,3 +18,4 @@ public interface WSService {
     void removeUser(@NotNull GameWS user);
 
     void notifyEnemyLeft(GameUser user);
+}

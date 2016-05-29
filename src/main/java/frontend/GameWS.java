@@ -32,18 +32,16 @@ public class GameWS {
     private Session session;
     @NotNull
     private final GameMechanicsImpl gameMechanics;
-    private final WebSocketServiceImpl webSocketService;
-    private final ShuffleWordService shuffleWordService;
+    private final WSServiceImpl webSocketService;
     private final AccountService accountService;
 
     @NotNull
     private final String myName;
 
-    public GameWebSocket(@NotNull String myName, Context context) {
+    public GameWS(@NotNull String myName, Context context) {
         this.myName = myName;
         this.gameMechanics = context.get(GameMechanicsImpl.class);
         this.webSocketService = context.get(WebSocketServiceImpl.class);
-        this.shuffleWordService = context.get(ShuffleWordService.class);
         this.accountService = context.get(AccountService.class);
         LOGGER.info("Socket created for " + myName);
 

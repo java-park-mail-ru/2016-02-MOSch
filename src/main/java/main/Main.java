@@ -11,6 +11,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 import rest.Session;
 import rest.Users;
+import frontend.WSGameServlet;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
@@ -60,6 +61,7 @@ public class Main {
         handlers.setHandlers(new Handler[]{contextHandler});
         server.setHandler(handlers);
         contextHandler.addServlet(servletHolder, "/*");
+        contextHandler.addServlet(new ServletHolder(new WSGameServlet(ctx)), "/gameplay");
 
         server.start();
         server.join();
