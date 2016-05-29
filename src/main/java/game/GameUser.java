@@ -17,8 +17,9 @@ public class GameUser {
 
     private int myLeadCount = 0;
 
-    public GameUser(@NotNull String myName) {
+    public GameUser(@NotNull String myName, @NotNull String enemyName) {
         this.myName = myName;
+        this.enemyName = enemyName;
     }
 
     @NotNull
@@ -27,11 +28,16 @@ public class GameUser {
     }
 
     @NotNull
-    public int getMyHeight(@NotNull String myName){
+    public String getEnemyName(){
+        return enemyName;
+    }
+
+    @NotNull
+    public int getMyHeight(){
         return currentHeight;
     }
 
-    public Boolean incrementMeLeadCount(){
+    public Boolean incrementMyLeadCount(){
         myLeadCount++;
         return true;
     }

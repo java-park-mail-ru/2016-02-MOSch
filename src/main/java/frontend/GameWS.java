@@ -39,7 +39,7 @@ public class GameWS {
     public GameWS(@NotNull String myName, Context context) {
         this.myName = myName;
         this.gameMechanics = context.get(GameMechanicsImpl.class);
-        this.webSocketService = context.get(WebSocketServiceImpl.class);
+        this.webSocketService = context.get(WSServiceImpl.class);
         this.accountService = context.get(AccountService.class);
         LOGGER.info("Socket created for " + myName);
 
@@ -57,7 +57,7 @@ public class GameWS {
         json.addProperty("action", "startGame");
         json.addProperty("user", user.getMyName());
         //noinspection ConstantConditions
-        json.addProperty("userRecord", accountService.getUserByLogin(user.getMyName()).getScore());
+        json.addProperty("userHighScore", accountService.getUserByLogin(user.getMyName()).getScore());
         json.addProperty("enemy", user.getEnemyName());
         //noinspection ConstantConditions
         json.addProperty("enemyRecord", accountService.getUserByLogin(user.getEnemyName()).getScore());
@@ -81,7 +81,7 @@ public class GameWS {
         jsonEndGame.addProperty("enemyScore", gameMechanics.getEnemyScore(myName));
 
         @SuppressWarnings("ConstantConditions")
-        final int prevScore = accountService.getUserByLogin(myName).getScore();
+        final Long prevScore = accountService.getUserByLogin(myName).getScore();
         final boolean isBestScore;
 
         if (currentScore > prevScore) {
@@ -118,46 +118,6 @@ public class GameWS {
                 throw new JsonSyntaxException("Can't find out \"action\" in JSON");
             }
             switch (action) {
-                case "getWord":
-                    ShuffleWord word;
-
-                    do {
-                        word = shuffleWordService.getShuffleWord();
-                    } while (gameMechanics.getIsUsedWordFromGameSession(myName, word.getId()));
-
-                    gameMechanics.addUsedWordInGameSession(myName, word);
-
-                    final ShuffleWord correctWord = shuffleWordService.getWordById(word.getId());
-                    final JsonObject jsonWord = new JsonObject();
-                    jsonWord.addProperty("action", "getWord");
-                    jsonWord.addProperty("id", word.getId());
-                    jsonWord.addProperty("shuffleWord", word.getWord());
-                    jsonWord.addProperty("right", correctWord.getWord());
-                    sendJson(jsonWord);
-                    break;
-
-                case "checkWord":
-
-                    final long idWord = jsonElement.getAsJsonObject().getAsJsonPrimitive("id").getAsLong();
-                    final String userWord = jsonElement.getAsJsonObject().getAsJsonPrimitive("word").getAsString();
-                    final ShuffleWord rightWord = shuffleWordService.getWordById(idWord);
-                    final boolean check;
-                    if (rightWord.getWord().equals(userWord)) {
-                        check = true;
-                        gameMechanics.incrementScore(myName);
-                    } else {
-                        check = false;
-                    }
-                    final JsonObject jsonCheck = new JsonObject();
-                    jsonCheck.addProperty("action", "checkWord");
-                    jsonCheck.addProperty("answer", check);
-                    jsonCheck.addProperty("right", rightWord.getWord());
-                    jsonCheck.addProperty("myScore", gameMechanics.getMyScore(myName));
-                    jsonCheck.addProperty("enemyScore", gameMechanics.getEnemyScore(myName));
-
-                    sendJson(jsonCheck);
-                    break;
-
                 default:
                     throw new JsonSyntaxException("Unknown \"action\"");
             }
