@@ -3,8 +3,6 @@ package frontend;
 import base.AccountService;
 import com.google.gson.*;
 
-import game.firstlvl.ShuffleWord;
-import game.firstlvl.ShuffleWordService;
 import game.GameMechanicsImpl;
 import game.GameUser;
 import main.Context;
