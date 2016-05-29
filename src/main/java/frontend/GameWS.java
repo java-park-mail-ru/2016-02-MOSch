@@ -80,18 +80,6 @@ public class GameWS {
         jsonEndGame.addProperty("enemyName", gameMechanics.getEnemyName(myName));
         jsonEndGame.addProperty("enemyScore", gameMechanics.getEnemyScore(myName));
 
-        @SuppressWarnings("ConstantConditions")
-        final Long prevScore = accountService.getUserByLogin(myName).getScore();
-        final boolean isBestScore;
-
-        if (currentScore > prevScore) {
-            accountService.editScore(myName, currentScore);
-
-            isBestScore = true;
-        } else {
-            isBestScore = false;
-        }
-        jsonEndGame.addProperty("best", isBestScore);
 
         sendJson(jsonEndGame);
 
