@@ -1,24 +1,26 @@
 package db.datasets;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import rest.UserProfile;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
  * Users {
- id: string
- login: string
- password: string
- level: int
- rate: int
- auth_token: string
- expires: date
- info: text
- }
+ * id: int
+ * username: string
+ * password: string
+ * score: int
+ * points: int
+ * auth_token: string
+ * star_bf: bool
+ * accuracy_bf: bool
+ * speed_bf: bool
+ * delay_bf: bool
+ * }
  */
 @SuppressWarnings("unused")
 @Entity
@@ -34,65 +36,63 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @Column(name = "isAdmin", nullable = false)
-    private Boolean isAdmin;
-
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "rate", nullable = false)
-    private Long rate;
+    @Column(name = "score", nullable = false)
+    private Long score = 0L;
 
-    @Column(name = "level", nullable = false)
-    private Long level;
+    @Column(name = "points", nullable = false)
+    private Long points = 0L;
 
-    @Column(name = "auth_token", unique = false, nullable = false)
+    @Column(name = "auth_token", unique = true, nullable = true)
     private String authToken;
 
-    @Column(name = "date", columnDefinition = "DATETIME", nullable = false)
-    private Date date;
+    @Column(name = "star_bf", nullable = false)
+    private Boolean starBf = false;
 
-    @Column(name = "info", columnDefinition="TEXT", nullable = false)
-    private String info;
+    @Column(name = "accuracy_bf", nullable = false)
+    private Boolean accuracyBf = false;
+
+    @Column(name = "speed_bf", nullable = false)
+    private Boolean speedBf = false;
+
+    @Column(name = "delay_bf", nullable = false)
+    private Boolean delayBf = false;
 
     //Important to Hibernate!
     public UserDataSet() {
     }
 
     public UserDataSet(@NotNull String username) {
-        this.id = (long) -1;
+        this.id = -1L;
         this.username = username;
-        this.isAdmin = false;
     }
 
     public UserDataSet(@NotNull String username, @NotNull String password) {
-        this.id = (long) -1;
+        this.id = -1L;
         this.username = username;
         this.password = password;
-        this.isAdmin = false;
-        this.rate = 0L;
-        this.level = 0L;
-        this.authToken = "";
-        this.date = new Date();
-        this.info = "";
     }
 
     public UserDataSet(@NotNull UserProfile user) {
-        this.id = (long) -1;
+        this.id = -1L;
         this.username = user.getUsername();
-        this.isAdmin = user.getIsAdmin();
         this.password = user.getPassword();
-        this.rate = user.getRate();
-        this.level = user.getLevel();
-        this.authToken = "";
-        this.date = new Date();
-        this.info = "";
+        this.score = user.getScore();
+        this.points = user.getPoints();
+        this.authToken = null;
+        this.starBf = user.getStarBf();
+        this.accuracyBf = user.getAccuracyBf();
+        this.speedBf = user.getSpeedBf();
+        this.delayBf = user.getDelayBf();
     }
 
     @NotNull
     public Long getId() {
         return id;
     }
+
     public void setId(@NotNull Long id) {
         this.id = id;
     }
@@ -101,6 +101,7 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     public String getUsername() {
         return username;
     }
+
     public void setUsername(@NotNull String username) {
         this.username = username;
     }
@@ -109,42 +110,85 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     public String getPassword() {
         return password;
     }
+
     public void setPassword(@NotNull String password) {
         this.password = password;
     }
 
     @NotNull
-    public Boolean getIsAdmin() {
-        return isAdmin;
-    }
-    public void setIsAdmin(@NotNull Boolean isAdmin) {
-        this.isAdmin = isAdmin;
+    public Long getScore() {
+        return this.score;
     }
 
-    @NotNull
-    public Long getRate(){return this.rate;}
-    public void setRate(@NotNull Long scores) { this.rate = scores; }
+    public void setScore(@NotNull Long score) {
+        this.score = score;
+    }
 
     @NotNull
-    public Long getLevel(){return this.level;}
-    public void setLevel(@NotNull Long level) { this.level = level; }
+    public Long getPoints() {
+        return this.points;
+    }
 
-    @NotNull
+    public void setPoints(@NotNull Long points) {
+        this.points = points;
+    }
+
+    @Nullable
     public String getAuthToken() {
         return this.authToken;
     }
-    public void setAuthToken(@NotNull String authToken) {
+
+    public void setAuthToken(@Nullable String authToken) {
         this.authToken = authToken;
     }
 
+    @NotNull
+    public Boolean getStarBf() {
+        return this.starBf;
+    }
+
+    public void setStarBf(@NotNull Boolean starBf) {
+        this.starBf = starBf;
+    }
+
+    @NotNull
+    public Boolean getAccuracyBf() {
+        return this.accuracyBf;
+    }
+
+    public void setAccuracyBf(@NotNull Boolean accuracyBf) {
+        this.accuracyBf = accuracyBf;
+    }
+
+    @NotNull
+    public Boolean getSpeedBf() {
+        return this.speedBf;
+    }
+
+    public void setSpeedBf(@NotNull Boolean speedBf) {
+        this.speedBf = speedBf;
+    }
+
+    @NotNull
+    public Boolean getDelayBf() {
+        return this.delayBf;
+    }
+
+    public void setDelayBf(@NotNull Boolean delayBf) {
+        this.delayBf = delayBf;
+    }
 
 
-    @Override
-    public String toString() {
-        return "UserDataSet{" +
-                "id=" + id +
-                ", name='" + username + '\'' +
-                ", is_Admin=" + isAdmin +
+    @NotNull
+    public String toJsonString() {
+        return "{id=" + this.id.toString() +
+                ",username=\'" + this.username + '\'' +
+                ",score=" + this.score.toString() +
+                ",points=" + this.points.toString() +
+                ",star_bf=" + this.starBf.toString() +
+                ",accuracy_bf=" + this.accuracyBf.toString() +
+                ",speed_bf=" + this.speedBf.toString() +
+                ",delay_bf=" + this.delayBf.toString() +
                 '}';
     }
 }

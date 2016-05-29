@@ -58,7 +58,7 @@ public class Users {
         }
         final UserProfile user = accountService.getUserBySessionID(sessionID);
         if (user != null) {
-            if (user.getIsAdmin() || Objects.equals(user.getId(), id)) {
+            if (Objects.equals(user.getId(), id)) {
                 final UserProfile lookFor = accountService.getUserByID(id);
                 if (lookFor != null) {
                     return Response
@@ -137,7 +137,7 @@ public class Users {
                     .status(Response.Status.UNAUTHORIZED)
                     .build();
         }
-        if (Objects.equals(currentUser.getId(), id) || currentUser.getIsAdmin()) {
+        if (Objects.equals(currentUser.getId(), id)) {
             final UserProfile oldUser = accountService.getUserByID(id);
             if (oldUser != null && accountService.updateUser(id, newUser)) {
                 final String payload = String.format("{\"id\":\"%d\"}", id);
@@ -184,7 +184,7 @@ public class Users {
                     .status(Response.Status.UNAUTHORIZED)
                     .build();
         }
-        if (Objects.equals(currentUser.getId(), id) || currentUser.getIsAdmin()) {
+        if (Objects.equals(currentUser.getId(), id)) {
             final UserProfile oldUser = accountService.getUserByID(id);
             if (oldUser != null) {
                 accountService.removeUser(id);

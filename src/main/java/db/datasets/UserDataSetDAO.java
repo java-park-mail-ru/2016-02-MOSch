@@ -7,7 +7,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import supportclasses.*;
+import supportclasses.LoginScoreSet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,84 +16,95 @@ import java.util.List;
  * MOSch-team test server for "Kill The Birds" game
  */
 public class UserDataSetDAO {
+    private static final Long DEFAULT_MULTIPLIER = 1000L;
     private final Session session;
 
     public UserDataSetDAO(Session session) {
         this.session = session;
     }
 
-    // true
-    public void updateUser(@NotNull Long userID, @NotNull UserDataSet dataSet) {
-        final UserDataSet oldDataSet = readUserByID(userID);
-        if (oldDataSet != null) {
-            if (oldDataSet.getRate() < dataSet.getRate()) {
-                oldDataSet.setRate(dataSet.getRate());
-                oldDataSet.setLevel(dataSet.getLevel());
-            }
+    public static void logoutAll(Session session) {
+        final List dsList = session.createCriteria(UserDataSet.class).list();
+        for (Object uDS : dsList) {
+            ((UserDataSet) uDS).setAuthToken(null);
         }
-        session.flush();
     }
 
-    // true
-    public void deleteUser(long userID) {
-        final UserDataSet user = readUserByID(userID);
-        if (user != null) {
-            session.delete(user);
-        }
-        session.flush();
-    }
-
-    // true
     public boolean createUser(@NotNull UserDataSet dataSet) {
         return (session.save(dataSet) != null);
     }
 
-    // true
-    public List<UserDataSet> readAll() {
-        final Criteria criteria = session.createCriteria(UserDataSet.class);
-
-        //noinspection unchecked
-        return (List<UserDataSet>) criteria.list();
-    }
-
-
-    public List<LoginScoreSet> readTop() {
-        final Criteria criteria = session.createCriteria(UserDataSet.class);
-        criteria.addOrder(Order.desc("rate"));
-        criteria.addOrder(Order.asc("username"));
-        final List dsList = criteria.list();
-
-        final ArrayList<LoginScoreSet> result = new ArrayList<>(dsList.size());
-
-        for (Object uDS : dsList) {
-            result.add(new LoginScoreSet((UserDataSet) uDS));
+    public void deleteUser(@NotNull Long userID) {
+        final UserDataSet user = readUserByID(userID);
+        if (user != null) {
+            session.delete(user);
         }
-        return result;
-
     }
 
-    // true
+    @Nullable
+    public UserDataSet readUserByID(@NotNull Long userID) {
+        final Criteria criteria = session.createCriteria(UserDataSet.class);
+        return (UserDataSet) criteria.add(Restrictions.eq("id", userID)).uniqueResult();
+    }
+
+    @Nullable
+    public UserDataSet readUserBySessionID(@NotNull String sessionID) {
+        final Criteria criteria = session.createCriteria(UserDataSet.class);
+        return (UserDataSet) criteria.add(Restrictions.eq("auth_token", sessionID)).uniqueResult();
+    }
+
+    @Nullable
+    public UserDataSet readUserByLogin(@NotNull String username) {
+        final Criteria criteria = session.createCriteria(UserDataSet.class);
+        return (UserDataSet) criteria.add(Restrictions.eq("username", username)).uniqueResult();
+    }
+
+    public void updateUser(@NotNull Long userID, @NotNull UserDataSet dataSet, @Nullable Long multiplier) {
+        if (multiplier == null) {
+            multiplier = DEFAULT_MULTIPLIER;
+        }
+        final UserDataSet oldDataSet = readUserByID(userID);
+        if (oldDataSet != null) {
+            final Long newScore = dataSet.getScore();
+            if (oldDataSet.getScore() < newScore) {
+                oldDataSet.setScore(newScore);
+            }
+            oldDataSet.setPoints(oldDataSet.getPoints() + multiplier * newScore);
+        }
+    }
+
     public long countUsers() {
         return (long) session.createCriteria(UserDataSet.class).setProjection(Projections.rowCount()).uniqueResult();
     }
 
-    // true
-    @Nullable
-    public UserDataSet readUserByID(@NotNull Long id) {
+    @NotNull
+    public List<LoginScoreSet> readAll() {
         final Criteria criteria = session.createCriteria(UserDataSet.class);
-        return (UserDataSet) criteria.add(Restrictions.eq("id", id)).uniqueResult();
+        criteria.addOrder(Order.desc("score"));
+        criteria.addOrder(Order.asc("username"));
+        final List dsList = criteria.list();
+        final ArrayList<LoginScoreSet> result = new ArrayList<>(dsList.size());
+        for (Object uDS : dsList) {
+            result.add(new LoginScoreSet((UserDataSet) uDS));
+        }
+        return result;
     }
 
-    // true
     @Nullable
-    public UserDataSet readUserByLogin(@NotNull String login) {
-        final Criteria criteria = session.createCriteria(UserDataSet.class);
-        return (UserDataSet) criteria.add(Restrictions.eq("username", login)).uniqueResult();
+    public String loginUser(@NotNull Long userID, @NotNull String sessionID) {
+        final UserDataSet userDataSet = readUserByID(userID);
+        if (userDataSet != null) {
+            userDataSet.setAuthToken(sessionID);
+            return sessionID;
+        } else {
+            return null;
+        }
     }
 
-
-//    @Nullable
-//    public UserDataSet getUserBySession(String sessionID) {
-//        TODO
-//    }
+    public void logoutUser(@NotNull Long userID) {
+        final UserDataSet userDataSet = readUserByID(userID);
+        if (userDataSet != null) {
+            userDataSet.setAuthToken(null);
+        }
+    }
 }

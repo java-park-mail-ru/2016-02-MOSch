@@ -12,8 +12,8 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public interface AccountService {
-    @Nullable
-    List<UserProfile> getAllUsers();
+    //    @Nullable
+    //    List<UserProfile> getAllUsers();
 
     @Nullable
     List<LoginScoreSet> getTopUsers();
@@ -40,15 +40,15 @@ public interface AccountService {
 
     void removeUser(@NotNull String sessionID);
 
-    boolean isLoggedIn(@NotNull String sessionID);
+    //    boolean isLoggedIn(@NotNull String sessionID);
 
     @Nullable
     Long getUserID(@NotNull String userName, @NotNull String password);
 
     boolean loginUser(@NotNull String userName, @NotNull String password, @NotNull String sessionID);
 
-    @Nullable
-    String loginUser(@NotNull String sessionID);
+    //    @Nullable
+    //    String loginUser(@NotNull String sessionID);
 
     void logoutUser(@NotNull String sessionID);
 

@@ -37,11 +37,8 @@ public final class MD5Hash {
         }
     }
 
-
     @NotNull
     public static String getHashString(String input) {
         return generateMD5(input);
     }
-
-
 }

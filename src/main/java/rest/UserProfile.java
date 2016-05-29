@@ -2,84 +2,67 @@ package rest;
 
 import db.datasets.UserDataSet;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
-@SuppressWarnings({"unused", "ClassWithTooManyConstructors"})
+@SuppressWarnings({"unused"})
 public class UserProfile {
+    @NotNull
+    private Long id = -1L;
     @NotNull
     private String username = "";
     @NotNull
     private String password = "";
     @NotNull
-    private Long id;
+    private Long score = 0L;
     @NotNull
-    private Boolean isAdmin = false;
+    private Long points = 0L;
     @NotNull
-    private RoleEnum role = RoleEnum.USER;
-
+    private Boolean starBf = false;
     @NotNull
-    private Long rate = 0L;
-
+    private Boolean accuracyBf = false;
     @NotNull
-    private Long level = 0L;
-
+    private Boolean speedBf = false;
+    @NotNull
+    private Boolean delayBf = false;
 
     public UserProfile() {
-        username = "";
-        password = "";
-        id = 0L;
-        role = RoleEnum.USER;
-        isAdmin = false;
-        rate = 0L;
-        level = 0L;
     }
 
     public UserProfile(@NotNull UserDataSet dataSet) {
+        id = dataSet.getId();
         username = dataSet.getUsername();
         password = dataSet.getPassword();
-        id = dataSet.getId();
-        role = dataSet.getIsAdmin() ? RoleEnum.ADMIN : RoleEnum.USER;
-        isAdmin = dataSet.getIsAdmin();
-        rate = dataSet.getRate();
-        level = dataSet.getLevel();
-    }
-
-    public UserProfile(@NotNull String username, @NotNull String password, @NotNull Long id) {
-        this.username = username;
-        this.password = password;
-        this.id = id;
-        this.role = RoleEnum.USER;
-        this.isAdmin = false;
-    }
-
-    public UserProfile(@NotNull Long rate, @NotNull Long level) {
-        this.username = "";
-        this.password = "";
-        this.id = -1L;
-        this.rate = rate;
-        this.level = level;
+        score = dataSet.getScore();
+        points = dataSet.getPoints();
+        starBf = dataSet.getStarBf();
+        accuracyBf = dataSet.getAccuracyBf();
+        speedBf = dataSet.getSpeedBf();
+        delayBf = dataSet.getDelayBf();
     }
 
     public UserProfile(@NotNull String username, @NotNull String password) {
         this.username = username;
         this.password = password;
-        this.id = 0L;
-        this.role = RoleEnum.USER;
-        this.isAdmin = false;
-        this.rate = 0L;
-        this.level = 0L;
     }
 
-    public UserProfile(@NotNull String username, @NotNull String password, @NotNull Long id, @NotNull RoleEnum role) {
+    public UserProfile(@NotNull String username, @NotNull String password, @NotNull Long id) {
+        this.id = id;
         this.username = username;
         this.password = password;
+    }
+
+    @NotNull
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(@NotNull Long id) {
         this.id = id;
-        this.role = role;
-        this.isAdmin = false;
     }
 
     @NotNull
@@ -101,54 +84,61 @@ public class UserProfile {
     }
 
     @NotNull
-    public Long getId() {
-        return id;
+    public Long getScore() {
+        return this.score;
     }
 
-    public void setId(@NotNull Long id) {
-        this.id = id;
-    }
-
-    @NotNull
-    public RoleEnum getRole() {
-        return role;
-    }
-
-    public void setRole(@NotNull RoleEnum role) {
-        this.role = role;
-        this.isAdmin = (role == RoleEnum.ADMIN);
+    public void setScore(@NotNull Long score) {
+        this.score = score;
     }
 
     @NotNull
-    public Boolean getIsAdmin() {
-        return isAdmin;
+    public Long getPoints() {
+        return this.points;
     }
 
-    public void setIsAdmin(@NotNull Boolean admin) {
-        this.isAdmin = admin;
-    }
-
-    @NotNull
-    public Long getRate() {
-        return this.rate;
-    }
-
-    public void setRate(@NotNull Long rate) {
-        this.rate = rate;
+    public void setPoints(@NotNull Long points) {
+        this.points = points;
     }
 
     @NotNull
-    public Long getLevel() {
-        return this.level;
+    public Boolean getStarBf() {
+        return starBf;
     }
 
-    public void setLevel(@NotNull Long level) {
-        this.level = level;
+    public void setStarBf(@NotNull Boolean starBf) {
+        this.starBf = starBf;
     }
 
-    public enum RoleEnum {ADMIN, USER}
+    @NotNull
+    public Boolean getAccuracyBf() {
+        return accuracyBf;
+    }
 
-    public boolean checkLogin() {
+    public void setAccuracyBf(@NotNull Boolean accuracyBf) {
+        this.accuracyBf = accuracyBf;
+    }
+
+    @NotNull
+    public Boolean getSpeedBf() {
+        return speedBf;
+    }
+
+    public void setSpeedBf(@NotNull Boolean speedBf) {
+        this.speedBf = speedBf;
+    }
+
+    @NotNull
+    public Boolean getDelayBf() {
+        return delayBf;
+    }
+
+    public void setDelayBf(@NotNull Boolean delayBf) {
+        this.delayBf = delayBf;
+    }
+
+
+    public boolean checkUsername() {
         final Pattern p = Pattern.compile("^[A-Za-z0-9]{1,32}$");
         final Matcher m = p.matcher(this.username);
         return m.matches();
