@@ -13,26 +13,32 @@ public class GameUser {
     @NotNull
     private String enemyName;
 
-    private int myHeight = 0;
-    private int enemyHeight = 0;
+    private int currentHeight = 0;
 
     private int myLeadCount = 0;
-    private int enemyLeadCount = 0;
 
-    public GameUser(@NotNull String myName, @NotNull String enemyName) {
-
+    public GameUser(@NotNull String myName) {
         this.myName = myName;
-        this.enemyName = enemyName;
     }
 
     @NotNull
     public String getMyName() {
         return myName;
     }
-    
+
     @NotNull
-    public String getEnemyName() {
-        return enemyName;
+    public int getMyHeight(@NotNull String myName){
+        return currentHeight;
+    }
+
+    public Boolean incrementMeLeadCount(){
+        myLeadCount++;
+        return true;
+    }
+
+    public Boolean setHeight(@NotNull int newHeight){
+        currentHeight = newHeight;
+        return true;
     }
 
 }
