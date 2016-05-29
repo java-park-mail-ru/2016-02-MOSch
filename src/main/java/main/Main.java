@@ -11,7 +11,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 import rest.Session;
 import rest.Users;
-import frontend.WSGameServlet;
+import frontend.*;
 import game.GameMechanicsImpl;
 
 /**
@@ -43,10 +43,13 @@ public class Main {
         try {
             final AccountServiceImpl accountService = new AccountServiceImpl("hibernate.cfg.xml");
             ctx.put(AccountService.class, accountService);
+            ctx.put(WSServiceImpl.class, new WSServiceImpl());
+            ctx.put(GameMechanicsImpl.class, new GameMechanicsImpl(ctx.get(WSServiceImpl.class)));
         } catch (RuntimeException e) {
             System.err.println(e.getLocalizedMessage());
             System.exit(1);
         }
+
 
         final ResourceConfig resourceConfig = new ResourceConfig(Users.class, Session.class);
         resourceConfig.register(new AbstractBinder() {
