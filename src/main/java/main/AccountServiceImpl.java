@@ -1,5 +1,6 @@
 package main;
 
+import base.AccountService;
 import db.datasets.UserDataSet;
 import db.datasets.UserDataSetDAO;
 import org.hibernate.HibernateException;

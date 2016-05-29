@@ -1,7 +1,7 @@
 package rest;
 
 import com.google.gson.Gson;
-import main.AccountService;
+import base.AccountService;
 import supportclasses.LoginScoreSet;
 
 import javax.inject.Inject;
