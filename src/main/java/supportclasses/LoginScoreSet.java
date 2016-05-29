@@ -15,12 +15,12 @@ public class LoginScoreSet {
     @NotNull
     public final Long score;
     @NotNull
-    public final Boolean star_bf;
+    public final Boolean starBf;
 
     public LoginScoreSet(@NotNull UserDataSet uDS) {
         this.id = uDS.getId();
         this.username = uDS.getUsername();
         this.score = uDS.getScore();
-        this.star_bf = uDS.getStarBf();
+        this.starBf = uDS.getStarBf();
     }
 }
