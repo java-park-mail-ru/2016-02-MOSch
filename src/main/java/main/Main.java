@@ -12,6 +12,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import rest.Session;
 import rest.Users;
 import frontend.WSGameServlet;
+import game.GameMechanicsImpl;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
@@ -64,6 +65,7 @@ public class Main {
         contextHandler.addServlet(new ServletHolder(new WSGameServlet(ctx)), "/gameplay");
 
         server.start();
-        server.join();
+        //server.join();
+        ctx.get(GameMechanicsImpl.class).run();
     }
 }
