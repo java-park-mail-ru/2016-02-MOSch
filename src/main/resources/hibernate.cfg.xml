@@ -12,7 +12,7 @@
         <property name="connection.username">test</property>
         <property name="connection.password">test</property>
         <!-- DB schema will be updated if needed -->
-        <property name="hbm2ddl.auto">create</property>
+        <property name="hbm2ddl.auto">update</property>
 
     </session-factory>
 </hibernate-configuration>
