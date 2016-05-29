@@ -8,13 +8,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class LoginScoreSet {
     @NotNull
-    private final Long id;
+    public final Long id;
     @NotNull
-    private final String username;
+    public final String username;
     @NotNull
-    private final Long score;
+    public final Long score;
     @NotNull
-    private final Boolean star_bf;
+    public final Boolean star_bf;
 
     public LoginScoreSet(@NotNull UserDataSet uDS) {
         this.id = uDS.getId();

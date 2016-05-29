@@ -30,6 +30,13 @@ public class UserDataSetDAO {
         }
     }
 
+    public static void deleteAll(Session session) {
+        final List dsList = session.createCriteria(UserDataSet.class).list();
+        for (Object uDS : dsList) {
+            session.delete(uDS);
+        }
+    }
+
     public boolean createUser(@NotNull UserDataSet dataSet) {
         return (session.save(dataSet) != null);
     }
@@ -50,7 +57,7 @@ public class UserDataSetDAO {
     @Nullable
     public UserDataSet readUserBySessionID(@NotNull String sessionID) {
         final Criteria criteria = session.createCriteria(UserDataSet.class);
-        return (UserDataSet) criteria.add(Restrictions.eq("auth_token", sessionID)).uniqueResult();
+        return (UserDataSet) criteria.add(Restrictions.eq("authToken", sessionID)).uniqueResult();
     }
 
     @Nullable

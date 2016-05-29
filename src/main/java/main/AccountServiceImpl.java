@@ -31,7 +31,6 @@ public class AccountServiceImpl implements AccountService {
                 final Transaction transaction = session.beginTransaction();
                 UserDataSetDAO.logoutAll(session);
                 transaction.commit();
-                session.close();
             } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
@@ -49,7 +48,6 @@ public class AccountServiceImpl implements AccountService {
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
                 final List<LoginScoreSet> ds = dao.readAll();
                 transaction.commit();
-                session.close();
                 return ds;
             } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
@@ -86,7 +84,6 @@ public class AccountServiceImpl implements AccountService {
                 final Transaction transaction = session.beginTransaction();
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
                 final UserDataSet dataSet = dao.readUserByID(userID);
-
                 transaction.commit();
                 if (dataSet != null) {
                     return new UserProfile(dataSet);
@@ -248,6 +245,22 @@ public class AccountServiceImpl implements AccountService {
                     final long userID = userDataSet.getId();
                     dao.deleteUser(userID);
                 }
+                transaction.commit();
+            } catch (HibernateException e) {
+                if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
+                        || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
+                    session.getTransaction().rollback();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void removeAll() {
+        try (Session session = sessionFactory.openSession()) {
+            try {
+                final Transaction transaction = session.beginTransaction();
+                UserDataSetDAO.deleteAll(session);
                 transaction.commit();
             } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
