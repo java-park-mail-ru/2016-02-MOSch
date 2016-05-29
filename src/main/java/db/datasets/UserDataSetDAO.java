@@ -32,9 +32,8 @@ public class UserDataSetDAO {
 
     public static void deleteAll(Session session) {
         final List dsList = session.createCriteria(UserDataSet.class).list();
-        for (Object uDS : dsList) {
-            session.delete(uDS);
-        }
+        //noinspection unchecked
+        dsList.forEach(session::delete);
     }
 
     public boolean createUser(@NotNull UserDataSet dataSet) {
@@ -66,7 +65,7 @@ public class UserDataSetDAO {
         return (UserDataSet) criteria.add(Restrictions.eq("username", username)).uniqueResult();
     }
 
-    public void updateUser(@NotNull Long userID, @NotNull UserDataSet dataSet, @Nullable Long multiplier) {
+    public void updateUser(@NotNull Long userID, @NotNull UserDataSet dataSet, @SuppressWarnings("SameParameterValue") @Nullable Long multiplier) {
         if (multiplier == null) {
             multiplier = DEFAULT_MULTIPLIER;
         }

@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import com.google.gson.JsonSyntaxException;
 
 /**
  * Created by KOPTE3 on 30.03.2016.
@@ -51,7 +52,7 @@ public class ServletTest extends JerseyTest {
     }
 
     @Test
-    public void testSignInUser() throws com.google.gson.JsonSyntaxException {
+    public void testSignInUser() throws JsonSyntaxException {
         final Gson gson = new Gson();
         final UserProfile user1 = new UserProfile("test1", "testpass1");
         final UserProfile user2 = new UserProfile("test2", "testpass2");

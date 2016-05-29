@@ -45,7 +45,7 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     @Column(name = "points", nullable = false)
     private Long points = 0L;
 
-    @Column(name = "auth_token", unique = true, nullable = true)
+    @Column(name = "auth_token", unique = true)
     private String authToken;
 
     @Column(name = "star_bf", nullable = false)

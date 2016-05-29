@@ -20,7 +20,7 @@ public class AccountServiceImplTest {
     private final UserProfile user4 = new UserProfile("login4", "password1");
     private final UserProfile user5 = new UserProfile("login5", "password1");
     private final UserProfile user6 = new UserProfile("login5", "special");
-    AccountServiceImpl accountService = new AccountServiceImpl("test_hibernate.cfg.xml");
+    final AccountServiceImpl accountService = new AccountServiceImpl("test_hibernate.cfg.xml");
 
     @Before
     public void setUp() {
