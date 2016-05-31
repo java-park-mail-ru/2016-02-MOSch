@@ -58,7 +58,7 @@ public class Main {
         contextHandler.addServlet(new ServletHolder(new WSGameServlet(ctx)), "/gameplay");
 
         server.start();
-        //server.join();
+        server.join();
         ctx.get(GameMechanicsImpl.class).run();
     }
 }
