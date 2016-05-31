@@ -28,21 +28,21 @@ public class GameUser {
     }
 
     @NotNull
-    public String getEnemyName(){
+    public String getEnemyName() {
         return enemyName;
     }
 
     @NotNull
-    public int getMyHeight(){
+    public int getMyHeight() {
         return currentHeight;
     }
 
-    public Boolean incrementMyLeadCount(){
+    public Boolean incrementMyLeadCount() {
         myLeadCount++;
         return true;
     }
 
-    public Boolean setHeight(@NotNull int newHeight){
+    public Boolean setHeight(@NotNull int newHeight) {
         currentHeight = newHeight;
         return true;
     }

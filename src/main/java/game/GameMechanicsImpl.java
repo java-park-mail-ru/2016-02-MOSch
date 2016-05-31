@@ -2,11 +2,11 @@ package game;
 
 import base.GameMechanicsService;
 import frontend.WSServiceImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import supportclasses.TimeHelper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
@@ -85,7 +85,7 @@ public class GameMechanicsImpl implements GameMechanicsService {
     public void incrementScore(String userName) {
         final GameSession myGameSession = nameToGame.get(userName);
         final GameUser myUser = myGameSession.getSelf(userName);
-        final int newHeight = myUser.getMyHeight()+1;
+        final int newHeight = myUser.getMyHeight() + 1;
         myUser.setHeight(newHeight);
 
         if (newHeight > myGameSession.getEnemy(userName).getMyHeight())
