@@ -9,7 +9,10 @@
  .idea\*
 /.idea
  lib
- logs/
+ logs
+/logs
+ logs/*
+ logs\*
  lib/*
  lib\*
 /lib

@@ -31,7 +31,7 @@ public class GameWSCreator implements WebSocketCreator {
         final UserProfile userBySession = context.get(AccountService.class).getUserBySessionID(sessionId);
 
         if (userBySession == null) {
-            LOGGER.error("Can't create websocket, user in not logged in");
+            LOGGER.error("Can't create websocket, user is not logged in");
             return null;
         } else {
             return new GameWS(userBySession.getUsername(), context);

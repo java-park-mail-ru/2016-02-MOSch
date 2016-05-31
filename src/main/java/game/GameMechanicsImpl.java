@@ -95,6 +95,7 @@ public class GameMechanicsImpl implements GameMechanicsService {
 
     @Override
     public void run() {
+        LOGGER.info("Gamemechanics loop started successfully");
         //noinspection InfiniteLoopStatement
         while (true) {
             gmStep();

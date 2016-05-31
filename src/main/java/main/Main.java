@@ -14,19 +14,21 @@ import rest.Users;
 import frontend.*;
 import game.GameMechanicsImpl;
 import supportclasses.PropertiesReader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
 public class Main {
-
+    private static Logger LOGGER = LogManager.getLogger(Main.class);
 
     @SuppressWarnings("OverlyBroadThrowsClause")
     public static void main(String[] args) throws Exception {
         PropertiesReader serverConfig = new PropertiesReader("server.properties");
         int port = serverConfig.getPort();
 
-        System.out.append("Starting at port: ").append(String.valueOf(port)).append('\n');
+        LOGGER.info("Starting at port: " + String.valueOf(port));
 
         final Server server = new Server(port);
         final Context ctx = new Context();
@@ -36,7 +38,7 @@ public class Main {
             ctx.put(WSServiceImpl.class, new WSServiceImpl());
             ctx.put(GameMechanicsImpl.class, new GameMechanicsImpl(ctx.get(WSServiceImpl.class)));
         } catch (RuntimeException e) {
-            System.err.println(e.getLocalizedMessage());
+            LOGGER.error(e);
             System.exit(1);
         }
 
@@ -58,7 +60,8 @@ public class Main {
         contextHandler.addServlet(new ServletHolder(new WSGameServlet(ctx)), "/gameplay");
 
         server.start();
-        server.join();
+        //server.join();
+        LOGGER.info("Server started successfully");
         ctx.get(GameMechanicsImpl.class).run();
     }
 }
