@@ -60,7 +60,7 @@ public class GameWS {
         json.addProperty("userHighScore", accountService.getUserByLogin(user.getMyName()).getScore());
         json.addProperty("enemy", user.getEnemyName());
         //noinspection ConstantConditions
-        json.addProperty("enemyRecord", accountService.getUserByLogin(user.getEnemyName()).getScore());
+        json.addProperty("enemyHighScore", accountService.getUserByLogin(user.getEnemyName()).getScore());
 
         sendJson(json);
     }

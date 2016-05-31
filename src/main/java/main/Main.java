@@ -13,28 +13,18 @@ import rest.Session;
 import rest.Users;
 import frontend.*;
 import game.GameMechanicsImpl;
+import supportclasses.PropertiesReader;
 
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
 public class Main {
 
-    public static final int DEFAULT_PORT = 8080;
 
     @SuppressWarnings("OverlyBroadThrowsClause")
     public static void main(String[] args) throws Exception {
-        int port = DEFAULT_PORT;
-        if (args.length == 1) {
-            try {
-                port = Integer.parseInt(args[0]);
-            } catch (NumberFormatException e) {
-                System.err.println("Specify correct port");
-                System.exit(1);
-            }
-        } else {
-            System.err.println("Specify port");
-            System.err.println("Uses the default port 8080");
-        }
+        PropertiesReader serverConfig = new PropertiesReader("server.properties");
+        int port = serverConfig.getPort();
 
         System.out.append("Starting at port: ").append(String.valueOf(port)).append('\n');
 
