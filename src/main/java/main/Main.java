@@ -21,12 +21,12 @@ import org.apache.logging.log4j.Logger;
  * MOSch-team test server for "Kill The Birds" game
  */
 public class Main {
-    private static Logger LOGGER = LogManager.getLogger(Main.class);
+    private static final Logger LOGGER = LogManager.getLogger(Main.class);
 
     @SuppressWarnings("OverlyBroadThrowsClause")
     public static void main(String[] args) throws Exception {
-        PropertiesReader serverConfig = new PropertiesReader("server.properties");
-        int port = serverConfig.getPort();
+        final PropertiesReader serverConfig = new PropertiesReader("server.properties");
+        final int port = serverConfig.getPort();
 
         LOGGER.info("Starting at port: " + String.valueOf(port));
 
