@@ -3,34 +3,24 @@ package supportclasses;
 import db.datasets.UserDataSet;
 import org.jetbrains.annotations.NotNull;
 
-
 /**
  * Created by Olerdrive on 06.04.16.
  */
+@SuppressWarnings("unused")
 public class LoginScoreSet {
     @NotNull
-    private final Long id;
-
+    public final Long id;
     @NotNull
-    private final String username;
-
+    public final String username;
     @NotNull
-    private final Long rate;
-
+    public final Long score;
     @NotNull
-    private final Long level;
-
+    public final Boolean star_bf;
 
     public LoginScoreSet(@NotNull UserDataSet uDS) {
         this.id = uDS.getId();
         this.username = uDS.getUsername();
-        this.rate = uDS.getRate();
-        this.level = uDS.getLevel();
-    }
-
-    @Override
-    public String toString() {
-        return "id=" + id + ", username=" + username + ", rate="
-                + rate + ", level=" + level;
+        this.score = uDS.getScore();
+        this.star_bf = uDS.getStarBf();
     }
 }

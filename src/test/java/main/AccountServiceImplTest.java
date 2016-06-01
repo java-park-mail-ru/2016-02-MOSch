@@ -1,10 +1,9 @@
 package main;
 
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import rest.UserProfile;
+import supportclasses.LoginScoreSet;
 
 import java.util.List;
 
@@ -21,12 +20,11 @@ public class AccountServiceImplTest {
     private final UserProfile user4 = new UserProfile("login4", "password1");
     private final UserProfile user5 = new UserProfile("login5", "password1");
     private final UserProfile user6 = new UserProfile("login5", "special");
-    AccountServiceImpl accountService;
+    final AccountServiceImpl accountService = new AccountServiceImpl("test_hibernate.cfg.xml");
 
     @Before
     public void setUp() {
-        accountService = new AccountServiceImpl("test_hibernate.cfg.xml");
-        user1.setRole(UserProfile.RoleEnum.ADMIN);
+        accountService.removeAll();
     }
 
     @Test
@@ -45,6 +43,17 @@ public class AccountServiceImplTest {
         final Long id6 = accountService.addUser(user6);
 
         assertNull(id6);
+
+        final UserProfile user7 = new UserProfile("login7", "1111");
+        final UserProfile user8 = new UserProfile("  login", "password");
+        final UserProfile user9 = new UserProfile("23__ sdwq", " wqer");
+        final Long id7 = accountService.addUser(user7);
+        final Long id8 = accountService.addUser(user8);
+        final Long id9 = accountService.addUser(user9);
+
+        assertNull(id7);
+        assertNull(id8);
+        assertNull(id9);
     }
 
     @Test
@@ -62,9 +71,8 @@ public class AccountServiceImplTest {
         assertNotNull(userProfile2);
         assertNull(profileWrong);
 
-        assertEquals("login1", userProfile1.getLogin());
-        assertEquals("login2", userProfile2.getLogin());
-        assertTrue(userProfile1.getIsAdmin());
+        assertEquals("login1", userProfile1.getUsername());
+        assertEquals("login2", userProfile2.getUsername());
     }
 
     @Test
@@ -72,17 +80,16 @@ public class AccountServiceImplTest {
         accountService.addUser(user1);
         accountService.addUser(user2);
 
-        final UserProfile userProfile1 = accountService.getUserByLogin(user1.getLogin());
-        final UserProfile userProfile2 = accountService.getUserByLogin(user2.getLogin());
+        final UserProfile userProfile1 = accountService.getUserByLogin(user1.getUsername());
+        final UserProfile userProfile2 = accountService.getUserByLogin(user2.getUsername());
         final UserProfile profileWrong = accountService.getUserByLogin("wrong");
 
         assertNotNull(userProfile1);
         assertNotNull(userProfile2);
         assertNull(profileWrong);
 
-        assertEquals("login1", userProfile1.getLogin());
-        assertEquals("login2", userProfile2.getLogin());
-        assertTrue(userProfile1.getIsAdmin());
+        assertEquals("login1", userProfile1.getUsername());
+        assertEquals("login2", userProfile2.getUsername());
     }
 
     @Test
@@ -113,19 +120,18 @@ public class AccountServiceImplTest {
     }
 
     @Test
-    @Ignore
     public void testUpdateUser() throws Exception {
         final Long id1 = accountService.addUser(user1);
         final Long id2 = accountService.addUser(user2);
 
         assertNotNull(id1);
         assertNotNull(id2);
-
-        accountService.updateUser(id2, user3);
-        accountService.updateUser(666, user3);
+        final Long newScore = 1000L;
+        user3.setScore(newScore);
+        assertTrue(accountService.updateUser(id2, user3, null));
         final UserProfile newUser2 = accountService.getUserByID(id2);
         assertNotNull(newUser2);
-        assertEquals("login3", newUser2.getLogin());
+        assertEquals(newScore, newUser2.getScore());
     }
 
     @Test
@@ -136,13 +142,12 @@ public class AccountServiceImplTest {
         accountService.addUser(user4);
         accountService.addUser(user5);
 
-        assertNotNull(accountService.getUserID(user2.getLogin(), user2.getPassword()));
-        assertNull(accountService.getUserID(user2.getLogin(), "wrong"));
+        assertNotNull(accountService.getUserID(user2.getUsername(), user2.getPassword()));
+        assertNull(accountService.getUserID(user2.getUsername(), "wrong"));
         assertNull(accountService.getUserID("wrong", "wrong"));
     }
 
     @Test
-    @Ignore
     public void testGetAllUsers() {
         accountService.addUser(user1);
         accountService.addUser(user2);
@@ -150,13 +155,14 @@ public class AccountServiceImplTest {
         accountService.addUser(user4);
         accountService.addUser(user5);
 
-        final List<UserProfile> users = accountService.getAllUsers();
+        final List<LoginScoreSet> users = accountService.getTopUsers();
         assertNotNull(users);
-        assertTrue(users.get(0).getLogin().equals("login1")
-                && users.get(1).getLogin().equals("login2")
-                && users.get(2).getLogin().equals("login3")
-                && users.get(3).getLogin().equals("login4")
-                && users.get(4).getLogin().equals("login5"));
+        assertEquals(5, users.size());
+        assertTrue(users.get(0).username.equals("login1")
+                && users.get(1).username.equals("login2")
+                && users.get(2).username.equals("login3")
+                && users.get(3).username.equals("login4")
+                && users.get(4).username.equals("login5"));
     }
 
     @Test
@@ -167,23 +173,20 @@ public class AccountServiceImplTest {
         accountService.addUser(user4);
         accountService.addUser(user5);
 
-        final String token1 = accountService.loginUser(user1.getLogin(), user1.getPassword());
-        final String token2 = accountService.loginUser(user2.getLogin(), user2.getPassword());
-        final String token5 = accountService.loginUser(user5.getLogin(), user5.getPassword());
+        final Boolean token1 = accountService.loginUser(user1.getUsername(), user1.getPassword(), "session1");
+        final Boolean token2 = accountService.loginUser(user2.getUsername(), user2.getPassword(), "session2");
+        final Boolean token5 = accountService.loginUser(user5.getUsername(), user5.getPassword(), "session5");
         assertNotNull(token1);
         assertNotNull(token2);
         assertNotNull(token5);
-        assertNotEquals(token1, token2);
 
-        final String token1new = accountService.loginUser(user1.getLogin(), user1.getPassword());
+        final Boolean token1new = accountService.loginUser(user1.getUsername(), user1.getPassword(), "session1new");
 
-        assertNotNull(token1new);
-        assertNull(accountService.loginUser(user1.getLogin(), "wrong"));
-        assertNull(accountService.loginUser("wrong", "wrong"));
-
-        assertNotNull(accountService.loginUser(token2));
-        assertNull(accountService.loginUser("wrong"));
-        assertNotNull(accountService.loginUser(token1new));
+        assertTrue(token1new);
+        final UserProfile user = accountService.getUserBySessionID("session1new");
+        assertNotNull(user);
+        assertEquals(user1.getUsername(), user.getUsername());
+        assertEquals(user1.getPassword(), user.getPassword());
     }
 
     @Test
@@ -194,20 +197,16 @@ public class AccountServiceImplTest {
         accountService.addUser(user4);
         accountService.addUser(user5);
 
-        final String token1 = accountService.loginUser(user1.getLogin(), user1.getPassword());
-        final String token2 = accountService.loginUser(user2.getLogin(), user2.getPassword());
-        final String token5 = accountService.loginUser(user5.getLogin(), user5.getPassword());
+        final Boolean token1 = accountService.loginUser(user1.getUsername(), user1.getPassword(), "session1");
+        final Boolean token2 = accountService.loginUser(user2.getUsername(), user2.getPassword(), "session2");
+        final Boolean token5 = accountService.loginUser(user5.getUsername(), user5.getPassword(), "session5");
         assertNotNull(token1);
         assertNotNull(token2);
         assertNotNull(token5);
 
-        accountService.logoutUser(token1);
-        accountService.logoutUser(token2);
+        accountService.logoutUser("session1");
+        accountService.logoutUser("session2");
         accountService.logoutUser("wrong");
-
-        assertNull(accountService.loginUser(token1));
-        assertNull(accountService.loginUser(token2));
-        assertNotNull(accountService.loginUser(token5));
     }
 
     @Test
@@ -218,23 +217,24 @@ public class AccountServiceImplTest {
         accountService.addUser(user4);
         accountService.addUser(user5);
 
-        final String token1 = accountService.loginUser(user1.getLogin(), user1.getPassword());
-        final String token2 = accountService.loginUser(user2.getLogin(), user2.getPassword());
-        final String token5 = accountService.loginUser(user5.getLogin(), user5.getPassword());
+        final Boolean token1 = accountService.loginUser(user1.getUsername(), user1.getPassword(), "session1");
+        final Boolean token2 = accountService.loginUser(user2.getUsername(), user2.getPassword(), "session2");
+        final Boolean token5 = accountService.loginUser(user5.getUsername(), user5.getPassword(), "session5");
 
-        assertNotNull(token1);
-        assertNotNull(token2);
-        assertNotNull(token5);
+        assertTrue(token1);
+        assertTrue(token2);
+        assertTrue(token5);
 
-        assertTrue(accountService.isLoggedIn(token1));
-        assertTrue(accountService.isLoggedIn(token2));
-        assertTrue(accountService.isLoggedIn(token5));
-        assertFalse(accountService.isLoggedIn("wrong"));
-        accountService.logoutUser(token1);
-        accountService.logoutUser(token2);
-        assertFalse(accountService.isLoggedIn(token1));
-        assertFalse(accountService.isLoggedIn(token2));
-        assertTrue(accountService.isLoggedIn(token5));
+        assertNotNull(accountService.getUserBySessionID("session1"));
+        assertNotNull(accountService.getUserBySessionID("session2"));
+        assertNotNull(accountService.getUserBySessionID("session5"));
+        assertNull(accountService.getUserBySessionID("wrong"));
+
+        accountService.logoutUser("session1");
+        accountService.logoutUser("session2");
+        assertNull(accountService.getUserBySessionID("session1"));
+        assertNull(accountService.getUserBySessionID("session2"));
+        assertNotNull(accountService.getUserBySessionID("session5"));
     }
 
     @Test
@@ -245,27 +245,27 @@ public class AccountServiceImplTest {
         accountService.addUser(user4);
         accountService.addUser(user5);
 
-        final String token1 = accountService.loginUser(user1.getLogin(), user1.getPassword());
-        final String token2 = accountService.loginUser(user2.getLogin(), user2.getPassword());
-        final String token5 = accountService.loginUser(user5.getLogin(), user5.getPassword());
-        assertNotNull(token1);
-        assertNotNull(token2);
-        assertNotNull(token5);
+        final Boolean token1 = accountService.loginUser(user1.getUsername(), user1.getPassword(), "session1");
+        final Boolean token2 = accountService.loginUser(user2.getUsername(), user2.getPassword(), "session2");
+        final Boolean token5 = accountService.loginUser(user5.getUsername(), user5.getPassword(), "session5");
+        assertTrue(token1);
+        assertTrue(token2);
+        assertTrue(token5);
 
-        accountService.removeUser(token1);
-        assertNull(accountService.getUserByLogin(user1.getLogin()));
+        accountService.removeUser("session1");
+        assertNull(accountService.getUserByLogin(user1.getUsername()));
         assertEquals(4, accountService.countUsers());
 
         accountService.removeUser("wrong");
         assertEquals(4, accountService.countUsers());
 
-        accountService.logoutUser(token5);
-        accountService.removeUser(token5);
+        accountService.logoutUser("session5");
+        accountService.removeUser("session5");
         assertEquals(4, accountService.countUsers());
     }
 
+
     @Test
-    @Ignore
     public void testUpdateUserBySessionID() throws Exception {
         accountService.addUser(user1);
         final Long id2 = accountService.addUser(user2);
@@ -275,30 +275,35 @@ public class AccountServiceImplTest {
 
         assertNotNull(id2);
         assertNotNull(id5);
-        final String token1 = accountService.loginUser(user1.getLogin(), user1.getPassword());
-        final String token2 = accountService.loginUser(user2.getLogin(), user2.getPassword());
-        final String token5 = accountService.loginUser(user5.getLogin(), user5.getPassword());
-        assertNotNull(token1);
-        assertNotNull(token2);
-        assertNotNull(token5);
+        final Boolean token1 = accountService.loginUser(user1.getUsername(), user1.getPassword(), "session1");
+        final Boolean token2 = accountService.loginUser(user2.getUsername(), user2.getPassword(), "session2");
+        final Boolean token5 = accountService.loginUser(user5.getUsername(), user5.getPassword(), "session5");
+        assertTrue(token1);
+        assertTrue(token2);
+        assertTrue(token5);
 
-        user6.setLogin("new");
-        accountService.updateUser(token2, user6);
-        final UserProfile profile2 = accountService.getUserByLogin(user6.getLogin());
+        final Long newScore = 1000L;
+        user6.setScore(newScore);
+        accountService.updateUser("session2", user6);
+        final UserProfile profile2 = accountService.getUserByID(id2);
         assertNotNull(profile2);
-        assertEquals("special", profile2.getPassword());
+        assertEquals(newScore, profile2.getScore());
         assertEquals(id2, profile2.getId());
 
-        user6.setLogin("newnew");
+        final Long newScore2 = 2000L;
+        user6.setScore(newScore2);
         accountService.updateUser("wrong", user6);
+        final UserProfile profile3 = accountService.getUserByID(id2);
+        assertNotNull(profile3);
+        assertNotEquals(newScore2, profile3.getScore());
 
-        accountService.logoutUser(token5);
-        accountService.updateUser(token5, user6);
-        UserProfile profile5 = accountService.getUserByLogin(user6.getLogin());
-        assertNull(profile5);
-        profile5 = accountService.getUserByID(id5);
+        final Long newScore3 = 3000L;
+        user6.setScore(newScore3);
+        accountService.logoutUser("session5");
+        accountService.updateUser("session5", user6);
+        final UserProfile profile5 = accountService.getUserByID(id5);
         assertNotNull(profile5);
-        assertNotEquals("special", profile5.getPassword());
+        assertNotEquals(newScore3, profile5.getScore());
     }
 
     @Test
@@ -309,25 +314,19 @@ public class AccountServiceImplTest {
         accountService.addUser(user4);
         accountService.addUser(user5);
 
-        final String token1 = accountService.loginUser(user1.getLogin(), user1.getPassword());
-        final String token2 = accountService.loginUser(user2.getLogin(), user2.getPassword());
-        final String token5 = accountService.loginUser(user5.getLogin(), user5.getPassword());
-        assertNotNull(token1);
-        assertNotNull(token2);
-        assertNotNull(token5);
+        final Boolean token1 = accountService.loginUser(user1.getUsername(), user1.getPassword(), "session1");
+        final Boolean token2 = accountService.loginUser(user2.getUsername(), user2.getPassword(), "session2");
+        final Boolean token5 = accountService.loginUser(user5.getUsername(), user5.getPassword(), "session5");
+        assertTrue(token1);
+        assertTrue(token2);
+        assertTrue(token5);
 
-        final UserProfile profile2 = accountService.getUserBySessionID(token2);
-        final UserProfile profile5 = accountService.getUserBySessionID(token5);
+        final UserProfile profile2 = accountService.getUserBySessionID("session2");
+        final UserProfile profile5 = accountService.getUserBySessionID("session5");
         assertNotNull(profile2);
         assertNotNull(profile5);
-        assertEquals("login2", profile2.getLogin());
-        assertEquals("login5", profile5.getLogin());
+        assertEquals("login2", profile2.getUsername());
+        assertEquals("login5", profile5.getUsername());
         assertNull(accountService.getUserBySessionID("wrong"));
     }
-
-    @After
-    public void tearDown() {
-        accountService.sessionFactory.close();
-    }
-
 }

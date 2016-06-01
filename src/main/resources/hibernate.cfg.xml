@@ -4,10 +4,10 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <property name="show_sql">true</property>
+        <property name="show_sql">false</property>
         <property name="format_sql">true</property>
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
-        <property name="connection.url">jdbc:mysql://localhost:3306/db_java</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/db_java?useSSL=false</property>
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
         <property name="connection.username">test</property>
         <property name="connection.password">test</property>

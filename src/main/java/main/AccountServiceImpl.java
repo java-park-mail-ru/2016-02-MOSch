@@ -1,69 +1,55 @@
 package main;
 
+import base.AccountService;
 import db.datasets.UserDataSet;
 import db.datasets.UserDataSetDAO;
-import org.hibernate.*;
-import org.hibernate.cfg.Configuration;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.resource.transaction.spi.*;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import rest.UserProfile;
-import supportclasses.*;
+import supportclasses.LoginScoreSet;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
 
 /**
  * MOSch-team test server for "Kill The Birds" game
  */
-
 public class AccountServiceImpl implements AccountService {
     final SessionFactory sessionFactory;
-    private final Map<String, UserProfile> loggedUsers = new ConcurrentHashMap<>();
-    private final Map<Long, String> sessionIDs = new ConcurrentHashMap<>();
 
     public AccountServiceImpl(@NotNull String config) {
         final Configuration configuration = new Configuration();
         configuration.addAnnotatedClass(UserDataSet.class);
         configuration.configure(config);
         sessionFactory = configuration.buildSessionFactory();
-    }
-
-
-    @Override
-    public List<UserProfile> getAllUsers(){
-        try(Session session = sessionFactory.openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             try {
                 final Transaction transaction = session.beginTransaction();
-                final UserDataSetDAO dao = new UserDataSetDAO(session);
-                final List<UserDataSet> userDS = dao.readAll();
+                UserDataSetDAO.logoutAll(session);
                 transaction.commit();
-                session.close();
-                return userDS.stream().map(UserProfile::new).collect(Collectors.toCollection(LinkedList::new));
             } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
                     session.getTransaction().rollback();
                 }
-                return null;
             }
         }
     }
 
     @Override
     public List<LoginScoreSet> getTopUsers() {
-        try(Session session = sessionFactory.openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             try {
                 final Transaction transaction = session.beginTransaction();
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
-                final List<LoginScoreSet> ds = dao.readTop();
+                final List<LoginScoreSet> ds = dao.readAll();
                 transaction.commit();
-                session.close();
                 return ds;
             } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
@@ -77,14 +63,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public long countUsers() {
-        try(Session session = sessionFactory.openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             try {
                 final Transaction transaction = session.beginTransaction();
                 final Long result = new UserDataSetDAO(session).countUsers();
                 transaction.commit();
                 return result;
-            }
-            catch (HibernateException e) {
+            } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
                     session.getTransaction().rollback();
@@ -101,13 +86,11 @@ public class AccountServiceImpl implements AccountService {
                 final Transaction transaction = session.beginTransaction();
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
                 final UserDataSet dataSet = dao.readUserByID(userID);
-
                 transaction.commit();
                 if (dataSet != null) {
                     return new UserProfile(dataSet);
                 } else return null;
-            }
-            catch (HibernateException e) {
+            } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
                     session.getTransaction().rollback();
@@ -119,7 +102,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public UserProfile getUserByLogin(@NotNull String username) {
-        try(Session session = sessionFactory.openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             try {
                 final Transaction transaction = session.beginTransaction();
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
@@ -128,8 +111,7 @@ public class AccountServiceImpl implements AccountService {
                 if (dataSet != null) {
                     return new UserProfile(dataSet);
                 } else return null;
-            }
-            catch (HibernateException e) {
+            } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
                     session.getTransaction().rollback();
@@ -141,25 +123,37 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public UserProfile getUserBySessionID(@NotNull String sessionID) {
-        if (loggedUsers.containsKey(sessionID)) {
-            return loggedUsers.get(sessionID);
-        } else {
-            return null;
+        try (Session session = sessionFactory.openSession()) {
+            try {
+                final Transaction transaction = session.beginTransaction();
+                final UserDataSetDAO dao = new UserDataSetDAO(session);
+                final UserDataSet dataSet = dao.readUserBySessionID(sessionID);
+                transaction.commit();
+                if (dataSet != null) {
+                    return new UserProfile(dataSet);
+                } else return null;
+            } catch (HibernateException e) {
+                if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
+                        || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
+                    session.getTransaction().rollback();
+                }
+                return null;
+            }
         }
     }
 
     @Override
     public Long addUser(@NotNull UserProfile userProfile) {
-        if (!userProfile.checkLogin()) {
+        if (!userProfile.checkUsername()) {
             return null;
         }
         if (!userProfile.checkPassword()) {
             return null;
         }
-        try(Session session = sessionFactory.openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             try {
                 final Transaction transaction = session.beginTransaction();
-                if (getUserByLogin(userProfile.getLogin()) != null) {
+                if (getUserByLogin(userProfile.getUsername()) != null) {
                     return null;
                 }
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
@@ -173,8 +167,7 @@ public class AccountServiceImpl implements AccountService {
                 }
                 transaction.commit();
                 return result;
-            }
-            catch (HibernateException e) {
+            } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
                     session.getTransaction().rollback();
@@ -185,16 +178,15 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public boolean updateUser(long userID, @NotNull UserProfile user) {
-        try(Session session = sessionFactory.openSession()) {
+    public boolean updateUser(long userID, @NotNull UserProfile user, @Nullable Integer mu) {
+        try (Session session = sessionFactory.openSession()) {
             try {
                 final Transaction transaction = session.beginTransaction();
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
-                dao.updateUser(userID, new UserDataSet(user));
+                dao.updateUser(userID, new UserDataSet(user), null);
                 transaction.commit();
                 return true;
-            }
-            catch (HibernateException e) {
+            } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
                     session.getTransaction().rollback();
@@ -206,14 +198,25 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public boolean updateUser(@NotNull String sessionID, @NotNull UserProfile user) {
-        if (isLoggedIn(sessionID)) {
-            final UserProfile profile = getUserBySessionID(sessionID);
-            if (profile != null && updateUser(profile.getId(), user) ) {
-                loggedUsers.put(sessionID, user);
+        try (Session session = sessionFactory.openSession()) {
+            try {
+                final Transaction transaction = session.beginTransaction();
+                final UserDataSetDAO dao = new UserDataSetDAO(session);
+                final UserDataSet userDataSet = dao.readUserBySessionID(sessionID);
+                if (userDataSet != null) {
+                    final long userID = userDataSet.getId();
+                    dao.updateUser(userID, new UserDataSet(user), null);
+                }
+                transaction.commit();
                 return true;
+            } catch (HibernateException e) {
+                if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
+                        || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
+                    session.getTransaction().rollback();
+                }
+                return false;
             }
         }
-        return false;
     }
 
     @Override
@@ -224,8 +227,7 @@ public class AccountServiceImpl implements AccountService {
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
                 dao.deleteUser(userID);
                 transaction.commit();
-            }
-            catch (HibernateException e) {
+            } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
                     session.getTransaction().rollback();
@@ -236,18 +238,39 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void removeUser(@NotNull String sessionID) {
-        if (isLoggedIn(sessionID)) {
-            final UserProfile profile = getUserBySessionID(sessionID);
-            if (profile != null) {
-                removeUser(profile.getId());
+        try (Session session = sessionFactory.openSession()) {
+            try {
+                final Transaction transaction = session.beginTransaction();
+                final UserDataSetDAO dao = new UserDataSetDAO(session);
+                final UserDataSet userDataSet = dao.readUserBySessionID(sessionID);
+                if (userDataSet != null) {
+                    final long userID = userDataSet.getId();
+                    dao.deleteUser(userID);
+                }
+                transaction.commit();
+            } catch (HibernateException e) {
+                if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
+                        || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
+                    session.getTransaction().rollback();
+                }
             }
-            logoutUser(sessionID);
         }
     }
 
     @Override
-    public boolean isLoggedIn(@NotNull String sessionID) {
-        return loggedUsers.containsKey(sessionID);
+    public void removeAll() {
+        try (Session session = sessionFactory.openSession()) {
+            try {
+                final Transaction transaction = session.beginTransaction();
+                UserDataSetDAO.deleteAll(session);
+                transaction.commit();
+            } catch (HibernateException e) {
+                if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
+                        || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
+                    session.getTransaction().rollback();
+                }
+            }
+        }
     }
 
     @Override
@@ -260,37 +283,47 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String loginUser(@NotNull String userName, @NotNull String password) {
+    public boolean loginUser(@NotNull String userName, @NotNull String password, @NotNull String sessionID) {
         final Long userID = getUserID(userName, password);
         if (userID != null) {
-            if (sessionIDs.containsKey(userID)) {
-                return sessionIDs.get(userID);
-            } else {
-                final String sessionID = MD5Hash.getHashString(userName);
-                sessionIDs.put(userID, sessionID);
-                loggedUsers.put(sessionID, getUserByID(userID));
-                return sessionID;
+            try (Session session = sessionFactory.openSession()) {
+                try {
+                    final Transaction transaction = session.beginTransaction();
+                    final UserDataSetDAO dao = new UserDataSetDAO(session);
+                    final String result = dao.loginUser(userID, sessionID);
+                    transaction.commit();
+                    return result != null;
+                } catch (HibernateException e) {
+                    if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
+                            || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
+                        session.getTransaction().rollback();
+                    }
+                }
+                return false;
             }
         } else {
-            return null;
-        }
-    }
-
-    @Override
-    public String loginUser(@NotNull String sessionID) {
-        if (loggedUsers.containsKey(sessionID)) {
-            return sessionID;
-        } else {
-            return null;
+            return false;
         }
     }
 
     @Override
     public void logoutUser(@NotNull String sessionID) {
-        if (loggedUsers.containsKey(sessionID)) {
-            sessionIDs.remove(loggedUsers.get(sessionID).getId());
-            loggedUsers.remove(sessionID);
+        try (Session session = sessionFactory.openSession()) {
+            try {
+                final Transaction transaction = session.beginTransaction();
+                final UserDataSetDAO dao = new UserDataSetDAO(session);
+                final UserDataSet userDataSet = dao.readUserBySessionID(sessionID);
+                if (userDataSet != null) {
+                    final long userID = userDataSet.getId();
+                    dao.logoutUser(userID);
+                }
+                transaction.commit();
+            } catch (HibernateException e) {
+                if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
+                        || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {
+                    session.getTransaction().rollback();
+                }
+            }
         }
     }
-
 }
