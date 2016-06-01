@@ -1,7 +1,7 @@
 package game;
 
-import base.GameMechanicsService;
-import frontend.WSServiceImpl;
+import base.GameMechanics;
+import base.WSService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -13,17 +13,14 @@ import java.util.*;
 /**
  * Created by Olerdrive on 29.05.16.
  */
-public class GameMechanicsImpl implements GameMechanicsService {
+public class GameMechanicsImpl implements GameMechanics {
 
     private static final int STEP_TIME = 100;
-
-    @SuppressWarnings("PointlessArithmeticExpression")
-    private static final int GAME_TIME = 1 * 60 * 1000;
 
     private static final Logger LOGGER = LogManager.getLogger(GameMechanicsImpl.class);
 
     @NotNull
-    private final WSServiceImpl webSocketService;
+    private final WSService webSocketService;
 
     @NotNull
     private final Map<String, GameSession> nameToGame = new HashMap<>();
@@ -34,9 +31,14 @@ public class GameMechanicsImpl implements GameMechanicsService {
     @Nullable
     private volatile String waiter;
 
-    public GameMechanicsImpl(@NotNull WSServiceImpl webSocketService) {
+    public GameMechanicsImpl(@NotNull WSService webSocketService) {
         this.webSocketService = webSocketService;
 
+    }
+
+    @Override
+    public GameSession getGameSession(@NotNull String name) {
+        return nameToGame.get(name);
     }
 
     @Override
@@ -45,12 +47,23 @@ public class GameMechanicsImpl implements GameMechanicsService {
     }
 
     @Override
+    public Integer getMyLeadCount(String user) {
+        return nameToGame.get(user).getSelf(user).getMyLeadCount();
+    }
+
+    @Override
     public int getEnemyScore(String user) {
         return nameToGame.get(user).getEnemy(user).getMyHeight();
     }
 
+    @Override
     public String getEnemyName(String user) {
         return nameToGame.get(user).getEnemy(user).getMyName();
+    }
+
+    @Override
+    public Integer getEnemyLeadCount(String user) {
+        return nameToGame.get(user).getEnemy(user).getMyLeadCount();
     }
 
     @Override
@@ -64,6 +77,7 @@ public class GameMechanicsImpl implements GameMechanicsService {
         }
     }
 
+    @Override
     public void removeGameSession(@NotNull String user) {
         allSessions.remove(nameToGame.get(user));
         nameToGame.remove(user);
@@ -92,6 +106,13 @@ public class GameMechanicsImpl implements GameMechanicsService {
             myUser.incrementMyLeadCount();
     }
 
+    @Override
+    public void setLooser(String userName) {
+        final GameSession myGameSession = nameToGame.get(userName);
+        final GameUser myUser = myGameSession.getSelf(userName);
+        myUser.setLooser();
+    }
+
 
     @Override
     public void run() {
@@ -105,8 +126,8 @@ public class GameMechanicsImpl implements GameMechanicsService {
 
     @Override
     public void gmStep() {
-        allSessions.stream().filter(session -> session.getSessionTime() > GAME_TIME).forEach(session -> {
-            LOGGER.info("игра завершена для : " + session.getFirst().getMyName() + " и " + session.getSecond().getMyName());
+        allSessions.stream().filter(GameSession::isGameOver).forEach(session -> {
+            LOGGER.info("Game is over for " + session.getFirst().getMyName() + " and " + session.getSecond().getMyName());
             if (session.isEquality()) {
                 webSocketService.notifyGameOver(session.getFirst(), true, false);
                 webSocketService.notifyGameOver(session.getSecond(), true, false);

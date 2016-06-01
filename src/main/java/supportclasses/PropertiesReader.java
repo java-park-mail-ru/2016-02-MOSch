@@ -10,7 +10,7 @@ import java.util.*;
 public class PropertiesReader {
     private Properties serverProperties;
 
-    public PropertiesReader(String serverPropertiesPath) throws IOException{
+    public PropertiesReader(@SuppressWarnings("SameParameterValue") String serverPropertiesPath) throws IOException{
         final InputStream is = getClass().getClassLoader().getResourceAsStream(serverPropertiesPath);
         if (is != null) {
             serverProperties = new Properties();

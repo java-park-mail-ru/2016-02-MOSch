@@ -1,6 +1,7 @@
 package rest;
 
 import db.datasets.UserDataSet;
+import game.GameUser;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -54,6 +55,10 @@ public class UserProfile {
         this.id = id;
         this.username = username;
         this.password = password;
+    }
+
+    public UserProfile (@NotNull GameUser gameUser){
+        this.score = (long)gameUser.getMyHeight();
     }
 
     @NotNull

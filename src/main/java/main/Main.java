@@ -1,6 +1,6 @@
 package main;
 
-import base.AccountService;
+import base.*;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -35,8 +35,8 @@ public class Main {
         try {
             final AccountServiceImpl accountService = new AccountServiceImpl("hibernate.cfg.xml");
             ctx.put(AccountService.class, accountService);
-            ctx.put(WSServiceImpl.class, new WSServiceImpl());
-            ctx.put(GameMechanicsImpl.class, new GameMechanicsImpl(ctx.get(WSServiceImpl.class)));
+            ctx.put(WSService.class, new WSServiceImpl());
+            ctx.put(GameMechanics.class, new GameMechanicsImpl(ctx.get(WSService.class)));
         } catch (RuntimeException e) {
             LOGGER.error(e);
             System.exit(1);
@@ -62,6 +62,6 @@ public class Main {
         server.start();
         //server.join();
         LOGGER.info("Server started successfully");
-        ctx.get(GameMechanicsImpl.class).run();
+        ctx.get(GameMechanics.class).run();
     }
 }

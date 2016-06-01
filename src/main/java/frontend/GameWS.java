@@ -1,9 +1,8 @@
 package frontend;
 
-import base.AccountService;
 import com.google.gson.*;
 
-import game.GameMechanicsImpl;
+import base.*;
 import game.GameUser;
 import main.Context;
 import org.apache.logging.log4j.LogManager;
@@ -13,9 +12,9 @@ import org.eclipse.jetty.websocket.api.WebSocketException;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import rest.UserProfile;
 
 import java.io.IOException;
 
@@ -29,8 +28,8 @@ public class GameWS {
     @Nullable
     private Session session;
     @NotNull
-    private final GameMechanicsImpl gameMechanics;
-    private final WSServiceImpl webSocketService;
+    private final GameMechanics gameMechanics;
+    private final WSService webSocketService;
     private final AccountService accountService;
 
     @NotNull
@@ -38,8 +37,8 @@ public class GameWS {
 
     public GameWS(@NotNull String myName, Context context) {
         this.myName = myName;
-        this.gameMechanics = context.get(GameMechanicsImpl.class);
-        this.webSocketService = context.get(WSServiceImpl.class);
+        this.gameMechanics = context.get(GameMechanics.class);
+        this.webSocketService = context.get(WSService.class);
         this.accountService = context.get(AccountService.class);
         LOGGER.info("Socket created for " + myName);
 
@@ -65,25 +64,37 @@ public class GameWS {
         sendJson(json);
     }
 
-    public void gameOver(boolean equality, boolean win) {
+    public void gameOver(boolean equality, boolean firstWinBF) {
 
         final JsonObject jsonEndGame = new JsonObject();
+        final String enemyName = gameMechanics.getEnemyName(myName);
         jsonEndGame.addProperty("action", "finishGame");
         if (equality) {
             jsonEndGame.addProperty("equality", true);
         } else {
-            jsonEndGame.addProperty("win", win);
+            jsonEndGame.addProperty("isWinner", firstWinBF);
         }
         final int currentScore = gameMechanics.getMyScore(myName);
         jsonEndGame.addProperty("myName", myName);
         jsonEndGame.addProperty("myScore", currentScore);
-        jsonEndGame.addProperty("enemyName", gameMechanics.getEnemyName(myName));
+        jsonEndGame.addProperty("myLeadCount", gameMechanics.getMyLeadCount(myName));
+        jsonEndGame.addProperty("enemyName", enemyName);
         jsonEndGame.addProperty("enemyScore", gameMechanics.getEnemyScore(myName));
+        jsonEndGame.addProperty("enemyLeadCount", gameMechanics.getEnemyLeadCount(myName));
 
 
         sendJson(jsonEndGame);
 
+        saveResults(gameMechanics.getGameSession(myName).getFirst());
+        saveResults(gameMechanics.getGameSession(myName).getSecond());
         gameMechanics.removeGameSession(myName);
+
+    }
+
+    public void saveResults(GameUser user1){
+        LOGGER.info("Saving results for " + user1.getMyName());
+        @NotNull final Long user1Id = accountService.getUserByLogin(user1.getMyName()).getId();
+        accountService.updateUser(user1Id, new UserProfile(user1), user1.getMyLeadCount());
 
     }
 
@@ -103,17 +114,28 @@ public class GameWS {
             final JsonElement jsonElement = new JsonParser().parse(data);
             final String action = jsonElement.getAsJsonObject().getAsJsonPrimitive("action").getAsString();
             if (action == null) {
-                throw new JsonSyntaxException("Can't find out \"action\" in JSON");
+                throw new JsonSyntaxException("Can't find understand \"action\" in JSON");
             }
             switch (action) {
+                case "build":
+                {
+                    final String builderName = jsonElement.getAsJsonObject().getAsJsonPrimitive("user").getAsString();
+                    gameMechanics.incrementScore(builderName);
+                }
+                case "miss":
+                {
+                    final String looserName = jsonElement.getAsJsonObject().getAsJsonPrimitive("user").getAsString();
+                    gameMechanics.setLooser(looserName);
+
+                }
                 default:
                     throw new JsonSyntaxException("Unknown \"action\"");
             }
         } catch (JsonSyntaxException e) {
 
-            LOGGER.error("Can't find out \"action\" in JSON");
+            LOGGER.error(e);
             final JsonObject jsonError = new JsonObject();
-            jsonError.addProperty("error", "action is null");
+            jsonError.addProperty("error", "action is invalid");
             sendJson(jsonError);
         }
     }

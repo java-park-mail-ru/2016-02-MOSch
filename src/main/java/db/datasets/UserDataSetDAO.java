@@ -64,7 +64,8 @@ public class UserDataSetDAO {
         return (UserDataSet) criteria.add(Restrictions.eq("username", username)).uniqueResult();
     }
 
-    public void updateUser(@NotNull Long userID, @NotNull UserDataSet dataSet, @SuppressWarnings("SameParameterValue") @Nullable Long multiplier) {
+    @SuppressWarnings("MagicNumber")
+    public void updateUser(@NotNull Long userID, @NotNull UserDataSet dataSet, @SuppressWarnings("SameParameterValue") @Nullable Integer multiplier) {
         final UserDataSet oldDataSet = readUserByID(userID);
         if (oldDataSet == null) {
             return;
@@ -92,6 +93,8 @@ public class UserDataSetDAO {
             oldDataSet.setPoints(oldDataSet.getPoints() - 1000000L);
             oldDataSet.setStarBf(true);
         }
+
+        session.save(oldDataSet);
     }
 
     public long countUsers() {

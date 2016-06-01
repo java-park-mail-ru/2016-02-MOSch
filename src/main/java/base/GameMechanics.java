@@ -1,10 +1,11 @@
 package base;
 import org.jetbrains.annotations.NotNull;
+import game.GameSession;
 
 /**
  * Created by Olerdrive on 29.05.16.
  */
-public interface GameMechanicsService {
+public interface GameMechanics {
 
     int getMyScore(String user);
 
@@ -15,6 +16,20 @@ public interface GameMechanicsService {
     void removeUser(@NotNull String user);
 
     void incrementScore(String userName);
+
+    void setLooser(String userName);
+
+    void removeGameSession(@NotNull String user);
+
+    Integer getEnemyLeadCount(String user);
+
+    String getEnemyName(String user);
+
+    Integer getMyLeadCount(String user);
+
+    GameSession getGameSession(@NotNull String name);
+
+
 
     void run();
 

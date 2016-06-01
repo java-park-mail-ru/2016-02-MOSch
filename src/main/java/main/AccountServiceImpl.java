@@ -10,6 +10,7 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import rest.UserProfile;
 import supportclasses.LoginScoreSet;
 
@@ -177,12 +178,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public boolean updateUser(long userID, @NotNull UserProfile user) {
+    public boolean updateUser(long userID, @NotNull UserProfile user, @Nullable Integer multiplier) {
         try (Session session = sessionFactory.openSession()) {
             try {
                 final Transaction transaction = session.beginTransaction();
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
-                dao.updateUser(userID, new UserDataSet(user), null);
+                dao.updateUser(userID, new UserDataSet(user), multiplier);
                 transaction.commit();
                 return true;
             } catch (HibernateException e) {

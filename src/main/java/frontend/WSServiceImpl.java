@@ -27,11 +27,11 @@ public class WSServiceImpl implements WSService{
     }
 
     @Override
-    public void notifyGameOver(GameUser user, boolean equality, boolean win) {
+    public void notifyGameOver(GameUser user, boolean equality, boolean firstWinBF) {
         if (equality) {
             userSockets.get(user.getMyName()).gameOver(true, false);
         } else {
-            userSockets.get(user.getMyName()).gameOver(false, win);
+            userSockets.get(user.getMyName()).gameOver(false, firstWinBF);
         }
 
         userSockets.remove(user.getMyName());

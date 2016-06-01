@@ -68,10 +68,14 @@ public class GameSession {
     }
 
     public boolean isFirstWin() {
-        return first.getMyHeight() > second.getMyHeight();
+        return first.getMyHeight() > second.getMyHeight() || first.getMyLeadCount() > second.getMyLeadCount();
     }
 
     public boolean isEquality() {
-        return first.getMyHeight() == second.getMyHeight();
+        return first.getMyHeight() == second.getMyHeight() || first.getMyLeadCount() > second.getMyLeadCount();
+    }
+
+    public boolean isGameOver(){
+        return first.isLooser() || second.isLooser();
     }
 }

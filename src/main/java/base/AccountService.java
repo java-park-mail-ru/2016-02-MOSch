@@ -29,7 +29,7 @@ public interface AccountService {
     @Nullable
     Long addUser(@NotNull UserProfile userProfile);
 
-    boolean updateUser(long userID, @NotNull UserProfile user);
+    boolean updateUser(long userID, @NotNull UserProfile user, @Nullable Integer multiplier);
 
     boolean updateUser(@NotNull String sessionID, @NotNull UserProfile user);
 
