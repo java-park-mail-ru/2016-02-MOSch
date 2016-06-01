@@ -1,6 +1,6 @@
 package rest;
 
-import main.AccountService;
+import base.AccountService;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

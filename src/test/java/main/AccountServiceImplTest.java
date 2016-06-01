@@ -128,7 +128,7 @@ public class AccountServiceImplTest {
         assertNotNull(id2);
         final Long newScore = 1000L;
         user3.setScore(newScore);
-        assertTrue(accountService.updateUser(id2, user3));
+        assertTrue(accountService.updateUser(id2, user3, null));
         final UserProfile newUser2 = accountService.getUserByID(id2);
         assertNotNull(newUser2);
         assertEquals(newScore, newUser2.getScore());
