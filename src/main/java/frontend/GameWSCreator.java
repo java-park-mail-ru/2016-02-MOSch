@@ -28,7 +28,8 @@ public class GameWSCreator implements WebSocketCreator {
     public GameWS createWebSocket(ServletUpgradeRequest req, ServletUpgradeResponse resp) {
 
         final String sessionId = req.getHttpServletRequest().getSession().getId();
-        final UserProfile userBySession = context.get(AccountService.class).getUserBySessionID(sessionId);
+        final AccountService accountService = context.get(AccountService.class);
+        final UserProfile userBySession = accountService.getUserBySessionID(sessionId);
 
         if (userBySession == null) {
             LOGGER.error("Can't create websocket, user is not logged in");

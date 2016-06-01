@@ -11,7 +11,7 @@ public class PropertiesReader {
     private Properties serverProperties;
 
     public PropertiesReader(@SuppressWarnings("SameParameterValue") String serverPropertiesPath) throws IOException{
-        final InputStream is = getClass().getClassLoader().getResourceAsStream(serverPropertiesPath);
+        final InputStream is = getClass().getResourceAsStream(serverPropertiesPath);
         if (is != null) {
             serverProperties = new Properties();
             serverProperties.load(is);

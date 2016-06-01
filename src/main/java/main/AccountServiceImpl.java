@@ -178,12 +178,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public boolean updateUser(long userID, @NotNull UserProfile user, @Nullable Integer multiplier) {
+    public boolean updateUser(long userID, @NotNull UserProfile user, @Nullable Integer mu) {
         try (Session session = sessionFactory.openSession()) {
             try {
                 final Transaction transaction = session.beginTransaction();
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
-                dao.updateUser(userID, new UserDataSet(user), multiplier);
+                dao.updateUser(userID, new UserDataSet(user), null);
                 transaction.commit();
                 return true;
             } catch (HibernateException e) {

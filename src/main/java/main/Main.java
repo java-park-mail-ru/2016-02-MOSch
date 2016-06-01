@@ -25,7 +25,7 @@ public class Main {
 
     @SuppressWarnings("OverlyBroadThrowsClause")
     public static void main(String[] args) throws Exception {
-        final PropertiesReader serverConfig = new PropertiesReader("server.properties");
+        final PropertiesReader serverConfig = new PropertiesReader("/server.properties");
         final int port = serverConfig.getPort();
 
         LOGGER.info("Starting at port: " + String.valueOf(port));
@@ -35,12 +35,14 @@ public class Main {
         try {
             final AccountServiceImpl accountService = new AccountServiceImpl("hibernate.cfg.xml");
             ctx.put(AccountService.class, accountService);
-            ctx.put(WSService.class, new WSServiceImpl());
-            ctx.put(GameMechanics.class, new GameMechanicsImpl(ctx.get(WSService.class)));
+            ctx.get(AccountService.class).countUsers();
         } catch (RuntimeException e) {
             LOGGER.error(e);
             System.exit(1);
         }
+
+        ctx.put(WSService.class, new WSServiceImpl());
+        ctx.put(GameMechanics.class, new GameMechanicsImpl(ctx.get(WSService.class)));
 
 
         final ResourceConfig resourceConfig = new ResourceConfig(Users.class, Session.class);
@@ -62,6 +64,8 @@ public class Main {
         server.start();
         //server.join();
         LOGGER.info("Server started successfully");
+
         ctx.get(GameMechanics.class).run();
+
     }
 }
