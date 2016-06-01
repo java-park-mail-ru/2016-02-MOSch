@@ -120,7 +120,7 @@ public class GameMechanicsImpl implements GameMechanics {
         //noinspection InfiniteLoopStatement
         while (true) {
             gmStep();
-            TimeHelper.sleep(STEP_TIME);
+            //TimeHelper.sleep(STEP_TIME);
         }
     }
 
