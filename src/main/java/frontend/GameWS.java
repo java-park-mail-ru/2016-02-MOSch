@@ -131,12 +131,14 @@ public class GameWS {
                     json.add("username", new JsonPrimitive(builderName));
                     json.add("height", new JsonPrimitive(gameMechanics.getMyScore(builderName)));
                     sendJson(json);
+                    break;
                 }
                 case "miss":
                 {
                     final String looserName = jsonElement.getAsJsonObject().getAsJsonPrimitive("username").getAsString();
                     LOGGER.info("User {} misses", looserName);
                     gameMechanics.setLooser(looserName);
+                    break;
 
                 }
                 default:
