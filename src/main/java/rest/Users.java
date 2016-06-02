@@ -1,7 +1,7 @@
 package rest;
 
 import com.google.gson.Gson;
-import main.AccountService;
+import base.AccountService;
 import supportclasses.LoginScoreSet;
 
 import javax.inject.Inject;
@@ -139,7 +139,7 @@ public class Users {
         }
         if (Objects.equals(currentUser.getId(), id)) {
             final UserProfile oldUser = accountService.getUserByID(id);
-            if (oldUser != null && accountService.updateUser(id, newUser)) {
+            if (oldUser != null && accountService.updateUser(id, newUser, null)) {
                 final String payload = String.format("{\"id\":\"%d\"}", id);
                 return Response
                         .status(Response.Status.OK)

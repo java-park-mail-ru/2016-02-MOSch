@@ -2,7 +2,7 @@ package rest;
 
 
 import com.google.gson.Gson;
-import main.AccountService;
+import base.AccountService;
 import main.AccountServiceImpl;
 import main.Context;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;

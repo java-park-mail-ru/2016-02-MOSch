@@ -7,7 +7,7 @@
         <property name="show_sql">true</property>
         <property name="format_sql">true</property>
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
-        <property name="connection.url">jdbc:mysql://localhost:3306/db_java_test</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/db_java_test?useSSL=false</property>
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
         <property name="connection.username">test</property>
         <property name="connection.password">test</property>

@@ -16,7 +16,6 @@ import java.util.List;
  * MOSch-team test server for "Kill The Birds" game
  */
 public class UserDataSetDAO {
-    private static final Long DEFAULT_MULTIPLIER = 1000L;
     private final Session session;
 
     public UserDataSetDAO(Session session) {
@@ -65,18 +64,37 @@ public class UserDataSetDAO {
         return (UserDataSet) criteria.add(Restrictions.eq("username", username)).uniqueResult();
     }
 
-    public void updateUser(@NotNull Long userID, @NotNull UserDataSet dataSet, @SuppressWarnings("SameParameterValue") @Nullable Long multiplier) {
-        if (multiplier == null) {
-            multiplier = DEFAULT_MULTIPLIER;
-        }
+    @SuppressWarnings("MagicNumber")
+    public void updateUser(@NotNull Long userID, @NotNull UserDataSet dataSet, @SuppressWarnings("SameParameterValue") @Nullable Integer multiplier) {
         final UserDataSet oldDataSet = readUserByID(userID);
-        if (oldDataSet != null) {
-            final Long newScore = dataSet.getScore();
-            if (oldDataSet.getScore() < newScore) {
-                oldDataSet.setScore(newScore);
-            }
+        if (oldDataSet == null) {
+            return;
+        }
+        final Long newScore = dataSet.getScore();
+        if (oldDataSet.getScore() < newScore) {
+            oldDataSet.setScore(newScore);
+        }
+        if (multiplier != null) {
             oldDataSet.setPoints(oldDataSet.getPoints() + multiplier * newScore);
         }
+        if (!oldDataSet.getAccuracyBf() && dataSet.getAccuracyBf() && oldDataSet.getPoints() > 350000L) {
+            oldDataSet.setPoints(oldDataSet.getPoints() - 350000L);
+            oldDataSet.setAccuracyBf(true);
+        }
+        if (!oldDataSet.getDelayBf() && dataSet.getDelayBf() && oldDataSet.getPoints() > 250000L) {
+            oldDataSet.setPoints(oldDataSet.getPoints() - 250000L);
+            oldDataSet.setDelayBf(true);
+        }
+        if (!oldDataSet.getSpeedBf() && dataSet.getSpeedBf() && oldDataSet.getPoints() > 300000L) {
+            oldDataSet.setPoints(oldDataSet.getPoints() - 300000L);
+            oldDataSet.setSpeedBf(true);
+        }
+        if (!oldDataSet.getStarBf() && dataSet.getStarBf() && oldDataSet.getPoints() > 1000000L) {
+            oldDataSet.setPoints(oldDataSet.getPoints() - 1000000L);
+            oldDataSet.setStarBf(true);
+        }
+
+        session.save(oldDataSet);
     }
 
     public long countUsers() {
