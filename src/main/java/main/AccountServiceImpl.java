@@ -296,7 +296,7 @@ public class AccountServiceImpl implements AccountService {
                     final UserDataSetDAO dao = new UserDataSetDAO(session);
                     final String result = dao.loginUser(userID, sessionID);
                     transaction.commit();
-                    LOGGER.info("User {} logged", userName);
+                    LOGGER.info("User {} logged in", userName);
                     return result != null;
                 } catch (HibernateException e) {
                     if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE

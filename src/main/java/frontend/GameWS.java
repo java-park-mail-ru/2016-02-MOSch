@@ -90,8 +90,7 @@ public class GameWS {
         sendJson(jsonEndGame);
 
         final GameSession currentSession = gameMechanics.getGameSession(myName);
-        saveResults(currentSession.getFirst());
-        saveResults(currentSession.getSecond());
+        saveResults(currentSession.getSelf(myName));
         gameMechanics.removeGameSession(myName);
 
     }
