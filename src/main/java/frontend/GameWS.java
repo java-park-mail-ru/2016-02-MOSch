@@ -123,6 +123,8 @@ public class GameWS {
                 case "build":
                 {
                     final String builderName = jsonElement.getAsJsonObject().getAsJsonPrimitive("user").getAsString();
+
+                    LOGGER.info("User {} builds up", builderName);
                     gameMechanics.incrementScore(builderName);
                     final JsonObject json = new JsonObject();
                     json.add("action", new JsonPrimitive("buildOK"));
@@ -133,6 +135,7 @@ public class GameWS {
                 case "miss":
                 {
                     final String looserName = jsonElement.getAsJsonObject().getAsJsonPrimitive("user").getAsString();
+                    LOGGER.info("User {} misses", looserName);
                     gameMechanics.setLooser(looserName);
 
                 }
