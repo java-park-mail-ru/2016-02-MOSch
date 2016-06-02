@@ -1,5 +1,6 @@
 package frontend;
 
+import com.google.gson.JsonObject;
 import game.GameUser;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +26,13 @@ public class WSServiceImpl implements WSService{
         final GameWS gameWebSocket = userSockets.get(user.getMyName());
         gameWebSocket.startGame(user);
     }
+
+    @Override
+    public void notifyUserBuilds(GameUser user, JsonObject data) {
+        final GameWS gameWS = userSockets.get(user.getMyName());
+        gameWS.sendJson(data);
+    }
+
 
     @Override
     public void notifyGameOver(GameUser user, boolean equality, boolean firstWinBF) {

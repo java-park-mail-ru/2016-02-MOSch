@@ -3,6 +3,7 @@ package frontend;
 import com.google.gson.*;
 
 import base.*;
+import game.GameSession;
 import game.GameUser;
 import main.Context;
 import org.apache.logging.log4j.LogManager;
@@ -88,8 +89,9 @@ public class GameWS {
 
         sendJson(jsonEndGame);
 
-        saveResults(gameMechanics.getGameSession(myName).getFirst());
-        saveResults(gameMechanics.getGameSession(myName).getSecond());
+        final GameSession currentSession = gameMechanics.getGameSession(myName);
+        saveResults(currentSession.getFirst());
+        saveResults(currentSession.getSecond());
         gameMechanics.removeGameSession(myName);
 
     }
@@ -130,7 +132,9 @@ public class GameWS {
                     json.add("action", new JsonPrimitive("buildOK"));
                     json.add("username", new JsonPrimitive(builderName));
                     json.add("height", new JsonPrimitive(gameMechanics.getMyScore(builderName)));
-                    sendJson(json);
+                    final GameSession currentSession = gameMechanics.getGameSession(myName);
+                    webSocketService.notifyUserBuilds(currentSession.getFirst(), json);
+                    webSocketService.notifyUserBuilds(currentSession.getSecond(), json);
                     break;
                 }
                 case "miss":
