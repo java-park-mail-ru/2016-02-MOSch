@@ -76,6 +76,7 @@ public class UserDataSetDAO {
         }
         if (multiplier != null) {
             oldDataSet.setPoints(oldDataSet.getPoints() + multiplier * newScore);
+            System.out.append(oldDataSet.getPoints().toString());
         }
         if (!oldDataSet.getAccuracyBf() && dataSet.getAccuracyBf() && oldDataSet.getPoints() > 350000L) {
             oldDataSet.setPoints(oldDataSet.getPoints() - 350000L);
