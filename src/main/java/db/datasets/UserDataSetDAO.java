@@ -19,7 +19,6 @@ import java.util.List;
  */
 public class UserDataSetDAO {
     private final Session session;
-    private static final Logger LOGGER = LogManager.getLogger(UserDataSetDAO.class);
 
 
     public UserDataSetDAO(Session session) {
@@ -80,7 +79,6 @@ public class UserDataSetDAO {
         }
         if (multiplier != null) {
             oldDataSet.setPoints(oldDataSet.getPoints() + multiplier * newScore);
-            LOGGER.info(oldDataSet.getPoints());
         }
         if (!oldDataSet.getAccuracyBf() && dataSet.getAccuracyBf() && oldDataSet.getPoints() > 350000L) {
             oldDataSet.setPoints(oldDataSet.getPoints() - 350000L);
