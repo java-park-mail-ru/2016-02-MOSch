@@ -121,6 +121,11 @@ public class GameWS {
                 {
                     final String builderName = jsonElement.getAsJsonObject().getAsJsonPrimitive("user").getAsString();
                     gameMechanics.incrementScore(builderName);
+                    final JsonObject json = new JsonObject();
+                    json.add("action", new JsonPrimitive("buildOK"));
+                    json.add("user", new JsonPrimitive("builderName"));
+                    json.add("height", new JsonPrimitive(gameMechanics.getMyScore(builderName)));
+                    sendJson(json);
                 }
                 case "miss":
                 {
