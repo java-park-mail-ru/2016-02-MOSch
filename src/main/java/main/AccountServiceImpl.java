@@ -3,6 +3,8 @@ package main;
 import base.AccountService;
 import db.datasets.UserDataSet;
 import db.datasets.UserDataSetDAO;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -22,6 +24,7 @@ import java.util.Objects;
  */
 public class AccountServiceImpl implements AccountService {
     final SessionFactory sessionFactory;
+    private static final Logger LOGGER = LogManager.getLogger(AccountServiceImpl.class);
 
     public AccountServiceImpl(@NotNull String config) {
         final Configuration configuration = new Configuration();
@@ -166,6 +169,7 @@ public class AccountServiceImpl implements AccountService {
                     result = null;
                 }
                 transaction.commit();
+                LOGGER.info("User {} created with id: {}", userProfile.getUsername(), result);
                 return result;
             } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
@@ -292,6 +296,7 @@ public class AccountServiceImpl implements AccountService {
                     final UserDataSetDAO dao = new UserDataSetDAO(session);
                     final String result = dao.loginUser(userID, sessionID);
                     transaction.commit();
+                    LOGGER.info("User {} logged", userName);
                     return result != null;
                 } catch (HibernateException e) {
                     if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
@@ -318,6 +323,7 @@ public class AccountServiceImpl implements AccountService {
                     dao.logoutUser(userID);
                 }
                 transaction.commit();
+                LOGGER.info("User {} logged out", userDataSet.getUsername());
             } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {

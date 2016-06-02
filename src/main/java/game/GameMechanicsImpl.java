@@ -69,10 +69,12 @@ public class GameMechanicsImpl implements GameMechanics {
     @Override
     public void addUser(@NotNull String user) {
         if (waiter != null) {
+            LOGGER.info("Starting game for {} and {}", user, waiter);
             //noinspection ConstantConditions
             starGame(user, waiter);
             waiter = null;
         } else {
+            LOGGER.info("Waiting player for " + user);
             waiter = user;
         }
     }
@@ -120,7 +122,7 @@ public class GameMechanicsImpl implements GameMechanics {
         //noinspection InfiniteLoopStatement
         while (true) {
             gmStep();
-            //TimeHelper.sleep(STEP_TIME);
+            TimeHelper.sleep(STEP_TIME);
         }
     }
 
