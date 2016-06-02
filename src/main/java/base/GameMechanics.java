@@ -11,6 +11,8 @@ public interface GameMechanics {
 
     int getEnemyScore(String user);
 
+    Integer countMultiplier(String name);
+
     void addUser(@NotNull String user);
 
     void removeUser(@NotNull String user);

@@ -90,17 +90,18 @@ public class GameWS {
         sendJson(jsonEndGame);
 
         final GameSession currentSession = gameMechanics.getGameSession(myName);
-        saveResults(currentSession.getSelf(myName));
+        final int multiplier = gameMechanics.countMultiplier(myName);
+        saveResults(currentSession.getSelf(myName), multiplier);
         gameMechanics.removeGameSession(myName);
 
     }
 
-    public void saveResults(GameUser user1){
+    public void saveResults(GameUser user1, int multiplier){
         LOGGER.info("Saving results for " + user1.getMyName());
         final UserProfile user1Profile = accountService.getUserByLogin(user1.getMyName());
         if (user1Profile != null) {
             final long user1Id = user1Profile.getId();
-            accountService.updateUser(user1Id, new UserProfile(user1), user1.getMyLeadCount());
+            accountService.updateUser(user1Id, new UserProfile(user1), multiplier);
         }
 
     }

@@ -66,6 +66,16 @@ public class GameMechanicsImpl implements GameMechanics {
         return nameToGame.get(user).getEnemy(user).getMyLeadCount();
     }
 
+    @SuppressWarnings("MagicNumber")
+    @Override
+    public Integer countMultiplier(String name) {
+        final int myLeadCount = getMyLeadCount(name);
+        final int enemyLeadCount = getEnemyLeadCount(name);
+        int sum = myLeadCount + enemyLeadCount;
+        sum = (myLeadCount * 2/sum) * (myLeadCount * 2/sum) * 50;
+        return sum;
+    }
+
     @Override
     public void addUser(@NotNull String user) {
         if (waiter != null) {
