@@ -130,15 +130,18 @@ public class GameWS {
                 {
                     final String builderName = jsonElement.getAsJsonObject().getAsJsonPrimitive("username").getAsString();
 
-                    LOGGER.info("User {} builds up", builderName);
-                    gameMechanics.incrementScore(builderName);
-                    final JsonObject json = new JsonObject();
-                    json.add("action", new JsonPrimitive("buildOK"));
-                    json.add("username", new JsonPrimitive(builderName));
-                    json.add("height", new JsonPrimitive(gameMechanics.getMyScore(builderName)));
-                    final GameSession currentSession = gameMechanics.getGameSession(myName);
-                    webSocketService.notifyUserBuilds(currentSession.getFirst(), json);
-                    webSocketService.notifyUserBuilds(currentSession.getSecond(), json);
+                    if (!gameMechanics.getGameSession(builderName).isGameOver()) {
+
+                        LOGGER.info("User {} builds up", builderName);
+                        gameMechanics.incrementScore(builderName);
+                        final JsonObject json = new JsonObject();
+                        json.add("action", new JsonPrimitive("buildOK"));
+                        json.add("username", new JsonPrimitive(builderName));
+                        json.add("height", new JsonPrimitive(gameMechanics.getMyScore(builderName)));
+                        final GameSession currentSession = gameMechanics.getGameSession(myName);
+                        webSocketService.notifyUserBuilds(currentSession.getFirst(), json);
+                        webSocketService.notifyUserBuilds(currentSession.getSecond(), json);
+                    }
                     break;
                 }
                 case "miss":
