@@ -12,6 +12,7 @@ import org.eclipse.jetty.websocket.api.WebSocketException;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import rest.UserProfile;
@@ -21,6 +22,8 @@ import java.io.IOException;
 /**
  * Created by Olerdrive on 29.05.16.
  */
+
+@WebSocket
 public class GameWS {
 
     private static final Logger LOGGER = LogManager.getLogger(GameWS.class);

@@ -93,8 +93,6 @@ public class UserDataSetDAO {
             oldDataSet.setPoints(oldDataSet.getPoints() - 1000000L);
             oldDataSet.setStarBf(true);
         }
-
-        session.save(oldDataSet);
     }
 
     public long countUsers() {
