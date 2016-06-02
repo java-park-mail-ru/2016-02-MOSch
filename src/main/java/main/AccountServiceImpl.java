@@ -187,7 +187,7 @@ public class AccountServiceImpl implements AccountService {
             try {
                 final Transaction transaction = session.beginTransaction();
                 final UserDataSetDAO dao = new UserDataSetDAO(session);
-                dao.updateUser(userID, new UserDataSet(user), null);
+                dao.updateUser(userID, new UserDataSet(user), mu);
                 transaction.commit();
                 return true;
             } catch (HibernateException e) {
