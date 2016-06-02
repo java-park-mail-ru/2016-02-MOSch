@@ -128,19 +128,22 @@ public class GameMechanicsImpl implements GameMechanics {
 
     @Override
     public void gmStep() {
-        allSessions.stream().filter(GameSession::isGameOver).forEach(session -> {
-            LOGGER.info("Game is over for " + session.getFirst().getMyName() + " and " + session.getSecond().getMyName());
-            if (session.isEquality()) {
-                webSocketService.notifyGameOver(session.getFirst(), true, false);
-                webSocketService.notifyGameOver(session.getSecond(), true, false);
-            } else {
-                final boolean firstWin = session.isFirstWin();
-                webSocketService.notifyGameOver(session.getFirst(), false, firstWin);
-                webSocketService.notifyGameOver(session.getSecond(), false, !firstWin);
+
+        for (GameSession session : allSessions) {
+            if (session.isGameOver()) {
+                LOGGER.info("Game is over for " + session.getFirst().getMyName() + " and " + session.getSecond().getMyName());
+                if (session.isEquality()) {
+                    webSocketService.notifyGameOver(session.getFirst(), true, false);
+                    webSocketService.notifyGameOver(session.getSecond(), true, false);
+                } else {
+                    final boolean firstWin = session.isFirstWin();
+                    webSocketService.notifyGameOver(session.getFirst(), false, firstWin);
+                    webSocketService.notifyGameOver(session.getSecond(), false, !firstWin);
+                }
+                nameToGame.values().removeAll(Collections.singleton(session));
+                allSessions.remove(session);
             }
-            nameToGame.values().removeAll(Collections.singleton(session));
-            allSessions.remove(session);
-        });
+        }
     }
 
     @Override

@@ -98,8 +98,11 @@ public class GameWS {
 
     public void saveResults(GameUser user1){
         LOGGER.info("Saving results for " + user1.getMyName());
-        @NotNull final Long user1Id = accountService.getUserByLogin(user1.getMyName()).getId();
-        accountService.updateUser(user1Id, new UserProfile(user1), user1.getMyLeadCount());
+        final UserProfile user1Profile = accountService.getUserByLogin(user1.getMyName());
+        if (user1Profile != null) {
+            final long user1Id = user1Profile.getId();
+            accountService.updateUser(user1Id, new UserProfile(user1), user1.getMyLeadCount());
+        }
 
     }
 
