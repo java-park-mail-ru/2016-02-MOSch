@@ -92,12 +92,13 @@ public class GameWS {
         final GameSession currentSession = gameMechanics.getGameSession(myName);
         final int multiplier = gameMechanics.countMultiplier(myName);
         saveResults(currentSession.getSelf(myName), multiplier);
-        gameMechanics.removeGameSession(myName);
+        //gameMechanics.removeGameSession(myName);
 
     }
 
     public void saveResults(GameUser user1, int multiplier){
         LOGGER.info("Saving results for " + user1.getMyName());
+        LOGGER.info("Scores: {} x {}", user1.getMyHeight(), multiplier);
         final UserProfile user1Profile = accountService.getUserByLogin(user1.getMyName());
         if (user1Profile != null) {
             final long user1Id = user1Profile.getId();

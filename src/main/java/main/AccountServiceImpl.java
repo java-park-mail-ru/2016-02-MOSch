@@ -209,7 +209,8 @@ public class AccountServiceImpl implements AccountService {
                 final UserDataSet userDataSet = dao.readUserBySessionID(sessionID);
                 if (userDataSet != null) {
                     final long userID = userDataSet.getId();
-                    dao.updateUser(userID, new UserDataSet(user), null);
+                    //noinspection MagicNumber
+                    dao.updateUser(userID, new UserDataSet(user), 50);
                 }
                 transaction.commit();
                 return true;

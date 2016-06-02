@@ -117,7 +117,7 @@ public class Session {
             final String result = String.format("{\"id\":\"%d\"}", userProfile.getId());
             return Response
                     .status(Response.Status.OK)
-                    .entity(result)
+                    .entity(userProfile)
                     .build();
         }
     }

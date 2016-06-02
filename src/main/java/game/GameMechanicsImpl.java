@@ -72,7 +72,7 @@ public class GameMechanicsImpl implements GameMechanics {
         final int myLeadCount = getMyLeadCount(name);
         final int enemyLeadCount = getEnemyLeadCount(name);
         int sum = myLeadCount + enemyLeadCount;
-        sum = (myLeadCount * 2/sum) * (myLeadCount * 2/sum) * 50;
+        sum = (myLeadCount * 2/sum) * (myLeadCount * 2/sum) * 100;
         return sum;
     }
 
