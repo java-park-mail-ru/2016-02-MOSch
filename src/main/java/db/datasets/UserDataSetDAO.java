@@ -19,6 +19,8 @@ import java.util.List;
  */
 public class UserDataSetDAO {
     private final Session session;
+    private static final Logger LOGGER = LogManager.getLogger(UserDataSetDAO.class);
+
 
 
     public UserDataSetDAO(Session session) {
@@ -80,21 +82,32 @@ public class UserDataSetDAO {
         if (multiplier != null) {
             oldDataSet.setPoints(oldDataSet.getPoints() + multiplier * newScore);
         }
+
+        if (!oldDataSet.getAnswerBf() && dataSet.getAnswerBf()){
+            oldDataSet.setAnswerBf(true);
+            oldDataSet.setPoints(oldDataSet.getPoints() + 1000000L);
+            LOGGER.info("User {} hit correct answer. Congrats!", oldDataSet.getUsername());
+        }
+
         if (!oldDataSet.getAccuracyBf() && dataSet.getAccuracyBf() && oldDataSet.getPoints() > 350000L) {
             oldDataSet.setPoints(oldDataSet.getPoints() - 350000L);
             oldDataSet.setAccuracyBf(true);
+            LOGGER.info("User {} bought the Hawkeye (Accuracy)", oldDataSet.getUsername());
         }
         if (!oldDataSet.getDelayBf() && dataSet.getDelayBf() && oldDataSet.getPoints() > 250000L) {
             oldDataSet.setPoints(oldDataSet.getPoints() - 250000L);
             oldDataSet.setDelayBf(true);
+            LOGGER.info("User {} bought the Cheetah Paws (Delay)", oldDataSet.getUsername());
         }
         if (!oldDataSet.getSpeedBf() && dataSet.getSpeedBf() && oldDataSet.getPoints() > 300000L) {
             oldDataSet.setPoints(oldDataSet.getPoints() - 300000L);
             oldDataSet.setSpeedBf(true);
+            LOGGER.info("User {} bought the Turtle Shell (Speed)", oldDataSet.getUsername());
         }
         if (!oldDataSet.getStarBf() && dataSet.getStarBf() && oldDataSet.getPoints() > 1000000L) {
             oldDataSet.setPoints(oldDataSet.getPoints() - 1000000L);
             oldDataSet.setStarBf(true);
+            LOGGER.info("User {} bought the Leo Sign (Star). Bingo!", oldDataSet.getUsername());
         }
     }
 

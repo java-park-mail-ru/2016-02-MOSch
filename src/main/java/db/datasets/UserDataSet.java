@@ -48,6 +48,9 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     @Column(name = "auth_token", unique = true)
     private String authToken;
 
+    @Column(name = "answer_bf", nullable = false)
+    private Boolean answerBf = false;
+
     @Column(name = "star_bf", nullable = false)
     private Boolean starBf = false;
 
@@ -176,6 +179,15 @@ public class UserDataSet implements Serializable { // Serializable Important to 
 
     public void setDelayBf(@NotNull Boolean delayBf) {
         this.delayBf = delayBf;
+    }
+
+    @NotNull
+    public Boolean getAnswerBf(){
+        return this.answerBf;
+    }
+
+    public void setAnswerBf(@NotNull Boolean answerBf){
+        this.answerBf = answerBf;
     }
 
 
