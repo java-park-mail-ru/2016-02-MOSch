@@ -123,7 +123,7 @@ public class GameWS {
             final JsonElement jsonElement = new JsonParser().parse(data);
             final String action = jsonElement.getAsJsonObject().getAsJsonPrimitive("action").getAsString();
             if (action == null) {
-                throw new JsonSyntaxException("Can't find understand \"action\" in JSON");
+                throw new JsonSyntaxException("Can't understand \"action\" in JSON");
             }
             switch (action) {
                 case "build":
