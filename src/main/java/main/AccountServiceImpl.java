@@ -322,9 +322,10 @@ public class AccountServiceImpl implements AccountService {
                 if (userDataSet != null) {
                     final long userID = userDataSet.getId();
                     dao.logoutUser(userID);
+                    LOGGER.info("User {} logged out", userDataSet.getUsername());
                 }
                 transaction.commit();
-                LOGGER.info("User {} logged out", userDataSet.getUsername());
+
             } catch (HibernateException e) {
                 if (session.getTransaction().getStatus() == TransactionStatus.ACTIVE
                         || session.getTransaction().getStatus() == TransactionStatus.MARKED_ROLLBACK) {

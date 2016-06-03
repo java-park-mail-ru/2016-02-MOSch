@@ -207,6 +207,10 @@ public class AccountServiceImplTest {
         accountService.logoutUser("session1");
         accountService.logoutUser("session2");
         accountService.logoutUser("wrong");
+
+        assertNull(accountService.getUserBySessionID("session1"));
+        assertNull(accountService.getUserBySessionID("session2"));
+        assertNotNull(accountService.getUserBySessionID("session5"));
     }
 
     @Test
