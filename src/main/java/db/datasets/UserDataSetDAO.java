@@ -83,10 +83,12 @@ public class UserDataSetDAO {
             oldDataSet.setPoints(oldDataSet.getPoints() + multiplier * newScore);
         }
 
-        if (!oldDataSet.getAnswerBf() && dataSet.getAnswerBf()){
-            oldDataSet.setAnswerBf(true);
-            oldDataSet.setPoints(oldDataSet.getPoints() + 1000000L);
-            LOGGER.info("User {} hit correct answer. Congrats!", oldDataSet.getUsername());
+        if (oldDataSet.getAnswer() == null){
+            oldDataSet.setAnswerBf(dataSet.getAnswer());
+            if (oldDataSet.getAnswer() == "yes") {
+                oldDataSet.setPoints(oldDataSet.getPoints() + 1000000L);
+                LOGGER.info("User {} hit correct answer. Congrats!", oldDataSet.getUsername());
+            }
         }
 
         if (!oldDataSet.getAccuracyBf() && dataSet.getAccuracyBf() && oldDataSet.getPoints() > 350000L) {

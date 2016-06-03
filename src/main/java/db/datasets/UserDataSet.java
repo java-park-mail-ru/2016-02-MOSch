@@ -48,8 +48,8 @@ public class UserDataSet implements Serializable { // Serializable Important to 
     @Column(name = "auth_token", unique = true)
     private String authToken;
 
-    @Column(name = "answer_bf", nullable = false)
-    private Boolean answerBf = false;
+    @Column(name = "answer")
+    private String answer = null;
 
     @Column(name = "star_bf", nullable = false)
     private Boolean starBf = false;
@@ -181,13 +181,13 @@ public class UserDataSet implements Serializable { // Serializable Important to 
         this.delayBf = delayBf;
     }
 
-    @NotNull
-    public Boolean getAnswerBf(){
-        return this.answerBf;
+
+    public String getAnswer(){
+        return this.answer;
     }
 
-    public void setAnswerBf(@NotNull Boolean answerBf){
-        this.answerBf = answerBf;
+    public void setAnswerBf(@NotNull String answer){
+        this.answer = answer;
     }
 
 
