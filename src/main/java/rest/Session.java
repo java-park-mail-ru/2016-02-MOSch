@@ -54,7 +54,7 @@ public class Session {
                     final String result = String.format("{\"id\":\"%d\"}", userId);
                     return Response
                             .status(Response.Status.OK)
-                            .entity(result)
+                            .entity(accountService.getUserByID(userId))
                             .build();
                 } else {
                     session.invalidate();
@@ -117,7 +117,7 @@ public class Session {
             final String result = String.format("{\"id\":\"%d\"}", userProfile.getId());
             return Response
                     .status(Response.Status.OK)
-                    .entity(userProfile)
+                    .entity(result)
                     .build();
         }
     }
