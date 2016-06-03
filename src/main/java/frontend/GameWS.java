@@ -177,7 +177,9 @@ public class GameWS {
     public void onClose(int statusCode, String reason) {
         webSocketService.removeUser(this);
         gameMechanics.removeUser(myName);
-        gameMechanics.removeGameSession(myName);
+        if (gameMechanics.getGameSession(myName) != null) {
+            gameMechanics.removeGameSession(myName);
+        }
         LOGGER.info("Closing socket for: {}  status: {} reason: {}", myName, statusCode, reason);
     }
 
