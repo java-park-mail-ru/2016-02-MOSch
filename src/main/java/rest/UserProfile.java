@@ -23,6 +23,8 @@ public class UserProfile {
     @NotNull
     private Long points = 0L;
     @NotNull
+    private String answer = "no";
+    @NotNull
     private Boolean starBf = false;
     @NotNull
     private Boolean accuracyBf = false;
@@ -40,6 +42,7 @@ public class UserProfile {
         password = dataSet.getPassword();
         score = dataSet.getScore();
         points = dataSet.getPoints();
+        answer = dataSet.getAnswer();
         starBf = dataSet.getStarBf();
         accuracyBf = dataSet.getAccuracyBf();
         speedBf = dataSet.getSpeedBf();
@@ -104,6 +107,15 @@ public class UserProfile {
 
     public void setPoints(@NotNull Long points) {
         this.points = points;
+    }
+
+    @NotNull
+    public String getAnswer(){
+        return this.answer;
+    }
+
+    public void setAnswer(@NotNull String answer){
+        this.answer = answer;
     }
 
     @NotNull
